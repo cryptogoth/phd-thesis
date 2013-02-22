@@ -1,0 +1,304 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Ph.D. Thesis proposal
+% Paul Pham
+% University of Washington
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\documentclass[runningheads]{llncs}
+% Suppress page numbers
+%\documentclass[a4paper]{llncs}
+% For arXiv, and eprint support
+\documentclass[]{article}
+
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{eprint}
+\usepackage[osf]{mathpazo} % Use Palatino / Euler fonts
+
+\usepackage{url}
+\urldef{\mailsa}\path|{alfred.hofmann, ursula.barth, ingrid.beyer, christine.guenther,|
+\urldef{\mailsb}\path|frank.holzwarth, anna.kramer, erika.siebert-cole, lncs}@springer.com|
+\newcommand{\keywords}[1]{\par\addvspace\baselineskip
+\noindent\keywordname\enspace\ignorespaces#1}
+
+% Right brace for multirows in tables / arrays
+\newcommand\coolrightbrace[2]{%
+\left.\vphantom{\begin{matrix} #1 \end{matrix}}\right\}#2}
+
+% To fix Qcircuit target with new Xypic
+\newcommand{\targfix}{\qw {\xy {<0em,0em> \ar @{ - } +<.39em,0em>
+\ar @{ - } -<.39em,0em> \ar @{ - } +
+<0em,.39em> \ar @{ - }
+-<0em,.39em>},<0em,0em>*{\rule{.01em}{.01em}}*+<.8em>\frm{o}
+\endxy}}
+
+% To get Roman uppercase Greek characters
+\newcommand{\X}[1]{$#1$}
+
+\input{Qcircuit}
+
+\newcommand{\braket}[2]{\langle #1|#2 \rangle}
+\newcommand{\normtwo}{\frac{1}{\sqrt{2}}}
+\newcommand{\norm}[1]{\parallel #1 \parallel}
+\newcommand{\email}[1]{\href{mailto:#1}{#1}}
+\theoremstyle{plain} \newtheorem{lemma}{Lemma}
+
+\begin{document}
+
+%\mainmatter  % start of an individual contribution
+
+% first the title is needed
+\title{Thesis Proposal: Low-depth quantum architectures}
+
+% a short form should be given in case it is too long for the running head
+%\titlerunning{A 2D Nearest-Neighbor Quantum Architecture for Factoring}
+
+% the name(s) of the author(s) follow(s) next
+%
+% NB: Chinese authors should write their first names(s) in front of
+% their surnames. This ensures that the names appear correctly in
+% the running heads and the author index.
+%
+\author{Paul Pham\\
+University of Washington\\
+\email{ppham@cs.washington.edu}
+}
+% if the list of authors exceeds the space for a headline,
+% an abbreviated author list is needed
+%\authorrunning{P. Pham \and K.M. Svore}
+% (feature abused for this document to repeat the title also on left hand pages)
+
+\maketitle
+
+\section{Committee}
+
+\begin{itemize}
+\item Aram Harrow (chair)
+\item Paul Beame
+\item Mark Oskin
+\item Boris Blinov (GSR)
+\end{itemize}
+
+\section{Abstract}
+
+Building upon my generals exam, I combine the common threads of
+realistic architectural constraints (e.g. nearest-neighbor
+interactions),
+quantum circuit construction techniques (e.g. parallelization),
+quantum compiling, and
+a new circuit resource called circuit coherence. I develop these threads
+in the context of
+the well-known Shor factoring algorithm and then generalize them to
+a new algorithm, Hamiltonian simulation. I calculate closed formulae
+for the resources needed
+to run these algorithms on input sizes of interest. Thus, I characterize the
+possibility of trading space (circuit width, up to billions of
+qubits, for time (circuit depth, up to centuries of time).
+
+\textbf{Thesis Statement: Advances in nearest-neighbor quantum architectures,
+quantum compilation, and quantum circuit analysis can help us design
+quantum computers to solve human problems within human lifetimes.}
+
+\pagebreak
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Proposed Timeline}
+
+\begin{description}
+\item[February 21]
+I send this proposal to committee, accept revisions.
+
+\item[February 22]
+I begin writing, at least on non-controversial parts of proposal, until
+we come to a consensus on the whole proposal. This 6 week period is
+broken down by chapter in the next section.
+
+\item[April 5]
+I finish writing and remaining research and send a penultimate dissertation
+draft to the reading committee. Beginning of two week reading period.
+
+\item[April 19]
+End of two week reading period. Reading committee gives me feedback and
+decides whether thesis is ready to be defended. I schedule my final exam with
+the graduate school (tentatively set for May 3rd), make requested changes to dissertation,
+and prepare my talk.
+
+\item[May 3]
+Tentative final exam with full committee present, in CSE 503, 10am - 12:30pm.
+
+\end{description}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Proposed Chapters}
+
+\begin{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Chapter 1
+
+\item
+\textbf{Factoring on a 2D nearest-neighbor architecture.}
+
+In this chapter, we discuss the work
+Pham-Svore 2012 \cite{Pham2012}, where we mapped Shor's factoring algorithm
+to a 2D nearest-neighbor quantum architecture (with classical controller) in
+polylogarithmic depth, an exponential improvement over the previous
+best-known architecture (in 1D).
+Furthermore, we will improve these
+results to be constant-depth, which is optimal even if we allow an
+architecture with arbitrary interactions. We will use the techniques,
+namely the unbounded quantum fanout of H{\o}yer-{\v S}palek 2002
+\cite{Hoyer2002}, the quantum threshold circuit given in
+Takahashi-Tani 2011 \cite{Takahashi2011}, and the original classical circuit
+given in Siu et al. 1993 \cite{Siu1993}.
+We will calculate the circuit resources required by our factoring architectures
+and compare them to previous implementations, especially the best-known
+1D nearest-neighbor algorithm by Kutin 2006 \cite{Kutin2006}.
+
+This chapter will also include a background of quantum architecture, and
+physical justification for the realism and utility of our chosen models.
+It will also review other work on mapping quantum gates of
+arbitrary connectivity to a nearest-neighbor architecture such as
+Rosenbaum 2012 \cite{Rosenbaum2012} and Biels et al. 2012 \cite{Beals2012}.
+
+\pagebreak
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Chapter 2
+
+\item
+\textbf{Quantum compiling on a nearest-neighbor architecture.}
+
+This section is primarily a pedagogical literature review which builds upon my
+quals project.
+
+Quantum compiling is the approximation of any quantum gate to arbitrary
+precision using gates from a universal, finite, discrete set. Along with
+error correction, it provides one of the biggest overheads in the realistic
+implementation of a quantum algorithm. In this case,
+we limit ourselves to approximating single-qubit gates, which is sufficient
+to approximate multi-qubit gates using known decompositions given in
+Kitaev-Shen-Vyalyi 2002 \cite{Kitaev2002}, Svore-Aho 2003 \cite{Aho2003},
+and Saeedi-Markov 2011 \cite{Saeedi2011}.
+
+There has been much recent
+work in approximating single-qubit gates and improving empirical performance
+using heuristics, such as 
+Amy et al. 2012 \cite{Amy2012}, Booth 2012 \cite{Booth2012},
+Kliuchnikov et al. 2012 \cite{Kliuchnikov2012a},
+Eastin 2012 \cite{Eastin2012}
+Selinger 2012 \cite{Selinger2012}, Bocharov-Svore 2012 \cite{Bocharov2012}.
+An interesting model which uses the technique of Kitaev-Shen-Vyalyi 2002
+\cite{Kitaev2002} to prepare programmable ancillae offline and then apply them
+in constant depth at runtime is given in Jones et al. \cite{Jones2012}.
+There has also been an asymptotic improvement by Duclos-Cianci-Svore 2012 \cite{Duclos-Cianci2012}.
+These all improve upon the original results by Solovay-Kitaev 1995-1997 as
+formulated in Dawson-Nielsen 2005 \cite{Dawson2005} and a later result by
+Kitaev-Shen-Vyalyi 2002 \cite{Kitaev2002}.
+
+We will give a pedagogical
+review all of these works and compare their relative performances on
+architectures with arbitrary interactions. As well, we will
+compute the circuit resource overhead in mapping one or more of these
+methods to our 2D nearest-neighbor architecture with classical controller,
+as time allows.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Chapter 3
+
+\item
+\textbf{Quantum coherence versus measurement patterns.}
+
+In this chapter, I re-introduce 
+a new circuit resource first mentioned in my generals report
+which I now call \emph{circuit coherence}. Roughly defined,
+it is the time-space product of the coherent computation
+state that ends in measurement to produce a circuit's final classical output.
+It has units of \emph{qubits$\cdot$ timestep}. Intuitively, it measures the
+amount of experimental labor and error-correction needed to maintain a
+coherent, entangled state for computation.
+
+Circuit size is counted as the
+number of two-qubit (nearest-neighbor) gates in a circuit, and a timestep is
+the unit depth of a two-qubit gate. Then circuit coherence is upper-bounded by the
+product of circuit depth times width, which in the worst case means that
+all qubits in a quantum computer must remain entangled for the entire
+runtime of the circuit. It is lower-bounded by the circuit size, which in
+the worst case means that every two-qubit gate is alternately entangling
+or disentagling a qubit from the computation state.
+
+The questions examined in this section are as follows:
+
+\begin{enumerate}
+\item
+Is circuit coherence a well-defined circuit resource? Are there pathological
+cases to be handled, and if so, what are the workarounds to the definition
+given above?
+
+\item
+Are there transformations to a circuit that decrease circuit coherence while
+still computing the same function? What are some specific examples? Can we
+generalize some principles, properties, or pseudocode that would allow us to
+automatically determine that a circuit is ``canonical''?
+That is, a canonical circuit has the minimum circuit coherence among
+all its equivalent representations.
+
+\item
+Is circuit coherence asymptotically separated from the upper and lower bounds
+given above? If not, what are specific examples where there is a separation
+between coherence and depth $\times$ width? 
+
+\item
+Is circuit coherence different from the measurement patterns defined in
+Broadbent-Kasheffi 2007 \cite{Broadbent2007} ?
+
+\end{enumerate}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Chapter 4
+
+\item
+\textbf{Mapping the Hamiltonian simulation algorithm to a 2D nearest-neighbor
+architecture.}
+
+A very different flavor of quantum algorithm is Hamiltonian simulation, the
+original problem Richard Feynman proposed for which a quantum mechanical
+machine might be exponentially faster than a classical machine. Hamiltonian
+simulation, or the simulation of an inherently quantum physical system
+with many-body interactions, has been attracting a lot of attention recently.
+We can
+conceivably demonstrate quantum speedups in experimental implementations
+of Hamiltonian simulation in the
+near future that match classical supercomputer performance on modest input
+sizes. We cannot say the same for factoring for at least many more years.
+
+This chapter is partly a review of related work on Hamiltonian simulation
+but is primarily original research on mapping this algorithm to our 2D
+nearest-neighbor architecture with classical controller. We also calculate
+the circuit resources for such a mapping. We expect that we can improve
+upon the general solution in Berry et al. 2005 \cite{Berry2006}
+by restricting ourselves to Hamiltonians with
+bounded, spatially-local terms.
+
+We will build upon the approach given in Nathan Wiebe's Ph.D. thesis.
+This chapter is not meant to be a comprehensive survey, but rather a
+novel and concrete application of the previous three chapters
+(architectural lessons learned from the factoring algorithm,
+quantum compiling as a subroutine to quantum algorithms, and circuit coherence)
+to a new algorithm.
+
+\item
+\textbf{Conclusion.} We conclude with interesting open problems and ways to
+extend the work of these four chapters in the future.
+
+\end{enumerate}
+
+\pagebreak
+
+\bibliography{proposal}
+\bibliographystyle{tocplain}
+
+\end{document}
