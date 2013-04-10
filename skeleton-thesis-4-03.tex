@@ -1,0 +1,136 @@
+\documentclass{article}
+
+\begin{document}
+
+\section{The Overall Sketch of a Constant-Depth Implementation to Factoring}
+
+The simplest but most disappointing discovery of today was that we
+could not do constant-depth factoring in a ``nice'' way using the
+modular exponentiation in depth-4 or even use modular reduction in depth 4
+from the Siu-Bruck paper, since those only work for a modulus that is
+polynomially-bounded, that is $m < n^k$ for some $k > 0$. In fact, for
+Shor's algorithm, we allow exponential moduli, that is, $m < 2^n$.
+So that is out.
+
+There is still a way though, but it uses the icky division circuit in
+Siu-Bruck, which is some ways seems superficially similar to the division
+and true division circuits that I spent a lot of time understanding
+two summers ago during my MSR internship. So we first use the depth-four
+circuit for multiple multiplication, the multiple product of $n\times n$-bit
+numbers into a single $n^2$-bit number in depth-4. This probably works
+because the product of any two $n$-bit numbers is in general a $2n$-bit number. We can multiply $n$ such numbers together in a $\log_2 n$-depth
+binary tree, where at the end we have a $n\cdot 2^{\log_2 n} = n^2$-bit
+number as desired.
+
+Then we can do division to get the remainder. It's not clear to me what
+$DIV_k(x/y)$ means in the Siu-Bruck paper, whether that gives us the
+remainder or what. But modular reduction seems pointless because we only
+needed it to keep a reasonably-sized register right? Do we even need
+modular multiplication to be unitary? Oh, I think it is because phase
+estimation only works for selecting a random eigenstate if the operators
+you apply have as eigenvectors the superposition of the initial state.
+There was probably a better way to say that.
+You know what I meant.
+
+Okay more writing, less thinking. Something to ponder later.
+
+\section{Implementation of a Threshold Gate in Nearest-Neighbor}
+
+Andrea appears to have done some of this work already in her report.
+The threshold gate performs a rotation by Hamming value on each of the
+inputs equal to the weight, and then something something final overall
+threshold value. However, if I remember correctly, it involves two layers
+of gates, a threshold of thresholds if you will. So constant-depth
+teleportation could be used to move the qubits from the first layer to
+be adjacent for the second layer. Also, I have a feeling that the first
+layer requires constant-depth fanout to create enough copies of the
+original inputs to operate in parallel. To create the correct weights for
+each input? That doesn't make sense. Fact check this!
+
+\section{Relationship Between a Threshold Gate and a Linear Threshold Function}
+
+This appears to be a one-to-one mapping.
+So it's probably a stupid section to have.
+
+\section{Relationship Between a Linear Threshold Function and a
+Polynomial Threshold Function}
+
+A linear threshold function as defined by Siu-Bruck is a sign function on
+$n$ inputs ${x_1, \ldots, x_n}$ with polynomial weights, including an
+initial weight $w_0$ that doesn't depend on any input that will let us
+program the ``offset'' of this function. This is what they call the class
+$LT_1$, meaning the class of functions that can be computed this way. Or
+rather, when they say a function $F\in LT_1$, they mean a family of 
+functions which depend on input size $n$ can be implemented with a single
+threshold gate. They are being rather pedantic, I think.
+
+However! The linear threshold function could be the result of exponentially
+big weights. Therefore, we consider weights (real-valued, could be negative)
+which are bounded by $n$, that is $|w_i| < n^c$. for some $c>0$. We call 
+this class $\hat{LT}_1$, and it is the one we are primarily interested in.
+For the sake of tractability, if a linear threshold function as 
+exponentially big weights, it could be difficult to implement.
+(How? Why?) And what is the relationship between linear threshold function
+and threshold gates?
+
+One thing we can say for sure is that $\hat{LT}_1 \subseteq LT_1$.
+
+I am guessing that a polynomial threshold function is a multinomial
+function in the input variables $\{x_1, \ldots, x_n\}$ where each
+monomial contains up to $n$ of these input variables, but the number of
+multinomials $m$ is polynomially bounded by $n$, that is, $m < n^c$ for
+some $c > 0$. This is what Siu and Bruck call a \emph{sparse polynomial},
+a term which I like. I think also each multinomial can have a weight
+$w_i$ which may also be polynomially bound, $|w_i| < c$.
+How are these relation to linear threshold functions? Fact check this!
+
+\section{Relationship Between Majority Gate and Threshold Gate}
+
+A Majority gate is a threshold gate where the weights only take on values of
+$-1$ and $+1$, where the inputs $x_i \in {-1,+1}$. This seems to be a 
+special case of threshold gates, and so we should be safe in saying that
+$MAJ_1 \subseteq \hat{LT}_1 \subseteq LT_1$.
+
+What is a monotone function? Why do they talk about non-monotone analogues 
+of the conventional majority gate?
+
+\section{Delta Polynomials}
+
+In analogy to the Dirac delta function, which has a large weight
+(theoretically infinite) at a particular point and zero weight anywhere 
+else, a delta polynomial over input variables $\{x_1, \ldots, x_n\}$ has
+a value greater than some $a$ for the all $+1$'s input:
+$\epsilon_1 = (1,\ldots,1)$ and
+some value less than some $a/c$ for any other input.
+
+This allows us to reward a condition with a large positive value by 
+encoding it in $\epsilon_1$ while simultaneously making sure that
+$\epsilon_1$ is not accidentally created by some other combination of 
+inputs. This is combines out notion of completeness. We do this by
+creating some polynomial $P(\cdot)$ on a truncated input, that is, only
+on a subset of the input variables $x_i$'s which slides depending on
+which portion we want to consider. This sliding window notion is natural
+in many arithmetic functions when we can define a kind of recursion or
+dependency.
+
+For comparison\ldots
+
+However, there is still soundness. We want undesirable inputs to generate
+low weight, and so there is often an additional coefficient controlled
+by the inputs
+
+\section{Explicit Polynomials}
+
+The existence of such polynomial threshold functions for given arithmetic
+functions such as COMPARE and ADDITION is proven in general terms by
+arguing from the symmetry of the functions (how they are unchanged by
+permuting the inputs) and constructing a composite circuit where
+the inputs to a linear threshold function are themselves outputs of
+a previous layer of linear threshold functions. FACT CHECK.
+
+However, explicit polynomials for these can be constructed by using
+so-called \emph{delta polynomials} described in a previous section.
+
+\section{Explicit Function for Comparison}
+
+\end{document}

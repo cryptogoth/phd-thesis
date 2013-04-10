@@ -1,0 +1,174 @@
+\documentclass{article}
+
+\usepackage{amssymb}
+
+\input{Qcircuit}
+
+\begin{document}
+
+\section{The Activities of Thesis Writing}
+
+The common activity to all these strategies is that you \emph{write} 
+something.
+
+\begin{enumerate}
+
+\item Write about things you want to do the next day. This is especially
+useful if you did not do a lot of thinking or reading in the current day.
+
+\item Write about things that you read today. Make a list of questions
+that you have.
+
+\item Write a general introduction of things from memory. (This seems the
+hardest to do)
+
+\item Write about what you are feeling, and how to deal with it, which
+may delve into Buddhism and mindfulness.
+
+\end{enumerate}
+
+\section{True Quantum Division}
+
+The first step is to reduce finding the ratio of two numbers $x$ and $y$
+with finding the reciprocal $y^{-1}$ with some precision (binary fraction 
+digits). Then taking the product $x y^{-1}$, since we already know how to
+do multiplication.
+
+So what are the steps in finding the reciprocal?
+
+First, we know that $y$ is less than one. I think it is not the case that
+$y$ is an arbitrary number, but rather that it is a number between 1 and 2.
+
+We do this by scaling $x$ as $2^s y$ where $s$ is the largest integer such
+that $2^s \le y \le 2^{s+1}$. Scaling $x$ by $2^s$, which we call $x'$ is
+just bitshifting. Then $y' = y \cdot 2^{-s}$, which is just truncating bits.
+We assume that we have a leading one by convention.
+
+So now we know that $1 \le y' < 2$, and we want to find $y'^{-1}$, which
+will be $\frac{1}{2} < y'^{-1} \le 1$. Let's say this is as easy as
+taking the bits of $y'$:
+
+\begin{equation}
+y' = 1.y_1 y_2 y_3 y_4 \ldots y_n
+\end{equation} 
+
+Every bit of $y'^{-1}$, let's call it $z$, is simply the inverse of the
+corresponding bit in $y'$.
+
+\begin{equation}
+z' = 0.1\cdot (1-y_1) \cdot (1-y_2) \cdot (1-y_3) \ldots
+\end{equation}
+
+FACT CHECK THIS. It seems too simplistic.
+
+Now assume that we know the reciprocal, $z' = y'^{-1}$, we can shift it
+up by $2^s$, which is technically part of $x'$, and then multiply.
+
+\section{What is the Plan to Fail Softly}
+
+Do not try to understand the division algorithm, or powering, or 
+multiplication, in detail. Instead, concentrate on the resources needed.
+If you have time, go back and try to understand the algorithm, or try to
+derive the explicit polynomial.
+
+Do not be seduced with doing new work. Some new work might be needed in
+Chapter 4, when you try to simulate local Hamiltonians. That is the
+most fearsome part.
+
+Finish Chapter 1, and let others give you feedback and what you need to
+do. Read the Harmonic Analysis paper, or at least understand better its
+results which are used in the depth-efficient paper, to see if you can
+get asymptotic bounds without knowing the explicit polynomial.
+
+Isolate yourself from pretty girls, and social scenes where you will compete
+and come to focus on what you do not have, rather than on what you have.
+
+\section{The Desire for Vagueness}
+
+Often there is a sense of wanting to avoid specifics, of meeting the
+interface of your ignorance, by not formulating things in symbols. After
+all, once you have put it in symbols, you could be wrong, and you could
+fact check it.
+
+Be vigilant against this. Use as many symbols as possible. Over-bias
+yourself towards using symbols. And formulating things, and calculating
+quantities.
+
+\section{Quantum Circuit Coherence}
+
+What can we state about the quantum circuit coherence and the circuits
+we have calculated so far? Certainly, we know that fanning-out increases
+coherence by a certain amount.
+Fanning out a qubit by $n$ increases the circuit coherence at least by
+$n\cdot D$, but as $D = O(1)$, we increase the circuit coherence by a
+linear amount.
+
+\section{Deterrences}
+
+It is not just the fear of losing money which would make you want to
+keep writing thesis pages for a particular day. It is also painful to
+not have things to write, and so the memory of it would work on the
+next day for you to read, and so have something to write about.
+
+What are the things you want to read about tomorrow?
+Multiplication, and how it scales up from the product of two numbers
+to multiple product, and its relationship to POWERING.
+
+Print out the paper on harmonic analysis. Print out the paper on the
+power of small weights. Be aware of perfectionism or procrastination
+as deterring you from you goal of finishing, since it is often easier,
+even though still painful, to wallow in your not understanding of a thing
+than to finish it, and submit an imperfect thing. As long as you prolong
+the finishing, you preserve the fantasy of a future perfect thing.
+
+When you were writing your generals exam, you made great progress in
+reading papers and then summarizing them, in the style of a
+buccaneer-scholar. Other techniques you used for isolation. You pretty
+much cut yourself off from other society in order to get your work done.
+Did you institute daily page quotas? Unknown. You definitely made it a
+point to sit and write for several hours at a time. Maybe you have a
+notebook account of the kind of work you did during this time.
+A lot of meditation, which you are missing this time. Because you put off
+the writing until the end of the day.
+
+Not just insight into what you are doing. But also recognizing thoughts as
+thoughts, and behaviors of unworthiness. Three minutes to go.
+
+Printing out and reading other papers for a timeboxed amount of time.
+You may have reached the limit of social pressure, where you are doing
+more work to uphold your social network than you are getting from it,
+in terms of suffering from guilt and so forth. It is not a nice way
+to view your life, as business transactions. How much discomfort
+is necessary?
+
+\section{The Threshold Circuit}
+
+Things that could affect the circuit resources of a threshold circuit.
+One is the number of inputs. One is the magnitude of the weights.
+One is the magnitude or precision of the thresholds. If, as I suspect,
+the weights and the thresholds are scaled angles of $0 \le \phi \le 2\pi$,
+then the precision matters, and is inversely proportional to the
+magnitude. Polynomially-bounded weights in the classical threshold case
+corresponds to inverse polynomial precision in the quantum case.
+
+The circuit size of each threshold gate, when reduced to a 2D CCNTC
+model (or maybe can even make it a 1D CCNTC model) depends on the
+size of the gates, or the number of inputs, since this is the number
+that must be used in transporting the qubits using constant-depth
+teleportation.
+
+\section{Connecting Themes of the Current Work}
+
+Circuit coherence as a new resource for measuring time-space product and
+tradeoffs. We need to show a separation between space on the lower bound
+and depth-width on the upper bound.
+
+Mapping other addition approaches to CCNTC, like the configurable-depth
+Takahashi-Tani addition scheme.
+
+The nearest-neighbor implementation of KSV compiling, or rather, using
+the nearest-neighbor implementation of constant-depth addition.
+
+\section{The Feeling of Retreating from Reality is Hard}
+
+\end{document}
