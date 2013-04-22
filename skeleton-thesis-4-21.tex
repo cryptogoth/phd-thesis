@@ -1,0 +1,132 @@
+\documentclass{article}
+
+\usepackage{amssymb}
+
+\input{Qcircuit}
+
+\begin{document}
+
+\section{Questions}
+
+To begin with
+
+\begin{enumerate}
+\item
+What is quantum Hamming weight? Why does it make sense to take the
+Hamming weight of a quantum state, and how is the output qubit entangled
+with each input state?
+
+\item
+What is the rotation by Hamming value used for?
+
+\item
+In Hoyer-Spalek, the constant-depth of Or and other quantum logic gates
+seems to depend on taking the gates from a arbitrary single-qubit
+rotations, rather than a fixed set. However, in the beginning sections,
+we do not make any such assumptions, and yet the assumption is made
+of constant-depth using a fixed basis. How do we get around this
+quantum compiling problem?
+
+\item
+Useful papers to add to our reading list include the result that
+a rotation about the $Z$-axis of an irrational multiple of $\pi$,
+together with Hadamard and CNOT, are universal, when in fact we
+know that Hadamard, the T gate ($R_z(\pi/8)$), and CNOT are normally
+considered universal everywhere else. How do we resolve this consistency?
+
+\item
+Is it worth computing exact parameters for KSV compiling? Soft failure
+says no, just keep it at asymptotics at this stage.
+
+\item
+What is the implementation of controlled-$R_z$, using some
+standard decomposition?
+
+\end{enumerate}
+
+\section{Exact Gate in 2D CCNTC}
+
+The $exact[t]$ gate is defined as the $(n+1)$-qubit operation which takes
+$\ket{x}\ket{y} \rightarrow \ket{x}\ket{y \oplus g(x)}$ where
+we define $g(x) = 1$ iff $|x| = t$. It is achieved by a rotation by Hamming
+weight using a basic angle $\phi = 2\pi / m$, where $m$ is determined by
+the $or$ gate, and an added rotation of $-\phi\cdot t$.
+
+\section{Or Gate in 2D CCNTC}
+
+From Hoyer-Spalek, the OR gate 
+
+\section{Rotation by Hamming Weight in 2D CCNTC}
+
+This is a basic gate in Hoyer-Spalek which makes use of unbounded-fanout.
+It takes as input $n$ input qubits and an output qubit in the
+$\ket{+}$ state which is an equal superposition of $\ket{0}$ and $\ket{1}$.
+It modifies the phase on the $\ket{1}$ component of the output qubit 
+based on the Hamming weight of the input. Since the input register $\ket{x}$
+is in general a superposition of $2^n$ computational basis states, the
+output qubit is entangled to encode a rotation based on the Hamming weight
+of a particular input $x$.
+
+Therefore, the notion of a \emph{quantum Hamming weight} appears to be ill-
+defined.
+writes the output in a single
+qubit, giving the following $(n+1)$-qubit operation.
+
+\begin{equation}
+\sum_{x \in \mathcal{B}^n} \ket{x}\left(\frac{\ket{0} + \ket{1}}{\sqrt{2}}\right)
+\rightarrow
+\sum_{x \in mathcal{B}^n} \ket{x}\left(\frac{\ket{0} + e^{i\phi|x|}\ket{1}}{\sqrt{2}}\right)
+\end{equation}
+
+It is denoted $\mu^{|x|}_\phi$, meaning that the phase of output qubit
+is shifted by $|x|\cdot \phi$. Note that we do not mention what to do
+with the output qubit. Obviously this phase is not measurable, but under
+certain circumstances mentioned in the succeeding sections, a Hadamard
+can be applied to this gate, in which case the phase does become
+measurable in the $Z$ basis. Based on the values of $\phi$, and additional
+rotations, this can be used to implement various logic gates.
+
+As it stands however, assuming that controlled-$R_z$ gates can be done
+in constant depth, the depth of this gate is one for the Hadamard,
+the depth of unbounded quantum fanout (which we know to be $9$), the
+controlled-$R_z$ rotation, which we can assume to approximate with
+resolution $2^-\delta$, so that the depth according to KSV-style
+approximation is $O(\log^2 \delta)$, plus a depth of $6$ for the
+unfanout. For $\delta = O(\log n')$, which is the case if we can
+bound the fan-in of this gate by some $n'$ related to the larger
+overall problem, size, the depth then becomes $16 + O((\log\log \delta)^2)$.
+
+The size of this gate is one for the Hadamard, plus $10n-9$ for the
+fanout, plus $n \times O()$ (fact check this, we need the size for KSV),
+plus $3n+2$ for the unfanout.
+
+The width of this gate is just $2n +1$.
+
+\section{Half-or-Nothing Gate in 2D CCNTC}
+
+The $\mu^{|x|}_\phi$ gate from the previous section is useful for
+implementing approximately 
+
+The basic gate from Hoyer-Spalek lets us approximate a ``half-or-nothing'' 
+gate on $n$ input qubits $x = x_1 x_2  \ldots x_n$. That is, it returns a
+$1$ if $|x| = n/2$ and $0$ if $|x| = 0$, exactly, whatever that means
+for quantum Hamming weight. Note that this is not a
+total function, since we are not always promised that $x$ has Hamming weight
+of exactly half ones or all zeros. In this case, we use the $\mu$ gate
+previously with $\phi = m$.
+
+What is the relationship between $m$ and $n$ in the case of this gate?
+We seem to need the idea of an \emph{expected Hamming weight}.
+
+Is this gate exact? Yes, for the partial function that it is.
+
+\section{Expected Hamming Weight}
+
+WRITE ABOUT THIS. This appears to be the key ingredient for doing everything
+else. It is contained in the proof of Theorem 4, on page 7 of Hoyer-Spalek.
+
+\section{OR Gate}
+
+
+
+\end{document}
