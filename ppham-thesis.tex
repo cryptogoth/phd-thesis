@@ -70,17 +70,22 @@
 \let\mffont=\sf
 % --- end-of-sample-stuff ---
  
-\usepackage{qic,epsfig}
+\usepackage{epsfig}
 \usepackage{graphicx}% Include figure files
 \usepackage{dcolumn}% Align table columns on decimal point
 \usepackage{bm}% bold math
 \usepackage{hyperref}% add hypertext capabilities
+\usepackage{amsthm}
+\usepackage{amssymb}
 
 \newcommand{\braket}[2]{\langle #1|#2 \rangle}
 \newcommand{\normtwo}{\frac{1}{\sqrt{2}}}
 \newcommand{\norm}[1]{\parallel #1 \parallel}
 \newcommand{\card}[1]{\left| #1 \right|}
 \newcommand{\ci}{\perp\!\!\!\perp}
+\newtheorem{definition}{Definition}
+\newtheorem{lemma}{Lemma}
+\newtheorem{theorem}{Theorem}
 
 % To fix Qcircuit target with new Xypic
 \newcommand{\targfix}{\qw {\xy {<0em,0em> \ar @{ - } +<.39em,0em>
