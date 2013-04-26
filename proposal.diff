@@ -1,0 +1,76 @@
+diff --git a/proposal.tex b/proposal.tex
+index d8ca38e..ae8862b 100644
+--- a/proposal.tex
++++ b/proposal.tex
+@@ -104,29 +104,34 @@ quantum computers to solve human problems within human lifetimes.}
+ \pagebreak
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+ %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+-\section{Proposed Timeline}
++\section{Updated and Proposed Timeline}
+ 
+ \begin{description}
+ \item[February 21]
+-I send this proposal to committee, accept revisions.
++I sent this proposal to committee, accept revisions.
+ 
+-\item[February 22]
+-I begin writing, at least on non-controversial parts of proposal, until
+-we come to a consensus on the whole proposal. This 6 week period is
+-broken down by chapter in the next section.
++\item[March 30]
++Finish first part of Chapter 1, on 2D factoring in polylogarithmic
++depth.
+ 
+-\item[April 5]
+-I finish writing and remaining research and send a penultimate dissertation
+-draft to the reading committee. Beginning of two week reading period.
++\item[April 30]
++Finish remaining part of Chapter 1, on 2D factoring in sublogarithmic
++depth.
+ 
+-\item[April 19]
+-End of two week reading period. Reading committee gives me feedback and
+-decides whether thesis is ready to be defended. I schedule my final exam with
+-the graduate school (tentatively set for May 3rd), make requested changes to dissertation,
+-and prepare my talk.
++\item[May 7]
++Finish Chapter 2 on quantum compiling. Submit to reading committee.
+ 
+-\item[May 3]
+-Tentative final exam with full committee present, in CSE 503, 10am - 12:30pm.
++\item[May 14]
++Finish Chapter 3 on quantum circuit coherence.
++Submit to reading committee.
++
++\item[May  24th]
++Finish Chapter 4 on hamiltonian simulation.
++Submit to reading committee.
++Beginning of two week reading period.
++
++\item[June 7]
++Tentative final exam with full committee present, in CSE 503, 10:30am - 12:30pm.
+ 
+ \end{description}
+ 
+@@ -276,14 +281,14 @@ near future that match classical supercomputer performance on modest input
+ sizes. We cannot say the same for factoring for at least many more years.
+ 
+ This chapter is partly a review of related work on Hamiltonian simulation
+-but is primarily original research on mapping this algorithm to our 2D
++but is primarily original research on mapping a $k$-sparse Hamiltonian
++to our 2D
+ nearest-neighbor architecture with classical controller. We also calculate
+-the circuit resources for such a mapping. We expect that we can improve
+-upon the general solution in Berry et al. 2005 \cite{Berry2006}
+-by restricting ourselves to Hamiltonians with
+-bounded, spatially-local terms.
++the circuit resources for such a mapping. This gives a concrete
++implementation for the basic building block of the Hamiltonian simulation
++steps in Berry et al. 2005 \cite{Berry2006} and Aharanov and Ta-Shma
++2003 \cite{Aharonov2003}.
+ 
+-We will build upon the approach given in Nathan Wiebe's Ph.D. thesis.
+ This chapter is not meant to be a comprehensive survey, but rather a
+ novel and concrete application of the previous three chapters
+ (architectural lessons learned from the factoring algorithm,
