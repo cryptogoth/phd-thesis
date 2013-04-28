@@ -1,0 +1,105 @@
+\documentclass{article}
+
+\usepackage{amssymb}
+
+\input{Qcircuit}
+
+\begin{document}
+
+\section{The Model 2D CCNTCM}
+
+It occurred to me while meditating that the use of teleportation in
+between modules was more powerful than I realized, in that it allowed
+us to reorder qubits and eliminate the need for David's 2D reordering
+construction.
+
+It would be interesting to correlate the two of them, and show the 
+equivalence.
+
+\section{Other Activities}
+
+During the day, when I am preparing things to write, here are useful
+things to do.
+
+\begin{enumerate}
+\item
+Write down interesting facts, theorems, lemmas, and whatnot on notecards
+to remind yourself later. I already do this. Maybe I should do this in
+my notebook, and number them in sections. This would certainly be more
+portable, but less viscerally satisfying than the index cards.
+
+\item
+The above, but especially mathematical formulae. It would be good for you
+to have practice formulating things in terms of symbols.
+
+\item
+Going through old previous skeleton pages and answering their questions,
+and then typing them up. Maybe you could do that right now!
+
+\item
+Plan sections and actually type them into your skeleton pages, the skeleton
+for the skeleton. Then go research each one for bursts of ten minutes,
+and come back and write about them.
+
+\end{enumerate}
+
+\section{Chinese Remaindering}
+
+Or the conversion from binary representation to a residue number system
+(Chinese Remainder basis). And why is it necessary, instead of
+just generating all the product bits for $n\times n$-bit numbers and
+using iterated product. This then is the procedure of Chinese Remaindering,
+or converting into a residue number system.
+
+Let $\{p_1, \ldots p_k\}$ be relatively prime numbers (say, even the
+$k$ smallest primes greater than $n$), and
+$P_k = \prod_{i=1^k} p_i$ be the product of all these numbers. Let $Z$ be
+an $n^2$-bit number, which would result from, for example, powering or
+multiple product. Then we know that $Z < 2^{n^2} < P_k$.
+
+Does this work out? We need to reconcile all the different versions of
+Chinese Remaindering. Because by Cebysev's Theorem in Yeh-Varvarigos we show
+that $k = \lceil n / \log_2 n \rceil$, so if $k$ such numbers of $\log^n$
+bits each, we can represent any $n$-bit number. To do something similar
+for 
+
+So in order to do something similar for an $n^2$-bit number, we can just 
+choose $k = \lceil n^2 / \log_2 n^2$.
+
+The advantage of doing this is that if the weights are related to the
+size of the numbers involved, then the original $O(n)$-bit number would
+have exponentially large ($2^O(n)$) weights, and each of the new
+modular arithmetic operations performed on each of the moduli in paralllel
+would be $O(\log n)$-bit numbers, and the weights would be polynomially-large
+($2^{\log n} = O(n)$).
+
+However, it is still not clear to be how finding $r_i = Z \mod p_i$ can
+be done as a sum of polynomially many $\hat{LT}_1$ functions.
+
+\section{Reciprocal Finding as Expansion into Multiplication, Powering, Addition}
+
+The expansion of reciprocal finding can be found in Kitaev on p. 190,
+where we divide out the largest power-of-two from $x$, so that we are
+left with the binary expansion (of finite precision):
+
+\begin{equation}
+\tilde{x} = 1.x_1 x_2 \ldots x_n
+\end{equation}
+
+Then $1 \le \tilde{x} < 2$, which saturates the lower bound if all the
+$x_i$'s are
+zero. Also note that we have imperfect knowledge of $x$ in this case.
+If we divide $\tilde{x}$ by two, we get $1/2 \le \tilde{x}/2 < 1$.
+Then let us define a new variable $y$ which is difference of $x/2$ of $1$,
+
+\begin{equation}
+y = 1 - x/2
+\end{equation}
+
+which is bounded by $0 < y \le 1/2$.
+
+\section{The Best Known Concrete Construction for Multiple Sum}
+
+
+
+\end{document}
