@@ -1,0 +1,152 @@
+\section{Constant-depth Teleportation, Fanout, and Unfanout}
+\label{subsec:fanout}
+
+Communication, namely the \emph{moving} and \emph{copying} of quantum information, in nearest-neighbor quantum architectures is challenging.
+The first challenge of moving quantum information from one site to another over
+arbitrarily long distances can be addressed by using
+%A related problem is how to teleport a qubit an arbitrary distance.
+% in an
+%architecture through ancillae prepared in some initial state.
+the constant-depth teleportation circuit
+shown in Figure \ref{fig:cdt}, illustrated using standard quantum circuit
+notation \cite{Nielsen2000}. This requires the circuit resources shown in
+Table \ref{tab:cd-resources}. The depth includes a layer of $H$ gates; a layer of CNOTs; an interleaved layer of Bell basis measurements; and two layers of
+Pauli corrections ($X$ and $Z$ for each qubit), occurring concurrently with
+resetting the $\ket{j}$ and $\ket{k}$ qubits back to $\ket{0}$.
+These correction layers are not shown in the circuit.
+
+\begin{figure*}[tb!]
+\begin{center}
+\begin{displaymath}
+%\begin{array}{ccc}
+\Qcircuit @C=1em @R=1em {
+\lstick{\ket{\psi}}	& \qw      & \qw      & \qw & \qw & \qw & \qw & \qw                                          & \qw & \qw & \multimeasureD{1}{\mbox{Bell}} & \cw & \rstick{j_1} \\
+\lstick{\ket{0}}    & \gate{H} & \ctrl{1} & \qw & \qw & \qw & \qw & \qw                                          & \qw & \qw & \ghost{\mbox{Bell}}            & \cw & \rstick{k_1} \\
+\lstick{\ket{0}}    & \qw      & \targfix & \qw & \qw & \qw & \qw & \qw_{Z^{j_1}X^{k_1}\ket{\psi}}               & \qw & \qw & \multimeasureD{1}{\mbox{Bell}} & \cw & \rstick{j_2} \\
+\lstick{\ket{0}}    & \gate{H} & \ctrl{1} & \qw & \qw & \qw & \qw & \qw                                          & \qw & \qw & \ghost{\mbox{Bell}}            & \cw & \rstick{k_2} \\
+\lstick{\ket{0}}    & \qw      & \targfix & \qw & \qw & \qw & \qw & \qw_{Z^{j_2}Z^{j_1}X^{k_2}X^{k_1}\ket{\psi}} & \qw & \qw & \multimeasureD{1}{\mbox{Bell}} & \cw & \rstick{j_3} \\
+\lstick{\ket{0}}    & \gate{H} & \ctrl{1} & \qw & \qw & \qw & \qw & \qw                                          & \qw & \qw & \ghost{\mbox{Bell}}            & \cw & \rstick{k_3} \\
+\lstick{\ket{0}}    & \qw      & \targfix & \qw & \qw & \qw & \qw & \qw & \qw_{Z^{j_1}Z^{j_2}Z^{j_3}X^{k_3}X^{k_2}X^{k_1}\ket{\psi}} & \qw & \qw              & \qw & \qw \\
+}
+\end{displaymath}
+\centerline{}
+\caption{Constant-depth circuit based on \protect{\cite{Broadbent2007,Browne2009}} for teleportation over $n=5$ qubits \protect{\cite{Rosenbaum2012}}.}
+\label{fig:cdt}
+\end{center}\end{figure*}
+
+\begin{figure*}[tb!]
+\begin{center}
+\begin{displaymath}
+%& \qquad \qquad \qquad &
+\Qcircuit @C=1em @R=1em {
+\lstick{\ket{\psi}}	& \qw      & \qw      & \qw & \qw & \qw & \multimeasureD{1}{\mbox{Bell}'} & \cw & \rstick{j_1} \\
+\lstick{\ket{0}}    & \gate{H} & \ctrl{1} & \qw & \qw      & \qw & \ghost{\mbox{Bell}'}            & \cw & \rstick{k_1} \\
+\lstick{\ket{0}_1}    & \qw      & \targfix & \qw & \ctrl{1} & \qw & \qw      & \qw & \rstick{Z^{j_1}X^{k_1}\ket{\ell}_1}\\
+\lstick{\ket{0}}	& \qw      & \qw      & \qw & \targfix & \qw & \multimeasureD{1}{\mbox{Bell}} & \cw & \rstick{j_2} \\
+\lstick{\ket{0}}    & \gate{H} & \ctrl{1} & \qw & \qw      & \qw & \ghost{\mbox{Bell}}           & \cw & \rstick{k_2} \\
+\lstick{\ket{0}_2}    & \qw      & \targfix & \qw & \ctrl{1} & \qw & \qw      & \qw & \rstick{Z^{j_2}X^{k_2}X^{k_1}\ket{\ell}_2}\\
+\lstick{\ket{0}}	& \qw      & \qw      & \qw & \targfix & \qw & \multimeasureD{1}{\mbox{Bell}} & \cw & \rstick{j_3} \\
+\lstick{\ket{0}}    & \gate{H} & \ctrl{1} & \qw & \qw      & \qw & \ghost{\mbox{Bell}}           & \cw & \rstick{k_3} \\
+\lstick{\ket{0}_3}    & \qw      & \targfix & \qw & \ctrl{1} & \qw & \qw      & \qw & \rstick{Z^{j_3}X^{k_3}X^{k_2} X^{k_1}\ket{\ell}_3}\\
+\lstick{\ket{0}_4}	& \qw      & \qw      & \qw & \targfix & \qw & \qw      & \qw & \rstick{X^{k_3}X^{k_2} X^{k_1}\ket{\ell}_4}\\
+}
+%& & \\
+%(a) & & (b)
+%\end{array}
+\end{displaymath}
+\centerline{}
+\caption{Constant-depth circuits based on \protect{\cite{Broadbent2007,Browne2009}} for fanout \protect{\cite{Harrow2012}} of one qubit to $n=4$ entangled copies.}
+\label{fig:cdf}
+\end{center}\end{figure*}
+
+Although general cloning is
+impossible \cite{Nielsen2000}, the second challenge of copying information can be addressed by performing an unbounded quantum
+fanout operation:
+$\ket{x,y_1,\ldots,y_n} \rightarrow \ket{x,y_1\oplus x, \ldots, y_n\oplus x}$.
+This is used in our arithmetic circuits when
+a single qubit needs to control (be entangled with) a large quantum register
+(called a \emph{fanout rail}).
+We employ a constant-depth circuit due to insight from
+measurement-based quantum computing \cite{Raussendorf2003}
+that relies on the creation of an
+$n$-qubit cat state \cite{Browne2009}.
+
+This circuit requires $O(1)$-depth, $O(n)$-size, and $O(n)$-width. Approximately
+two-thirds of the ancillae are reusable and can be reset to $\ket{0}$ after
+being measured. Numerical upper bounds are given in Table \ref{tab:cd-resources}.
+The constant-depth fanout circuit is shown in Figure \ref{fig:cdf} for the case of fanning out a given single-qubit state
+$\ket{\psi} = \alpha\ket{0} + \beta\ket{1}$ to four qubits.
+The technique works by creating multiple small
+cat states of a fixed size (in this case, three qubits), linking them
+together into a larger cat state of unbounded size with Bell basis measurements,
+and finally entangling them with the source qubit to be fanned out.
+The qubits marked $\ket{\ell}$ are
+entangled into the larger fanned out state given in Equation \ref{eqn:cat4}.
+The Pauli corrections from the cat state creation are denoted by
+$X^{k_2}$, $X^{k_3}$, $Z^{j_2}$ and $Z^{j_3}$ on qubits ending in
+states $\ket{\ell}_1$, $\ket{\ell}_2$,
+$\ket{\ell}_3$, and $\ket{\ell}_4$. The Pauli corrections
+$X^{k_1}$ and $Z^{j_1}$ are from the Bell basis measurement
+entangling the cat state with the source qubit (denoted $\text{Bell}'$).
+\begin{equation}
+Z_1^{j_1}X_1^{k_1}Z_2^{j_2}X_2^{k_2}X_2^{k_1}Z_{3}^{j_3}X_{3}^{k_3}X_{3}^{k_2}X_{3}^{k_1}X_{4}^{k_3}X_{4}^{k_2}X_{4}^{k_1}
+\left(\alpha \ket{0}_1\ket{0}_2\ket{0}_3\ket{0}_4 + \beta \ket{1}_1\ket{1}_2\ket{1}_3\ket{1}_4 \right)
+\label{eqn:cat4}
+\end{equation}
+%
+The operators $X^k_i$ and $Z^j_{h}$ denote Pauli $X$ and $Z$ operators
+on qubits $i$ and $h$, controlled by classical bits $k$ and $j$,
+respectively. These corrections are enacted by the classical controller based on
+the Bell measurement outcomes (not depicted).
+Note the cascading nature of these corrections.
+There can be up to
+$n-1$ of these $X$ and $Z$
+corrections on the same qubit, which can be simplified by the classical
+controller to a single $X$ and $Z$ operation and then applied with a circuit of
+depth 2 and size 2. Also, given the symmetric nature of the cat state, there
+is an alternate set of Pauli corrections which would give the same state and
+is of equal size to corrections given above.
+
+Reversing the fanout (un-fanout) in constant depth is an interesting
+problem. Doing so would allow us to improve the overall depth of our
+factoring implementation to $O(\log^2 n)$ instead of $O(\log^3 n )$.
+In this work it is sufficient to perform un-fanout using alternating rounds of
+teleportation and CNOT among the $n$ fanned-out qubits in a logarithmic-depth
+binary tree. The resources for this are given in
+Table \ref{tab:cd-resources}.
+
+% From Notebook #16, p. 212
+% From Notebook #16, p. 66
+\begin{table}
+\begin{displaymath}
+\begin{tabular}{|c|c|c|c|}
+\hline
+\text{Circuit Name} & \text{Depth} & \text{Size} & \text{Width}\\
+\hline
+\text{Teleportation from Figure \ref{fig:cdt}} & 7 & 3n + 4 & n+1\\
+\hline
+\text{Fanout from Figure \ref{fig:cdf}} & 9 & 10n - 9 & 3n-1 \\
+\hline
+\text{Un-fanout} & $8\log_2(2n)$ & $33n\log_2(2n) + 10\log^2_2(2n)$ & $3n-1$ \\
+\hline
+\end{tabular}
+\end{displaymath}
+\centerline{}
+\caption{Circuit resources for teleportation, fanout, and un-fanout
+(consisting of
+alternating rounds of constant-depth teleportation and CNOT).}
+\label{tab:cd-resources}
+\end{table}
+
+From an experimental perspective, it is physically efficient to create
+a cat state in trapped ions using the M{\o}lmer-S{\o}rensen gate
+\cite{Sorensen2000}\cite{Benhelm2008}. However, the fanout circuit for
+the 2D CCNTCM model would still be useful for other technologies, such
+as superconducting qubits on a two-dimensional lattice.
+
+%Unfortunately, this
+%``consumes'' the cat state in that there is no known way to unentangle the
+%source qubit from the cat state after they have been jointly measured \cite{Rosenbaum2012}.
+
+%\input{factor2d-related}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

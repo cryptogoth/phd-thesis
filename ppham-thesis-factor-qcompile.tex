@@ -1,0 +1,53 @@
+\section{Controlled Rotations for Factoring}
+\label{sec:factor-crz}
+
+In Section \ref{sec:related}, we stated that we wished to avoid
+factoring implementations that used a QFT due to the fine
+single-qubit rotations involved. Due to the requirements of
+fault-tolerance on a particular physical implementation,
+we can usually implement only a set of gates that is fixed
+(it does not change with the problem input size), discrete (of finite size),
+and universal. This last property is necessary for us to approximate any
+other gate \emph{not} in our set, especially single-qubit phase rotations
+of the form $\Lambda(e^{i \phi})$. Such an approximation would involve
+a quantum compiling procedure, such as Solovay-Kitaev, which is the
+subject of Chapter \ref{chap:qcompile}. However, we mention it here
+because the choice of our universal set determines the true depth
+of any circuit.
+
+In our polylogarithmic factoring implementation, we were able to reduce
+all our arithmetic circuits to such a fixed, discrete universal set.
+These arithmetic circuits are discrete and classical and nature, so it is
+not surprising that we can implement them in a discrete way.
+However, to reduce the depth further, we need to introduce the idea of
+a quantum threshold gate, which 
+the Toffoli gate, CNOT, and fixed set of
+single-qubit gates.
+
+
+
+\begin{figure}[tb!]
+\begin{center}
+\begin{displaymath}
+\begin{array}{ccc}
+\Qcircuit @C=1.5em @R=1.5em {
+   & \qw      & \ctrl{1}                   & \qw \\
+   & \qw      & \gate{\frac{\pi}{2^{d}}} & \qw \\
+ }
+&
+\begin{array}{c}
+\\
+\\
+\\
+= \\
+\end{array}
+&
+\Qcircuit @C=1.5em @R=1.5em {
+& \qw & \qw & \qw & \ctrl{1} & \qw & \gate{\frac{\pi}{2^{d+1}}} & \qw & \ctrl{1} & \qw\\
+ & \qw & \gate{\frac{\pi}{2^{d+1}}} & \qw & \targfix & \qw & \gate{\frac{\pi}{2^{d+1}}} & \qw & \targfix & \qw
+}
+\end{array}
+\end{displaymath}
+\caption{Decomposition of a controlled-$R_z$ rotation}
+\label{fig:crz}
+\end{center}\end{figure}

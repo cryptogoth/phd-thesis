@@ -1,0 +1,114 @@
+\section{Quantum Majority Circuits for Modular Exponentiation}
+
+We now consider circuits made from majority gates, which we denote
+as $\text{MAJ}_n \equiv \text{TH}^{\lceil n/2 \rceil}_n$. These have the
+advantage of being simpler to implement than general threshold gates
+$\text{TH}^t_n$ while being equivalent in power. Namely, depth-$k$
+majority circuits are equivalent in power to depth-$k$ threshold circuits
+with polynomially-bounded weights: $\textsf{MAJ}_k = \hat{\textsf{LT}}_k$
+\cite{Alon1994,Goldmann1994}.
+
+In many works on classical majority circuits, the fanin of a majority
+gate is not treated as an important consideration and can in 
+
+\begin{theorem}{Multiple product in constant depth and polynomial size.\cite{Yeh1996}}
+The $n^2$-bit product of $n\times n$-bit numbers can be computed by a
+circuit of depth $O(\frac{1}{\epsilon})$,
+size and width $O(\frac{1}{\epsilon}n^{3+2\epsilon})$, and
+fanin $O(n)$.
+\end{theorem}
+
+\begin{theorem}{Modular reduction in constant depth and polynomial size \cite{Yeh1996}}
+The $n$-bit binary representation of the modular residue $x \bmod m$, where
+$x$ is an $n^2$-bit number and $m$ is an $n$-bit modulus, can be computed
+by a circuit of depth $O(\frac{1}{\epsilon})$,
+size and width $O(\frac{1}{\epsilon}n^{1 + 2\epsilon})$, and
+fanin $O(n^2)$.
+\end{theorem}
+
+
+
+\section{A Majority Gate in 2D CCNTCM in Sub-logarithmic Depth}
+
+To map a majority gate to 2D CCNTCM, we use the $\textsf{AC}_f^0$ 
+constructions from Takahashi-Tani \cite{Takahashi2011},
+based on the results of
+Hoyer-Spalek \cite{Hoyer2002}.
+We combine this with our architectural techniques
+from the previous chapter, including the 2D CCNTCM circuits
+for constant-depth teleportation, fanout, and unfanout.
+
+The majority gate is a threshold gate, with unit weights, a
+fan-in (input size) $n' = O(n)$ in the size of the input number to Shor's 
+factoring algorithm, and a threshold of $\lceil n/2 \rceil$.
+
+We describe the construction for $\text{MAJ}_{n'}$ below, given the
+$n'$-qubit input $x$.
+
+\begin{enumerate}
+
+\item
+We compute in parallel the gates $\text{EX}^i_{n}$ for
+$0 \le i \le \lceil n/2 \rceil$ to determine if the quantum
+threshold for majority is reached. There are at most $(n/2) + 1$
+such gates.
+
+\begin{enumerate}
+\item 
+Compute the constant-depth reduction from $\text{EX}^t_{n'}$ to
+$\text{EX}^t_{m}$ where $m = \lceil \log_2(n'=1) \rceil$, using
+the reduction from $OR_n$ to $OR_{\log_n}$ \cite{Hoyer2002}.
+For $1 \le k \le m$, do the following:
+
+\begin{enumerate}
+\item
+Compute the qubit $\mu^{|x|-t}_{\phi_k}$, which is the rotation by Hamming 
+weight of $x$, with a threshold $t$ subtracted, by the angle $\phi_k = 2\pi / 2^k$. Note that the precision
+of this angle is $O(\log \log n)$. This can be done by a 2D CCNTCM circuit
+with $O(1)$-depth, $O(n^2)$-size, and $O(n^2)$-width, as described in
+Section \ref{subsec:or-reduce}.
+\end{enumerate}
+
+At the end of this step, we have $O(\log_2 n)$ bits $\ket{y_k}$ which 
+represent the degree to which the Hamming weight of $x$ is close to the
+threshold $t = \lceil n/2 \rceil$.
+
+\item
+Apply the circuit for exact $\text{OR}_{\log n}$ from Lemma 2 of
+\cite{Takahashi2011} to the output of the previous step. This can
+be done with a 2D CCNTCM circuit with $O(1)$-depth, $O(n \log n)$-size,
+and $O()$.
+
+\end{enumerate}
+
+\item
+Apply the gate $\text{PA}_{\lceil n/2 \rceil}$ to the result of
+the previous step. This can be done by a 2D CCNTCM circuit of
+$O(1)$-depth, $O(n)$-size, and $O(n)$-width using constant-depth
+fanout, as described in Section \ref{sec:cdc}, and conjugated by
+Hadamards on every qubit as described in \cite{Moore1998}.
+
+\item
+Apply a NOT to the output of the previous step. This final
+output is the output of the quantum majority gate $MAJ_{n}$.
+
+\end{enumerate}
+
+
+\subsection{OR Reduction of Hoyer-Spalek}
+\label{subsec:or-reduce}
+
+This step involves $m \le (n/2)+1$ gates $\mu^{|x|-t}_{\phi_k}$ for
+$1 \le k \le m$. Each gate is the same as Hoyer and Spalek's reduction from
+$O(n)$ bits to $O(\log n)$ bits as described in \cite{Hoyer2002}.
+
+The $\mu$ circuits 
+
+\subsection{Exact OR Circuit of Takahashi-Tani}
+\label{subsec:or-exact}
+
+
+
+\subsection{Parity Circuit}
+\label{subsec:parity}
+

@@ -1,0 +1,68 @@
+\section{Asymptotic Results}
+\label{sec:results}
+
+The asymptotic resources required for our approach,
+as well as the resources for other nearest-neighbor approaches,
+are listed in Table \ref{tab:results},
+where we assume some fixed constant error
+probability for each round of QPF. Not all resources are
+provided directly by the referenced source.
+
+Resources in square brackets
+are inferred using Equation \ref{eqn:depth-width}.
+These upper bounds are correct,
+but may not be tight with the upper bounds
+calculated by their respective authors.
+In particular, a more detailed analysis
+could give a better upper bound for circuit size than the
+depth-width product. Also note that the
+work by Beckman et al. \cite{Beckman1996} is unique in that it uses
+efficient multi-qubit gates inherent to linear ion trap technology which at first
+seem to
+be more powerful than \textsc{1D NTC}. However, use of these gates does not result in an
+asymptotic improvement over \textsc{1D NTC}.
+
+%, say $\epsilon=1/4$.
+% and $\delta' = 1/2$ for KSV-QPF.
+%Note that the
+%number of measurements are included for completeness.
+%, since these are
+%not counted as gates in our model but may be comparable in terms of
+%execution time.
+%Some table cells are blank if the entries are not relevant to the current comparison, or if the entires were not %calculated in the prior work.
+We achieve an exponential
+improvement in nearest-neighbor circuit depth (from quadratic to polylogarithmic)
+with our approach at the cost of a polynomial increase in
+circuit size and width. Similar depth improvements at the cost of width increases can be achieved using the modular multipliers
+of other factoring implementations
+by arranging them in a parallel modular exponentiator.
+Our approach is the first implementation for factoring on \textsc{2D NTC},
+augmented with a classical controller and parallel, communicating
+modules (\textsc{2D CCNTCM}).
+%
+\begin{table}[htb!]
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+Implementation             & Architecture      & Depth   & Size   & Width     \\
+\hline
+Vedral, et al. \cite{Vedral1996}   & \textsc{AC}      & $[O(n^3)]$ & $O(n^3)$    & $O(n)$ \\
+Gossett \cite{Gossett1998}                   & \textsc{AC}       & $O(n \log n)$  & $[O(n^3\log n)]$  & $O(n^2)$  \\
+Beauregard \cite{Beauregard2002}                & \textsc{AC}       & $O(n^3)$      & $O(n^3 \log n)$ & $O(n)$ \\
+Zalka \cite{Zalka1998}                     & \textsc{AC}       & $O(n^2)$      & $[O(n^3)]$ & $O(n)$     \\
+Takahashi \& Kunihiro \cite{Takahashi2006}     & \textsc{AC}       & $O(n^3)$      & $O(n^3\log n)$ & $O(n)$ \\
+Cleve \& Watrous \cite{Cleve2000}           & \textsc{AC}       & $O(\log^3 n)$ & $O(n^3)$ & $[O(n^3 / \log^3n)]$ \\
+\hline
+Beckman et al. \cite{Beckman1996} & \textsc{Ion trap}   & $O(n^3)$ & $O(n^3)$ & $O(n)$\\
+\hline
+Fowler, et al. \cite{Fowler2004} & \textsc{1D NTC}   & $O(n^3)$ & $O(n^4)$ & $O(n)$\\
+Van Meter \& Itoh \cite{VanMeter2006} & \textsc{1D NTC}   & $O(n^2 \log n)$ & $[O(n^4\log n)]$ & $O(n^2)$\\
+Kutin \cite{Kutin2006}                     & \textsc{1D NTC}   & $O(n^2)$ & $O(n^3)$ & $O(n)$\\
+\hline
+Current Work               & \textsc{2D CCNTCM}   & $O(\log^3{n})$ & $O(n^4\log n)$ & $O(n^4)$   \\
+\hline
+\end{tabular}
+\end{center}
+\caption{Asymptotic circuit resource usage for quantum factoring of an $n$-bit number.}
+\label{tab:results}
+\end{table}
