@@ -1,0 +1,160 @@
+\section{Controlled Rotations for Factoring}
+\label{sec:factor-crz}
+
+In Section \ref{sec:related}, we stated that we wished to avoid
+factoring implementations that used a QFT due to the fine
+single-qubit rotations involved. Due to the requirements of
+fault-tolerance on a particular physical implementation,
+we can usually implement only a set of gates that is fixed
+(it does not change with the problem input size), discrete (of finite size),
+and universal. This last property is necessary for us to approximate any
+other gate \emph{not} in our set, especially single-qubit phase rotations
+of the form $\Lambda(e^{i \phi})$. Such an approximation would involve
+a quantum compiling procedure, such as Solovay-Kitaev, which is the
+subject of Chapter \ref{chap:qcompile}. However, we mention it here
+because the choice of our universal set determines the true depth
+of any circuit.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Controlled-$R_Z$ Rotations}
+
+In our polylogarithmic factoring implementation, we were able to reduce
+all our arithmetic circuits to such a fixed, discrete universal set.
+These arithmetic circuits are discrete and classical and nature, so it is
+not surprising that we can implement them in a discrete way.
+However, to reduce the depth further, we need to introduce the idea of
+a quantum threshold gate, which requires controlled-rotations similar to
+the QFT. This controlled-rotation gate is shown in Figure \ref{fig:crz}
+along with its decomposition into CNOTs and single-qubit $R_Z(\phi)$
+rotations.
+These rotations depend on the input size.
+
+If we were given pre-generated ancillae of the form
+$\ket{0} + e^{i\phi}\ket{1}$, we could use the method of programmable ancillae rotation (PAR) from
+\cite{Jones2012}
+to apply the gate $R_Z(\phi)$ probabilistically
+using the circuit from Figure \ref{fig:par}. Note that we have a $50\%$
+chance
+of applying the opposite rotation $-\phi$, and so we must chain
+several rounds of the given circuit. In expectation, we achieve the
+desired rotation in a constant depth of $2$, and now we must consider
+all circuit resources in terms of expected (average) values. The 
+probability of $k$ PAR rounds all failing is $2^{-k}$, and the cost
+of the circuit depth 
+
+, we can prepare these bits in advance, using one of
+the quantum compiling methods described in Chapter \ref{chap:qcompile}, and 
+We do not count the quantum compiling resources as part of the
+circuit resources for factoring in this chapter. 
+
+\begin{figure}[tbp!]
+\begin{displaymath}
+\Qcircuit @C=1.5em @R=1.5em {
+\lstick{\ket{\psi}}                  & \qw & \targfix  & \qw & \gate{X^j} & \qw & \rstick{R_Z((-1)^j \phi)\ket{\psi}} \\
+ %\normtwo \left( \ket{0} + e^{i\phi}\ket{1} \right) & \qw & \ctrl{-1} & \qw & \measureD  & \cw & \rstick{j}
+\lstick{ \normtwo \left( \ket{0} + e^{i\phi}\ket{1} \right) } & \qw & \ctrl{-1} & \qw & \measureD{Z}  & \cw & \rstick{j}
+ }
+ \end{displaymath}
+\caption{One round of programmable ancillae rotation (PAR) to probabilistically achieve arbitrary single-qubit rotations \cite{Jones2012}}
+\label{fig:crz}
+\end{figure}
+
+\begin{figure}[tb!]
+\begin{center}
+\begin{displaymath}
+\begin{array}{ccc}
+\Qcircuit @C=1.5em @R=1.5em {
+   & \qw      & \ctrl{1}                   & \qw \\
+   & \qw      & \gate{\frac{\pi}{2^{d}}} & \qw \\
+ }
+&
+\begin{array}{c}
+\\
+\\
+\\
+= \\
+\end{array}
+&
+\Qcircuit @C=1.5em @R=1.5em {
+& \qw & \qw & \qw & \ctrl{1} & \qw & \gate{\frac{\pi}{2^{d+1}}} & \qw & \ctrl{1} & \qw\\
+ & \qw & \gate{\frac{\pi}{2^{d+1}}} & \qw & \targfix & \qw & \gate{\frac{\pi}{2^{d+1}}} & \qw & \targfix & \qw
+}
+\end{array}
+\end{displaymath}
+\caption{Decomposition of a controlled-$R_z$ rotation}
+\label{fig:crz}
+\end{center}\end{figure}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{2D CCNTCP: A Nearest-Neighbor Model with Single-Qubit Phases}
+
+We now modify our 2D CCNTCM model from Section \ref{subsec:2dccntcm} to
+allow teleportations from a separate ``quantum compiler'' module (or modules) which
+can produce ancillary qubits of the form 
+$\ket{0} + e^{i\phi}\ket{1}$. The angles $\phi$ are determined by
+the particular algorithm. In the case of majority gates for factoring,
+as described in Section \ref{sec:factor-majority}, the angles are of the
+form $\phi_k = \frac{2\pi}{2^k}$ where $k \le (\log_2 n' + 2)$ for a majority
+gate with fanin $n'$. Since this represents the most fine-grained resolution of
+rotation, our allowable error is $2^{-(k+1)} = 2^{-(\log_2 n' + 3)}$.
+
+This quantum compiler resource has a parameter $\epsilon$ which is the
+allowable error in the angles of the return PAR qubits.
+We assume they have some precision $\epsilon = 2^{-k}$ from the
+true desired angle $\tilde{\phi}$.
+
+\begin{equation}
+| \phi - \tilde{\phi} | \le \epsilon = 2^{-(k+1)} = 2^{-(\log_2 n' + 3)}
+\end{equation}.
+
+Often, quantum compiler resources are given in terms of the quantity
+$(1/\epsilon)$, which we can re-express in terms of the
+majority gate fanin as $O(1/n')$. 
+While we will delay a discussion and comparison of
+quantum compilers until Chapter \ref{chap:qcompile}, for now
+we assume an upper bound of the Kitaev-Shen-Vyalyi (KSV) algorithm
+using parallel phase estimation from Section 13 of \cite{Kitaev2002}.
+This has the resources given in Table \ref{tab:fsl-ksv}.
+
+\begin{table}[tbp!]
+\begin{tabular}{|c|c|c|}
+\hline
+Circuit Size & $O((\log n')^2\log\log n')$ \\
+\hline
+Circuit Depth & $O((\log\log n')^2)$\\
+\hline
+\caption{KSV quantum compiling resources for single-qubit rotations in majority gates of fanin $n'$.}
+\label:tab:fsl-ksv}
+\end{table}
+
+As we will discover later, the fanin of each majority gate is
+linear in the size of the modulus to factor: $n' = O(n)$.
+Therefore, if we are not allowed PAR qubits for free in our model,
+our construction will actually have minimum depth $O((\log\log n)^2)$,
+which is not constant, but is still sublogarithmic. This relationship still
+holds if the fanin is merely $n' = poly(n)$. It is still an
+open question \cite{Hoyer2002} whether a constant-depth
+quantum majority gate exists even on $\textsf{AC}$ with a fixed finite basis,
+let alone
+${NTC}$ architectures and their sub-models.
+
+Now we give a formal definition of this model, which we call
+$\textsf{2D CCNTCP}$: a two-dimensional nearest-neighbor architecture
+with two-qubit, concurrent gates, parallel modules, and PAR qubits
+prepared with phases up to error $1/poly(n)$ for a circuit input size of $n$.
+
+
+
+Given this new model and probabilistic nature of the PAR procedure, we now
+consider variations of the previous circuit models, which are still
+analogous to those in the $\textsf{2D CCNTCM}$ model.
+
+\begin{description}
+\item[expected circuit depth ($\langle D \rangle $):] the expected number of concurrent timesteps.
+\item[expected circuit size ($\langle S \rangle$):] the total number of non-identity gates applies
+from $\mathcal{G}$, equal to $\sum_{i=1}^D |G_i|$.
+\item[expected circuit width ($\langle W \rangle$):] is the total number of qubits operated upon by
+any gate, including inputs, outputs, and ancillae. It is equal to $| \bigcup_{i=1}^D V_i|$.
+
+\end{description}
+
