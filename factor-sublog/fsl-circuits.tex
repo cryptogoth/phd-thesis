@@ -34,18 +34,59 @@ second parameter as a superscript.
 \text{GATE}_n^k
 \end{equation}
 
+The fanin $n$ will be neglected where it is obvious,
+such as for the following well-known gate set which is universal
+for classical circuits:
+
+\begin{itemize}
+\item $\text{NOT} = \text{NOT}_1$
+\item $\text{AND} = \text{AND}_2$
+\item $\text{OR} = \text{OR}_2$
+\end{itemize}
+
+\subsection{Gates Based on the Hamming Weight}
+
+While the gates above have a simple truth table, it is
+useful to describe a wider class of gates with general
+fanin $n$ in a compact way as a function on the input
+Hamming weight. These include the gates named below, which
+are $1$ when the condition to their right is met, and $0$
+otherwise.
+
+\begin{itemize}
+\item The logical OR gate $\text{OR}_n: |x| > 0$
+\item The logical AND gate $\text{AND}_n: |x| = n$
+\item The modular gate $\text{MOD}[q]_n: |x| \bmod q = 0$
+\item The parity gate $\text{PA}_n: |x| \bmod 2 = 0$
+\item The exact gate $\text{EX}^t_n: |x| = t$
+\item The threshold gate $\text{TH}^t_n: |x| \ge t$
+\item The majority $\text{MAJ}_n: |x| \ge n/2$
+\end{itemize}
+
+Many of these gates are also related in interesting ways,
+as noted in \cite{Takahashi2011}.
+$\text{OR}_n$ and $\text{EX}^0_n$ are
+negations of each other. $\text{PA}_n$ is equivalent to
+$\text{MOD}[2]_n$. $\text{TH}^t_n$ can be implemented with
+$n-t$ parallel copies of $\text{EX}^k_n$ for $t \ge k \ge n$
+followed by $\text{PA}_{n-t}$ on the outputs.
+
 \subsection{Classical Circuit Complexity Classes}
 
-It is useful to define complexity classes of circuits based on the
-set of allowed gates. In classical circuits, we take unbounded fanout
+We have introduced a menagerie of interesting gates,
+all of which are universal with the $NOT$ gate. However depending
+on what gates are in our universal set, our circuits may have
+different depth and size. Therefore, we can define complexity classes
+of circuits based on the allowed gate set and study more general
+relationships among these classes beyond the special cases mentioned
+as the end of the last section. This will let us formalize the notion of
+which gates are more powerful than other gates and which are equivalent.
+ 
+In classical circuits, we take unbounded fanout
 for granted (any node can have arbitrary out-degree). These are common
 in the literature of classical circuits. We will list them in order
 of the size of their universal set, where each subsequent class adds
 more gates.
-Obviously, since the set is universal to begin with, adding more gates
-does not increase the power of the class to represent more Boolean
-functions. Rather, it can decrease the depth or size of the circuit.
-Once we define the classes, we can design subclasses.
 
 \begin{definition}
 \item[\textsf{NC}]
@@ -119,3 +160,5 @@ for $n \ge 2$.
 constant-depth $\textsf{QAC}^0_f$ circuits augmented with $\text{TH}_n^t$ gates, for $n \ge 2$ and
 $0 \le t \le n$.
 \end{definition}
+
+\subsection{}

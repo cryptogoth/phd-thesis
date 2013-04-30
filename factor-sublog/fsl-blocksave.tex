@@ -1,33 +1,149 @@
-\section{The Block-Save Technique}
+\section{The Iterated Carry-Save Technique}
+\label{sec:blocksave}
 
-This doesn't really go anywhere, but I will mention here out of
-completeness.
-As an aside, one may think that one can iterate the carry-save
-adder. Instead of re-encoding the sum of 3 bits as the sum of
-2 bits, we could also re-encode the sum of 7 bits to be the
+Now we mention an alternative, constructive technique to sublogarithmic
+factoring by generalizing
+the carry-save technique in Section \ref{sec:csa}. We will call this
+\emph{iterated carry-save} to distinguish it from the block-save
+technique, which is another generalization using classical threshold
+circuits \cite{Siu1993}.
+Using iterated carry-save, we can replace the modular multiple addition module in
+Section \ref{sec:mma} of Chapter \ref{chap:factor-polylog}. This
+would reduce our modular multiplier from $O(\log n)$ depth to 
+a $O(\log^{(*)})$-depth algorithm, where $\log^{(*)}$ indicates
+the iterated logarithm function, or the number of times the
+logarithm can be applied to a number before it is less than a
+constant.
+\begin{eqnarray}
+\log^{(1)}_2 n & \equiv & \log_2 n \\
+\log^{(2)}_2 n & \equiv & \log_2\log_2 n \\
+\log^{(*)}_2 n & \equiv & \log_2 \cdots \log_2 n < k \text{ for some positive constant } k\\
+\end{eqnarray}
+For our purposes, we are interested in base $2$ and
+the constant is defined as $\log^{(*)}_2 n \le 2$. This
+means we would halt modular multiple addition as before, when we
+had converted the sum of $t'\times n$-bit numbers to $2 \times n$-bit numbers.
+
+While this functions grows
+slowly (it only has meaningful values less than
+$6$ given the number of particles in the universe), it is not
+constant. Furthermore, its output is a non-unique carry-save encoding (CSE)
+and must be combined into a single unique conventional number in
+$O(\log n)$ depth and $O(n^2 \log n)$ size as done in Section \ref{subsec:qcla}.
+Therefore, by itself, it cannot lead to a sub-logarithmic factoring
+implementation.
+We mention the proof here for completeness. Future work
+may discover that this approach yields lower-depth empirical
+results than the majority circuit approach in Section \ref{fsl-majority},
+especially since it does not quantum compiling.
+
+Now we sketch the proof of iterated carry-save.
+Instead of re-encoding the sum of 3 input bits ($x = 2^2 x_2 + 2 x_1  + x_0$)
+as the sum of 2 output bits ($y = 2 y_1 + y_0$),
+we could also re-encode the sum of 7 bits to be the
 sum of 3 bits. In analogy to the 3-2 adder, we call this a 7-3 adder.
-How would this re-encoding work?
+Moreover, the sum of $2^n - 1$ input bits can be re-encoded into the sum
+of $n$ output bits. If there are in general $k$ input bits, for $2^{n-1} < k \ge 2^n$,
+they can be padded with zero bits up to $2^n$.
 
-In the 3-2 adder, there were two output bits of significance $1$
-and $2$. The $1$-bit was the parity of the three bits and
-the $2$-bit was the majority of the three bits. The truth tables
-for these functions are shown in Table \ref{tab:3-2}
+\begin{equation}
+\sum_{i=0}^{2^n - 2} 2^i x_i = \sum_{j=0}^{n-1} 2^i y_i
+\end{equation}
 
-\begin{table}
-\begin{tabular}{cc|c}
-\hline
-$x_0$ & $x_1$ & $c$ \\
-\hline
-0 & 0 & 0 \\
-0 & 1 & 1 \\
-1 & 0 & 1 \\
-1 & 1 & 0 \\
-\hline
-\end{tabular}
-\caption{Truth tables for}
-\label{tab:3-2}
-\end{table}
+This is the result of Theorem \ref{thm:log-sum}.
+However, this only re-encodes bits of the same significance. For adding
+$n$-bit numbers, we must regroup the output bits of difference
+significances. This is the result of Theorem \ref{thm:par-icsa}.
 
- In a 7-3 adder,
-likewise, the $1$-bit is the parity of \emph{single} bits.
-The $2$-bit is the parity of \emph{pairs} of bits, 
+%%%%%%%%%%%%%%%
+\begin{theorem}{Logarithmic Reduction of Multiple-Qubit Sums in Constant-Depth}
+The sum of $2^n -1$ qubits $\ket{x_i}$
+can be re-encoded into the sum of $n$ qubits $\ket{y_j}$ in
+constant depth on CCNTC. Analogously, we can reduce the sum of
+$n$ qubits into the sum of $\lceil \log_2 n \rceil$ qubits in
+constant depth on CCNTC.
+\label{thm:log-sum}
+\end{theorem}
+
+\begin{proof}
+We provide a circuit which is entirely classical, but can be applied to
+quantum inputs on a CCNTC architecture in order to achieve
+constant-depth communication.
+In the 3-2 adder, $y_1$ is the parity of the $x_i$ bits and
+$y_0$ is their majority. In fact, the 
+generalization of this re-encoding is as follows:
+$y_0=1$ when $|x|$ is evenly divisible by $2$, $y_1=1$ when
+$|x|$ is evenly divisible by $4$, and so forth. The general
+form of the output bits is given below.
+
+\begin{equation}
+y_i = \left\{
+\begin{array}{rl}
+1 & \text{ if } |x| \bmod 2^i = 0 \\
+0 & \text{ otherwise } 
+\end{array}
+\end{equation}
+
+Every round of the re-encoding reduces the number of bits in the
+sum by a logarithmic factor. Therefore, the number of re-encodings
+needed to reduce the sum of $n$ bits to a sum of $2$ bits is
+$\lceil \log^*n \rceil$. It remains to show that round of re-encoding
+can be done in constant-depth using quantum fanout.
+
+Each of the $y_i$ bits in a re-encoding round is the output of a
+$\text{MOD}[q]$ gate. Using Theorem 2 in \cite{Hoyer2002} and the
+quantum fanout and unfanout circuits in Chapter \cite{chap:factor-polylog},
+we can
+implement this in constant depth. We fanout a target register of
+$\lceil \log_2 n \rceil$ qubits $n$ times, one per input qubit $\ket{x_i}$.
+In parallel, and using constant-depth teleportation, we can increment
+each copy of the target register controlled on each $\ket{x_i}$ modulo
+$q$. Since $q$ is fixed, this can be done in constant-depth. Then
+we unfanout the target registers and compare the result with all $\ket{0}$'s
+using, for example, a quantum $\text{OR}_n$ or $\text{EX}_n$. Such exact
+(non-approximate) gates can be accomplished on CCNTC in constant-depth
+using the circuits of \cite{Takahashi2011}. The results of this are later shown
+in Theorem \ref{thm:ex-ccntc}.
+\end{proof}
+
+Now we can perform the reduction in Theorem \ref{thm:log-sum} multiple times
+on each bit in parallel of $t' \times n$-bit numbers. To do this, we need
+to bound how fast the output numbers grow after every round of parallel,
+bitwise applications of the previous logarithmic reduction. The size of
+the output numbers produced after $k$ rounds of reduction is given below.
+
+\begin{equation}
+n_k = n + \sum_{l=1}^k \log_2^{(l)}n = O(n)
+\end{equation}
+
+%%%%%%%%%%%%%%%
+\begin{theorem}{Parallel Multiple Sum in Iterated-Logarithmic Depth}
+The sum of $t' \times n$-qubit numbers can be reduced to the sum
+of $2 \times n$-qubit numbers in $O(\log^{*}n)$ depth on CCNTC.
+\end{theorem}
+
+\begin{proof}
+Again, we use completely classical circuits, but with quantum inputs and
+using quantum fanout and unfanout techniques to map them to CCNTC.
+
+\begin{enumerate}
+
+\item For round $k$ of $\lceil \log_2^{*} n \rceil$ rounds, perform the following
+steps on $t'\log_2^{(k)}$ input numbers of size $n + \sum_{l=1}^k \log_2^{(l)}n$. 
+
+\begin{enumerate}
+
+\item
+For each of (at most) $\log_2^{(k)}t'$ bits of significance $2^i$ in the summands, for 
+$0 \le i < n$, apply Theorem \ref{thm:log-sum} to re-encode them as the sum of
+$\log_2^{(k+1)}t'$ bits (of different significance). This leaves 
+
+\item
+Thi
+
+\end{enumerate}
+
+\end{enumerate}
+
+With the quantum compiling overhead discussed in Section \ref{fsl-qcompile},
+we can now 
