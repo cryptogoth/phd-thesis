@@ -1,10 +1,10 @@
 \section{Asymptotic Results}
-\label{sec:results}
+\label{sec:fpl-results}
 
 The asymptotic resources required for our approach,
 as well as the resources for other nearest-neighbor approaches,
 are listed in Table \ref{tab:results},
-where we assume some fixed constant error
+where we assume a fixed constant error
 probability for each round of QPF. Not all resources are
 provided directly by the referenced source.
 
@@ -59,10 +59,10 @@ Fowler, et al. \cite{Fowler2004} & \textsc{1D NTC}   & $O(n^3)$ & $O(n^4)$ & $O(
 Van Meter \& Itoh \cite{VanMeter2006} & \textsc{1D NTC}   & $O(n^2 \log n)$ & $[O(n^4\log n)]$ & $O(n^2)$\\
 Kutin \cite{Kutin2006}                     & \textsc{1D NTC}   & $O(n^2)$ & $O(n^3)$ & $O(n)$\\
 \hline
-Current Work               & \textsc{2D CCNTCM}   & $O(\log^3{n})$ & $O(n^4\log n)$ & $O(n^4)$   \\
+Current Work               & \textsc{2D CCNTCM}   & $O(\log^2{n})$ & $O(n^4)$ & $O(n^4)$   \\
 \hline
 \end{tabular}
 \end{center}
-\caption{Asymptotic circuit resource usage for quantum factoring of an $n$-bit number.}
+\tcaption{Asymptotic circuit resource usage for quantum factoring of an $n$-bit number.}
 \label{tab:results}
 \end{table}

@@ -1,5 +1,5 @@
 \section{Background}
-\label{sec:bg}
+\label{sec:fpl-bg}
 
 Quantum architecture is the design of physical qubit layouts
 and their allowed interactions to execute
@@ -20,8 +20,7 @@ A \emph{model} is a set of constraints and rules for the placement and
 interaction of qubits.
 An \emph{architecture} (or interchangeably, an \emph{implementation} 
 or a \emph{circuit}) is a particular
-spatial layout of qubits (as a graph of vertices) and their
-constrained interactions (edges between the vertices),
+spatial layout of qubits (as a graph of vertices) and allowed interactions (edges between the vertices),
 following the constraints of a given model. In this section, we describe
 several models which try to incorporate resources of physical interest from
 experimental work. We also introduce a new model,
@@ -30,8 +29,8 @@ experimental work. We also introduce a new model,
 The most general model is called Abstract Concurrent (\textsc{AC})
 and allows arbitrary, long-range interactions between any qubits and concurrent
 operation of quantum gates.
-This corresponds to a complete graph with an edge between every pair of nodes,
-and is the model assumed in most quantum algorithms.
+This corresponds to a complete graph with an edge between every pair of nodes.
+It is the model assumed in most quantum algorithms.
 
 A more specialized model restricts interactions to nearest-neighbor, two-qubit,
 concurrent gates (\textsc{NTC}) in a regular one-dimensional chain (1D NTC),
@@ -43,8 +42,8 @@ resource overheads.
 To relieve movement congestion,
 we can consider a two-dimensional regular grid
 (2D NTC), where each
-qubit has four planar neighbors and 
-there is an extra degree of freedom
+qubit has four planar neighbors, and 
+there is an extra degree of freedom over the 1D model
 in which to move data.
 In this paper, we extend the \textsc{2D NTC} model in three ways.
 The first two extensions are described in Section \ref{subsec:2dccntc},
@@ -60,7 +59,8 @@ All qubits are accessible from above
 or below by control and measurement apparatus.
 Whereas 2D NTC conventionally assumes each qubit
 has four neighbors, we consider up to six neighbors in a roughly hexagonal
-layout. The second extension is the realistic assumption
+layout. The edge length in this model is no more than twice the edge length
+in a regular 2D NTC lattice. The second extension is the realistic assumption
 that classical control (CC) can
 access every qubit in parallel, and we do not count these classical
 resources in our implementation since they are polynomially bounded. The
@@ -111,9 +111,9 @@ We can then define the three conventional circuit resources in this model.
 
 \begin{description}
 \item[circuit depth ($D$):] the number of concurrent timesteps.
-\item[circuit size ($S$):] the total number of non-identity gates applies
+\item[circuit size ($S$):] the total number of non-identity gates applied
 from $\mathcal{G}$, equal to $\sum_{i=1}^D |G_i|$.
-\item[circuit width ($W$):] is the total number of qubits operated upon by
+\item[circuit width ($W$):] the total number of qubits operated upon by
 any gate, including inputs, outputs, and ancillae. It is equal to $| \bigcup_{i=1}^D V_i|$.
 \end{description}
 
@@ -130,14 +130,16 @@ D \le S \le D\cdot W
 \end{equation}
 
 The set $\mathcal{G}$ includes measurement in the $Z$ basis, which is
-actually not a unitary operation, or gate per se.
+actually not a unitary operation but which may be slower than unitary
+operations in actual practice \cite{DiVincenzo2007}.
+Therefore we count it in our resource
+estimates.
 All other gates
 in $\mathcal{G}$ form a universal set of unitary
 gates \cite{Kitaev2002}.
  In this paper we
 will treat the operations in $\mathcal{G}$ as \emph{elementary gates}.
-
-We also find it useful to define a Bell basis measurement using operations
+We can also define a Bell basis measurement using operations
 from $\mathcal{G}$. A circuit performing this measurement is shown
 in Figure \ref{fig:bell-measure} and has depth $4$,
 size $4$, and width $2$.
@@ -158,7 +160,7 @@ size $4$, and width $2$.
 \end{array}
 \end{displaymath}
 \centerline{}
-\caption{A circuit for measurement in the Bell state basis.}
+\fcaption{A circuit for measurement in the Bell state basis.}
 \label{fig:bell-measure}
 \end{center}\end{figure*}
 
@@ -182,11 +184,11 @@ referring to the modulus $m$ which we are trying to factor.
 We treat these modules
 and teleportations between them as nodes and edges, respectively,
 in a higher-level planar graph. The teleportations each transmit one qubit
-from one module to another, from any location within the source module and
+from one module to another, from any location within the source module
 to any location within the destination module, making use of the
 omnipresent classical controller. The modules can be arbitrarily far
-apart and have arbitrary
-connectivity with other modules.
+apart physically, but they have bounded-degree connectivity with other
+modules, and their edges are planar (they cannot intersect).
 
 A single module can be part of multiple teleportation operations in a single timestep, as long as they involve disjoint qubits within the module.
 We justify this assumption in that it is
@@ -205,9 +207,9 @@ classically and share a clock.
 
 \begin{figure}[btp!]
 \begin{center}
-\includegraphics[width=4in]{figures/modules.pdf}
+\includegraphics[width=4in]{./modules.pdf}
 \end{center}
-\caption{Three modules in the \textsc{2D CCNTCM} model}
+\fcaption{Three modules in the \textsc{2D CCNTCM} model}
 \label{fig:modules}
 \end{figure}
 
@@ -224,7 +226,7 @@ undirected edge $(\overline{u},\overline{v}) \in \overline{E}$ represents an
 allowed teleportation from any qubit in module $\overline{u}$ to
 another qubit in module $\overline{v}$.
 \item All modules are restricted to be linear in the number of their qubits:
-$|V| = O(n)$ for all $(V,E) \in \overline{V}$.
+$|V| = \Theta(n)$ for all $(V,E) \in \overline{V}$.
 \item a universal gate set $\mathcal{G} = \{X, Z, H, T, T^{\dagger}, CNOT,
 MeasureZ\}$
 for the qubits \emph{within the same} modules which is the same as for \textsc{2D CCNTC},
@@ -240,7 +242,8 @@ gates $G_i = \{g_{i,j} : g_{i,j} \in \mathcal{G} \lor g_{i,j} = Teleport \}$.
 That is, there are two kinds of timesteps with respect to the kinds of gates
 which operate within them.
 \begin{enumerate}
-\item In the first kind, gates are exclusively from $\mathcal{G}$ operating within modules, as described
+\item In the first kind, gates are exclusively from $\mathcal{G}$, and
+they operate within modules as described
 for \textsc{2D CCNTC} above. We say there are $D$ such timesteps.
 \item In the second kind, gates are exclusively $Teleport$ gates between two qubits $v^{(1)}_{i,j} \in \overline{v}_1$ and
 $v^{(2)}_{i,j} \in \overline{v}_2$ for
@@ -253,7 +256,7 @@ Again, we define the support of $G_i$
 as $V_i$, the set of all qubits acted upon by any $g_{i.j}$, which
 includes all the modules.
 \begin{equation}
-V_i = \bigcup_{j: g_{i,j} \in G_i} v_{i,j} \cup v^{(1)}_{i,j} \cup v^{(2)}_{i,j} \cup \overline{v}_1 \cup \overline{v}_2
+V_i = \bigcup_{j: g_{i,j} \in G_i} v_{i,j} \cup v^{(1)}_{i,j} \cup v^{(2)}_{i,j} 
 \end{equation}
 
 \end{itemize}
@@ -288,6 +291,14 @@ module width.
 W = O(n\overline{W})
 \label{eqn:module-width}
 \end{equation}
+
+This restriction imposes some locality on our model by constraining it to
+nearest-neighbor gates within a linear-sized group of qubits, but allowing
+it long-range teleportation to circumvent onerous geometric constraints.
+Using the constant-depth communication in Section \ref{sec:cdc}, and for
+the specific case of factoring, we
+can simulate arbitrary connectivity between modules with only a polynomial
+increase in the module size and a constant increase in module depth.
 
 \subsection{Circuit Resource Comparisons}
 

@@ -1,4 +1,3 @@
-%\input{factor2d-csa}
 \section{The Constant-Depth Carry-Save Technique}
 \label{sec:csa}
 
@@ -83,7 +82,7 @@ x_4 & x_3 & x_2 & x_1 & x_0
 \end{array}
 \right\}
 \end{displaymath}
-\caption{An example of carry-save encoding for the 5-bit conventional number 30.}
+\fcaption{An example of carry-save encoding for the 5-bit conventional number 30.}
 \label{fig:csa-encoding}
 \end{figure*}
 \end{center}
@@ -101,7 +100,7 @@ x_4 & x_3 & x_2 & x_1 & x_0
 \lstick{\ket{0}}   & \targfix & \qw & \qw_{\ket{b_i \wedge c_i}} & \qw & \qw                        & \qw       & \qw & \qw                                     & \ctrl{-4} & \qw       & \qw       & \targfix                                                        & \qw & \qswap \qwx & \qw         & \qw & \rstick{\ket{v_{i+1}}}}
 }
 \end{displaymath}
-\caption{Carry-save adder circuit for a single bit position $i$: $a_i+b_i+c_i = u_i + v_{i+1}$.}
+\fcaption{Carry-save adder circuit for a single bit position $i$: $a_i+b_i+c_i = u_i + v_{i+1}$.}
 \label{fig:csa-circuit}
 \end{center}\end{figure}
 
@@ -129,7 +128,7 @@ x_4 & x_3 & x_2 & x_1 & x_0
 }
 \end{tabular}
 \end{displaymath}
-\caption{The depth-efficient Toffoli gate decomposition from \cite{Amy2012}.}
+\fcaption{The depth-efficient Toffoli gate decomposition from \cite{Amy2012}.}
 \label{fig:toffoli}
 \end{center}
 \end{figure}
@@ -150,7 +149,7 @@ x_4 & x_3 & x_2 & x_1 & x_0
 \end{tabular}
 \end{displaymath}
 \centerline{}
-\caption{Circuit resources for Toffoli and single-bit addition.}
+\tcaption{Circuit resources for Toffoli and single-bit addition.}
 \label{tab:csa-tile-resources}
 \end{table}
 
@@ -172,18 +171,20 @@ in Figure \ref{fig:csa-3-2}, which satisfies our 2D NTC model.
 Qubits $\ket a_i$, $\ket b_i$, and $\ket c_i$ reside at the top of Figure~\ref{fig:csa-3-2}, while qubits $\ket{u_i}$ and $\ket{v_{i+1}}$ are initialized to $\ket 0$.
 Upon completion of the circuit, qubit $\ket{a_i}$ is in state $\ket 0$, as seen from the output in Figure~\ref{fig:csa-circuit}. 
 Note that this construction uses more gates and one more ancilla than the equivalent
-quantum full adder circuit in Figure 5 of \cite{Gossett1998}, however this
+quantum full adder circuit in Figure 5 of \cite{Gossett1998}. However this
 is necessary in order to meet our architectural constraints and does not change the
 asymptotic results.
 Also in Figure \ref{fig:csa-3-2}
 is a variation called a 2-2 adder, which simply re-encodes two $i$-bits
-into an $i$-bit and an $(i+1)$-bit. This will be useful in the next section.
+into an $i$-bit and an $(i+1)$-bit. The 2-2 adder uses at most the resources
+of a 3-2 adder, so we can count it as such in our calculations.
+It will be useful in the next section.
 
 \begin{figure}[b!]
 \begin{center}
-\includegraphics[width=3in]{figures/csa-32-22.pdf}
+\includegraphics[width=3in]{./csa-32-22.pdf}
 \end{center}
-\caption{The carry-save adder (CSA), or 3-2 adder, and carry-save 2-2 adder.}
+\fcaption{The carry-save adder (CSA), or 3-2 adder, and carry-save 2-2 adder.}
 \label{fig:csa-3-2}
 \end{figure}
 

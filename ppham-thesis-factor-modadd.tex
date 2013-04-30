@@ -26,19 +26,19 @@ we add back its modular residue $2^n \bmod m$. How can we guarantee that we won'
 generate another overflow bit by adding back the modular residue? It turns out
 we can accomplish this by allowing
 a slightly larger input and output number ($n+1$ bits in this case), truncating
-multiple overflow bits, and adding back their modular residues.
+multiple overflow bits, and adding back their $n$-bit modular residues.
 
-For an $(n+1)$-bit conventional number $x$,
-we truncate its high-order bits $x_n$ and $x_{n-1}$
+For two $(n+1)$-bit conventional numbers $x$ and $y$,
+we truncate the three high-order bits of their sum $z_{n-1,n+3}$
 and
 add back their modular residue $x_{(n-1,n)}[m]$:
 %
 \begin{eqnarray}
-x \bmod m &=& x_{(0,n)}[m] \nonumber \\
-&=& x_{(0,n-2)} + x_{(n-1,n)}[m].
+x + y \bmod m &=& z_{(0,n+1)}[m] \nonumber \\
+&=& z_{(0,n-2)} + z_{(n-1,n+1)}[m].
 \end{eqnarray}
 %
-Since both the truncated number $x_{(0,n-2)}$ and the modular residue
+Since both the truncated number $z_{(0,n-2)}$ and the modular residue
 are $n$-bit numbers, their sum is an $(n+1)$-bit number as desired, equivalent
 to $x[m]$.
 
@@ -61,14 +61,13 @@ $\{u_0, u_1, \ldots, u_{n-1}\} \cup \{v_1, v_2, \ldots, v_{n-1}\}$.
 Then we add back the three modular residues
 $(v_{(n+1)}[m], u_{(n)}[m], v_{(n)}[m])$, and we are guaranteed not to
 generate additional overflow bits (of significance $2^{n}$ or higher). This equivalence
-is shown in Eq \ref{eqn:mod-reduce}.
+is shown in Equation \ref{eqn:mod-reduce}.
 \begin{eqnarray}
 (u+v)[m] &=& \left(u_{(0,n+1)} + v_{(1,n+2)}\right)[m] \nonumber \\
  &=& u_{(0,n)} +
      v_{(1,n)} + \nonumber \\
  & & u_{(n+1)}[m] +
-     v_{(n+1)}[m] + \nonumber \\
- & & v_{(n+2)}[m]
+     v_{(n+1)}[m] + v_{(n+2)}[m]
 \label{eqn:mod-reduce}
 \end{eqnarray}
 
@@ -78,7 +77,10 @@ accomplished
 in constant depth with $O(n)$ width in \textsc{2D CCNTC}.
 \end{lemma}
 
-\begin{proof}
+%\begin{proof}
+\vspace*{12pt}
+\noindent
+{\bf Proof:}
 Our goal is to show how to perform modular addition while keeping our numbers
 of a fixed size by treating overflow bits correctly.
 We map the proof of \cite{Gossett1998} to \textsc{2D CCNTC} and show that
@@ -140,7 +142,7 @@ in Figure \ref{fig:csa-proof}.
 %\hline
 %\end{array}
 \end{displaymath}
-\caption{A schematic proof of Gossett's constant-depth modular reduction for $n=3$.}
+\fcaption{A schematic proof of Gossett's constant-depth modular reduction for $n=3$.}
 \label{fig:csa-proof}
 \end{figure*}
 \end{center}
@@ -187,7 +189,8 @@ Everywhere
 we use the fact that the modular residues are restricted to $n$ bits.
 Therefore, the modular sum is computed as the sum of two $(n+2)$-bit numbers
 with no overflows in constant-depth.
-\end{proof}
+%\end{proof}
+\square\,
 
 As a side note, we can perform modular reduction in one layer instead of
 three by decoding the three overflow bits into one of seven different
@@ -206,9 +209,9 @@ general circuit resources.
 \begin{center}
 \begin{figure*}[h!bt]
 \centerline{
-\includegraphics[width=6.5in]{figures/mod-add-fixed.pdf}
+\includegraphics[width=6.5in]{./mod-add-fixed.pdf}
 }
-\caption{Addition and three rounds of modular reduction for a 3-bit
+\fcaption{Addition and three rounds of modular reduction for a 3-bit
 modulus.}
 \label{fig:csa-add-4}
 \end{figure*}
@@ -245,7 +248,7 @@ distribute the control bit $v_4$ to its modular residue, which we denote as
 $\ket{c^{v_4}} \equiv \ket{2^4[m]\cdot v_4}$.
 %%\end{equation}
 %This fanout requires constant depth;
-$c^{v_4}$ has $n$ bits, which we add to the CSE results of layer 1.
+The register $c^{v_4}$ has $n$ bits, which we add to the CSE results of layer 1.
 The results $u_i$ and $v_{i+1}$ are teleported into layer 3. The exception is
 $v'_4$ which is teleported into layer 4, since there are no other $4$-bits
 to which it can be added. Wherever there are only
@@ -260,7 +263,7 @@ $u_4$:
 $\ket{c^{u_4}} \equiv \ket{2^4[m] \cdot u_4}$.
 %%\end{equation}
 %This fanout again requires constant depth;
-The qubit $c^{u_4}$ has $3$ bits, which we
+The register $c^{u_4}$ has $3$ bits, which we
 add to the CSE results of layer 2, where $u'_i$ and $v'_{i+1}$ are teleported
 forward into layer 4.
 
@@ -271,10 +274,10 @@ is similar to layers 2 and 3, with the modular residue controlled on $v_5$:
 $\ket{c^{v_5}} \equiv \ket{2^5[m] \cdot v_5}$.
 %%\end{equation}
 %This fanout is constant depth;
-The qubit $c^{v_5}$ has $3$ bits, which we
+The register $c^{v_5}$ has $3$ bits, which we
 add to the CSE results of layer 3.
 There is no overflow bit $v'''_5$, and no carry bit from $v''_4$ and $v'_4$
-as argued in Lemma 1.
+as argued in the proof of Lemma 1.
 The final modular sum $(a+b+c)[m]$ is $u'''+v'''$.
 
 The general circuit for adding three $n$-qubit quantum integers to
@@ -287,9 +290,9 @@ the size of the modulus is still $n$ bits.
 \begin{center}
 \begin{figure*}[h!bt]
 \centerline{
-\includegraphics[width=1.5in]{figures/csa-tile-symbol.pdf}
+\includegraphics[width=1.5in]{./csa-tile-symbol.pdf}
 }
-\caption{Symbol for an $n$-bit 3-to-2 modular adder, also called a CSA tile.}
+\fcaption{Symbol for an $n$-bit 3-to-2 modular adder, also called a CSA tile.}
 \label{fig:csa-tile-symbol}
 \end{figure*}
 \end{center}
@@ -299,7 +302,7 @@ the size of the modulus is still $n$ bits.
 
 We now calculate numerical upper bounds for the circuit resources of
 the $n$-bit $3$-to-$2$ modular adder described in the previous section.
-There are four layers of non-modular $n'$-bit $3$-to-$2$ adders, which
+There are four layers of non-modular $n'$-bit $3$-to-$2$ adders, each of which
 consists of $n'$ parallel single-bit adders whose
 resources are detailed in Table \ref{tab:csa-tile-resources}. For factoring
 an $n$-bit modulus, we have $n'=n+2$ in the first and fourth layers
@@ -319,25 +322,26 @@ in the correct position to be added as inputs.
 %them are given in Table \ref{tab:csa-tile-resources}.
 
 The resources for the $n$-bit $3$-to-$2$ modular adder depicted in Figure
-\ref{fig:csa-add-4} is more complicated due to the un-fanout procedure.
-The formulae below reflect the resources needed for both computing the output
-in the forward direction (creating an entangled fanned-out state)
+\ref{fig:csa-add-4} are given below.
+The formulae reflect the resources needed for both computing the output
+in the forward direction (including creating an entangled fanned-out state
+controlled on overflow qubits)
 and also uncomputing ancillae in the backward
-direction (disentangling fanned-out copies).
+direction (including disentangling previous fanned-out copies).
 
-The circuit depth is:
-
-\begin{equation}
-356 + 8\log_2(2n+4)\text{.}
-\end{equation}
-
-The circuit size is:
+The circuit depth is $O(1)$:
 
 \begin{equation}
-33n\log_2 n + 40\log^2 n + 575n + 752\text{.}
+374\text{.}
 \end{equation}
 
-The circuit width is:
+The circuit size is $O(n)$:
+
+\begin{equation}
+551n + 757\text{.}
+\end{equation}
+
+The circuit width is $O(n)$:
 
 \begin{equation}
 33n + 47\text{.}

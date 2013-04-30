@@ -1,14 +1,19 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Constant-depth Teleportation, Fanout, and Unfanout}
-\label{subsec:fanout}
+\label{sec:cdc}
 
 Communication, namely the \emph{moving} and \emph{copying} of quantum information, in nearest-neighbor quantum architectures is challenging.
+In this section we quote known results for teleportation and
+fanout in constant depth while also contributing a novel construction
+for unfanout.
+
 The first challenge of moving quantum information from one site to another over
 arbitrarily long distances can be addressed by using
 %A related problem is how to teleport a qubit an arbitrary distance.
 % in an
 %architecture through ancillae prepared in some initial state.
 the constant-depth teleportation circuit
-shown in Figure \ref{fig:cdt}, illustrated using standard quantum circuit
+shown in Figure \ref{fig:cdt} due to Rosenbaum \cite{Rosenbaum2012}, illustrated using standard quantum circuit
 notation \cite{Nielsen2000}. This requires the circuit resources shown in
 Table \ref{tab:cd-resources}. The depth includes a layer of $H$ gates; a layer of CNOTs; an interleaved layer of Bell basis measurements; and two layers of
 Pauli corrections ($X$ and $Z$ for each qubit), occurring concurrently with
@@ -30,7 +35,7 @@ These correction layers are not shown in the circuit.
 }
 \end{displaymath}
 \centerline{}
-\caption{Constant-depth circuit based on \protect{\cite{Broadbent2007,Browne2009}} for teleportation over $n=5$ qubits \protect{\cite{Rosenbaum2012}}.}
+\fcaption{Constant-depth circuit based on \protect{\cite{Broadbent2007,Browne2009}} for teleportation over $n=5$ qubits \protect{\cite{Rosenbaum2012}}.}
 \label{fig:cdt}
 \end{center}\end{figure*}
 
@@ -55,7 +60,7 @@ These correction layers are not shown in the circuit.
 %\end{array}
 \end{displaymath}
 \centerline{}
-\caption{Constant-depth circuits based on \protect{\cite{Broadbent2007,Browne2009}} for fanout \protect{\cite{Harrow2012}} of one qubit to $n=4$ entangled copies.}
+\fcaption{Constant-depth circuits based on \protect{\cite{Broadbent2007,Browne2009}} for fanout \protect{\cite{Harrow2012}} of one qubit to $n=4$ entangled copies.}
 \label{fig:cdf}
 \end{center}\end{figure*}
 
@@ -69,7 +74,8 @@ a single qubit needs to control (be entangled with) a large quantum register
 We employ a constant-depth circuit due to insight from
 measurement-based quantum computing \cite{Raussendorf2003}
 that relies on the creation of an
-$n$-qubit cat state \cite{Browne2009}.
+$n$-qubit cat state \cite{Browne2009} which was communicated to
+us by Harrow and Fowler \cite{Harrow2012}.
 
 This circuit requires $O(1)$-depth, $O(n)$-size, and $O(n)$-width. Approximately
 two-thirds of the ancillae are reusable and can be reset to $\ket{0}$ after
@@ -105,14 +111,75 @@ corrections on the same qubit, which can be simplified by the classical
 controller to a single $X$ and $Z$ operation and then applied with a circuit of
 depth 2 and size 2. Also, given the symmetric nature of the cat state, there
 is an alternate set of Pauli corrections which would give the same state and
-is of equal size to corrections given above.
+is of equal size to the corrections given above.
 
-Reversing the fanout (un-fanout) in constant depth is an interesting
-problem. Doing so would allow us to improve the overall depth of our
-factoring implementation to $O(\log^2 n)$ instead of $O(\log^3 n )$.
-In this work it is sufficient to perform un-fanout using alternating rounds of
-teleportation and CNOT among the $n$ fanned-out qubits in a logarithmic-depth
-binary tree. The resources for this are given in
+\begin{figure*}[tb!]
+\begin{center}
+\begin{displaymath}
+\Qcircuit @C=1em @R=1em {
+& \lstick{\ket{\ell}}	& \qw & \gate{H} & \qw & \ctrl{1} & \qw & \qw      & \qw &  \measureD{Z} & \cw & \rstick{j_1} & \\
+& \lstick{\ket{\ell}}	& \qw & \gate{H} & \qw & \targfix & \qw & \ctrl{1} & \qw & \measureD{Z} & \cw & \rstick{j_2} & \\
+& \lstick{\ket{\ell}}	& \qw & \gate{H} & \qw & \ctrl{1} & \qw & \targfix & \qw & \measureD{Z} & \cw & \rstick{j_3} & \\
+& \lstick{\ket{\ell}}	& \qw & \gate{H} & \qw & \targfix & \qw & \ctrl{1} & \qw & \measureD{Z} & \cw & \rstick{j_4} & \\
+& \lstick{\ket{\ell}}	& \qw & \gate{H} & \qw & \ctrl{1} & \qw & \targfix & \qw & \measureD{Z} & \cw & \rstick{j_5} & \\
+& \lstick{\ket{\ell}}	& \qw & \gate{H} & \qw & \targfix & \qw & \ctrl{1} & \qw & \measureD{Z} & \cw & \rstick{j_6} & \\
+& \lstick{\ket{\ell}}	& \qw & \gate{H} & \qw & \qw      & \qw & \targfix & \qw & \gate{H} & \qw & \rstick{Z^{j_2 \oplus j_4}(\alpha\ket{0} + \beta\ket{1})}
+}
+\end{displaymath}
+\centerline{}
+\fcaption{A novel, constant-depth circuit for unbounded quantum unfanout on
+CCNTC, from the $7$-qubit entangled state $\alpha\ket{0}^{\otimes 7} + \beta\ket{1}^{\otimes 7}$ to the
+target product state $(\alpha\ket{0} + \beta\ket{1})\otimes\ket{0}^{\otimes 6}$.}
+\label{fig:cdu}
+\end{center}\end{figure*}
+
+Reversing the fanout is an operation called \emph{unfanout}. Unfanout
+takes as input 
+the following entangled $n$-qubit state which is the result of a fanout.
+
+\begin{equation}
+\normtwo (\ket{0}^{\otimes n} + \ket{1}^{\otimes n})
+\label{eqn:fanned-out}
+\end{equation}
+
+The output of unfanout, after Pauli corrections, is the product state
+consisting of all $\ket{0}$'s except for a single target qubit $\alpha\ket{0} + \beta\ket{1}$, which is in the
+same state as the original source qubit of the fanout.
+
+In the model of \cite{Hoyer2002}, the fanout and unfanout were identical, elementary
+operations. In CCNTC, the operations are not identical due to
+the one-way nature of the measurement and the
+constraints of NTC. In Figure \ref{fig:cdu}, we contribute a novel quantum circuit for unbounded quantum
+unfanout for $n=7$ in constant depth on 2D CCNTC.
+Note that the state in Equation \ref{eqn:fanned-out}
+is completely symmetric in that all qubits are
+equivalent entangled copies of each other. Therefore, the asymmetry 
+of the final target qubit is entirely determined by the unfanout circuit,
+which in this case selects the bottom qubit in the figure.
+
+The initial fanned out state lives in a $2$-dimensional subspace. The
+round of Hadamard gates increases its dimension to $2^n$, and the two
+interleaved layers of CNOTs in a sense ``disentangle'' the qubits from
+one another, up to a Pauli $Z$ correction. This correction, on the
+final target qubit, is controlled by the parity of the classical measurements
+on every ``even'' qubit ($j_2$ and $j_4$ in the figure), excluding the 
+next-to-last qubit ($j_6$ in the figure). Each measurement projects the state of the
+target qubit
+into a subspace with half the dimension, so $n-1$ measurements project
+the target qubit into a final $2$-dimensional subspace, which is the
+qubit $\alpha\ket{0} + \beta\ket{1}$.
+
+Although the circuit show works for odd $n$, we can easily take into
+account even $n$ with an initial CNOT to ``uncopy'' one qubit from its
+neighbors. The unfanout circuit in Figure \ref{fig:cdu} is the
+functional inverse of the
+fanout circuit in 
+Figure \ref{fig:cdf}, but it relies on the fanned-out qubits
+being teleported back into adjacent positions,
+which is only possible in a 2D layout.
+The target qubit of unfanout is usually chosen to be in the same location
+as the source qubit of the corresponding fanout. 
+The resources for unfanout are given in
 Table \ref{tab:cd-resources}.
 
 % From Notebook #16, p. 212
@@ -127,12 +194,12 @@ Table \ref{tab:cd-resources}.
 \hline
 \text{Fanout from Figure \ref{fig:cdf}} & 9 & 10n - 9 & 3n-1 \\
 \hline
-\text{Un-fanout} & $8\log_2(2n)$ & $33n\log_2(2n) + 10\log^2_2(2n)$ & $3n-1$ \\
+\text{Unfanout} & $ 6 $ & $ 3n+2 $ & $ n$ \\
 \hline
 \end{tabular}
 \end{displaymath}
 \centerline{}
-\caption{Circuit resources for teleportation, fanout, and un-fanout
+\tcaption{Circuit resources for teleportation, fanout, and unfanout
 (consisting of
 alternating rounds of constant-depth teleportation and CNOT).}
 \label{tab:cd-resources}
@@ -142,11 +209,4 @@ From an experimental perspective, it is physically efficient to create
 a cat state in trapped ions using the M{\o}lmer-S{\o}rensen gate
 \cite{Sorensen2000}\cite{Benhelm2008}. However, the fanout circuit for
 the 2D CCNTCM model would still be useful for other technologies, such
-as superconducting qubits on a two-dimensional lattice.
-
-%Unfortunately, this
-%``consumes'' the cat state in that there is no known way to unentangle the
-%source qubit from the cat state after they have been jointly measured \cite{Rosenbaum2012}.
-
-%\input{factor2d-related}
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+as superconducting qubits on a 2D lattice.
