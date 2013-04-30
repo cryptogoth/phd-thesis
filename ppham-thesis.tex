@@ -76,6 +76,7 @@
 \usepackage{bm}% bold math
 \usepackage{hyperref}% add hypertext capabilities
 \usepackage{amsthm}
+\usepackage{amsmath}
 \usepackage{amssymb}
 
 \newcommand{\sgn}{\text{sgn}}
@@ -198,9 +199,13 @@ efficiently in time, space, and other resources.
 \textpages
  
 % ========== Chapter 1
-\input{ppham-thesis-factor} 
+\input{factor-polylog/factor-polylog.tex} 
+
 
 % ========== Chapter 2
+\input{factor-sublog/factor-sublog.tex} 
+
+% ========== Chapter 3
  
 \chapter{Quantum Compiling}
  
@@ -208,7 +213,7 @@ Being a pedagogical review of existing and recent work on the approximation
 of arbitrary quantum gates from a discrete, universal set, especially the
 special case of single-qubit gates.
  
-% ========== Chapter 3
+% ========== Chapter 4
  
 \chapter{Quantum Circuit Coherence}
  
@@ -217,7 +222,7 @@ proportional to the amount of energy to maintain a coherent quantum
 computation state over the lifetime of the circuit, and its relationship
 to circuit depth, size, width, and so forth.
 
-% ========== Chapter 4
+% ========== Chapter 5
 
 \chapter{Hamiltonian Simulation on a Nearest-Neighbor Architecture}
  
