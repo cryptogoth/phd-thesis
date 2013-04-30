@@ -1,0 +1,33 @@
+\section{The Block-Save Technique}
+
+This doesn't really go anywhere, but I will mention here out of
+completeness.
+As an aside, one may think that one can iterate the carry-save
+adder. Instead of re-encoding the sum of 3 bits as the sum of
+2 bits, we could also re-encode the sum of 7 bits to be the
+sum of 3 bits. In analogy to the 3-2 adder, we call this a 7-3 adder.
+How would this re-encoding work?
+
+In the 3-2 adder, there were two output bits of significance $1$
+and $2$. The $1$-bit was the parity of the three bits and
+the $2$-bit was the majority of the three bits. The truth tables
+for these functions are shown in Table \ref{tab:3-2}
+
+\begin{table}
+\begin{tabular}{cc|c}
+\hline
+$x_0$ & $x_1$ & $c$ \\
+\hline
+0 & 0 & 0 \\
+0 & 1 & 1 \\
+1 & 0 & 1 \\
+1 & 1 & 0 \\
+\hline
+\end{tabular}
+\caption{Truth tables for}
+\label{tab:3-2}
+\end{table}
+
+ In a 7-3 adder,
+likewise, the $1$-bit is the parity of \emph{single} bits.
+The $2$-bit is the parity of \emph{pairs} of bits, 

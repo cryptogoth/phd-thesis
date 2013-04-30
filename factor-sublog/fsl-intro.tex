@@ -1,0 +1,49 @@
+\section{Improving the Depth Beyond Sublogarithmic}
+\label{fsl-intro}
+
+It is now natural to ask, given such dramatic improvement in
+nearest-neighbor circuit
+depth from quadratic \cite{Kutin2006} to polylogarithmic in the last chapter, can we
+decrease depth further? Surprisingly, the answer is yes. In this
+chapter we now decrease the depth below polylogarithmic, in fact,
+to be $O((\log \log n)^2)$. To do this, we take inspiration from
+classical circuit complexity to augment our universal quantum gate
+set to get circuits of ``near-constant'' depth. At the end, we show how
+to compile these augmented gate sets to the sublogarithmic depth above
+on $2D CCNTCM$.
+
+By augmenting a classical universal
+gate set with a new primitive logic element, the \emph{threshold gate}, we can
+get strictly more powerful circuit classes with constant depth. A brief
+history of threshold circuit complexity is given in Section \ref{sec:fsl-threshold}.
+However, these
+definitions must be modified to allow reversible quantum gates and
+superpositions of logic functions. Hoyer-Spalek showed that using
+constant-depth fanout, we can implement the quantum threshold gate and
+other such powerful multi-qubit functions.
+The quantum threshold
+gate can be decomposed into simpler operations, namely CNOT and
+arbitrary single-qubit gates, while maintaining constant-depth.
+These quantum modifications and results
+are summarized in Section \ref{sec:fsl-circuits}.
+
+A special case of the quantum threshold gate is the quantum majority
+gate on $n$ qubits, which has unit weights, zero bias, and a
+threshold of $\lceil n/2 \rceil$. This is a popular example from
+classical threshold circuits, where the classical majority gate
+is simpler to implement and is equivalent in computing power to
+the general threshold gate, up to a constant factor in depth and
+a polynomial increase in size. Using results for
+arithmetic in constant-depth majority circuits due to
+Reif-Tate \cite{Reif1992} and Yeh-Varvarigos \cite{Yeh1996},
+we calculate the resources needed
+for constant-depth quantum majority circuits for Shor's factoring
+algorithm in Section \ref{sec:fsl-majority}.
+
+In terms of physical realism,
+we are still interested in implementing a quantum majority gate using
+our $\textsf{2D CCNTCM}$ model, which due to the requirements of
+quantum fault-tolerance must use a fixed, finite basis. This is where
+we encounter the $O((\log \log n)^2)$ depth overhead. The resources
+needed for quantum compiling the arbitrary single-qubit rotations above
+are given in Section \ref{sec:fsl-qcompile}.
