@@ -1,0 +1,159 @@
+\chapter{Nearest-Neighbor Factoring in Sublogarithmic Depth}
+\label{chap:fsl}
+
+\input{ppham-thesis-factor-threshold}
+
+\input{ppham-thesis-factor-qcompile}
+
+\input{ppham-thesis-factor-majority}
+
+\section{Improving the Depth Beyond Sublogarithmic}
+
+It is now natural to ask, given such dramatic improvement in
+nearest-neighbor circuit
+depth from quadratic \cite{Kutin2006} to polylogarithmic, can we
+decrease depth further? Surprisingly, the answer is yes. In this
+chapter we now decrease the depth below polylogarithmic, in fact,
+to be $O((\log \log n)^2)$.
+
+\section{The Block-Save Technique}
+
+This doesn't really go anywhere, but I will mention here out of
+completeness.
+As an aside, one may think that one can iterate the carry-save
+adder. Instead of re-encoding the sum of 3 bits as the sum of
+2 bits, we could also re-encode the sum of 7 bits to be the
+sum of 3 bits. In analogy to the 3-2 adder, we call this a 7-3 adder.
+How would this re-encoding work?
+
+In the 3-2 adder, there were two output bits of significance $1$
+and $2$. The $1$-bit was the parity of the three bits and
+the $2$-bit was the majority of the three bits. The truth tables
+for these functions are shown in Table \ref{tab:3-2}
+
+\begin{table}
+\begin{tabular}{cc|c}
+\hline
+$x_0$ & $x_1$ & $c$ \\
+\hline
+0 & 0 & 0 \\
+0 & 1 & 1 \\
+1 & 0 & 1 \\
+1 & 1 & 0 \\
+\hline
+\end{tabular}
+\caption{Truth tables for}
+\label{tab:3-2}
+\end{table}
+
+ In a 7-3 adder,
+likewise, the $1$-bit is the parity of \emph{single} bits.
+The $2$-bit is the parity of \emph{pairs} of bits, 
+
+\section{Circuit Complexity Classes}
+
+A circuit is a directed acyclic graph in which the nodes are
+logical gates drawn from a certain (universal) set and the edges 
+represent
+the connection of the output of one gate to the input of another
+gate. For classical circuits, they implement Boolean functions, which take in $n$ input
+bits to one output bit.
+
+\begin{equation}
+f:{0,1}^n \rightarrow {0,1}
+\end{equation}
+
+For quantum circuits, they implement reversible functions on
+$(n+1)$-qubits.
+
+
+ We can also define special nodes which are not gates, but rather
+are placeholder ``sources'' which provide the inputs to the circuit and 
+``sinks'' which provide the outputs to the circuit. The in-degree of a 
+node is also known as its \emph{fanin} and the out-degree of a node is
+also known as its \emph{fanout}.
+
+We denote a gate by its fanin as a subscript and an optional
+second parameter as a superscript.
+
+\begin{equation}
+\text{GATE}_n^k
+\end{equation}
+
+\subsection{Classical Circuit Complexity Classes}
+
+It is useful to define complexity classes of circuits based on the
+set of allowed gates. In classical circuits, we take unbounded fanout
+for granted (any node can have arbitrary out-degree). These are common
+in the literature of classical circuits. We will list them in order
+of the size of their universal set, where each subsequent class adds
+more gates.
+Obviously, since the set is universal to begin with, adding more gates
+does not increase the power of the class to represent more Boolean
+functions. Rather, it can decrease the depth or size of the circuit.
+Once we define the classes, we can design subclasses.
+
+\begin{definition}
+\item[\textsf{NC}]
+circuits consisting of $\text{NOT}_1$ and $\text{AND}_2$ and
+$\text{OR}_2$ gates.
+\item[\textsf{AC}]
+NC circuits augmented with $\text{AND}_n$ and $\text{OR}_n$ gates,
+for $n \ge 2$.
+\item[\textsf{TC}]
+AC circuits augmented with $\text{TH}_n^t$ gates, for $n \ge 2$ and
+$0 \le t \le n$.
+\end{definition}
+
+A $\text{TH}^t_n$ gate is a threshold gate that is $1$ if the number
+of input bits in greater than or equal to the threshold $t$ and $0$
+otherwise.
+
+\begin{equation}
+% TODO insert block piecewise bracket
+\end{equation}
+
+We are often interested in the computing power of the above
+circuit classes restricted in some way, usually shallow depth.
+We denote by a superscript $k$ a complexity class of
+functions implementable by circuits of depth $k$.
+
+For these classical circuit classes, it is known that containment
+is proper.
+
+\begin{equation}
+\textsf{NC}^0 \subsetneq \textsf{AC}^0 \subsetneq \textsf{TC}^0
+\end{equation}
+
+\subsection{Quantum Gates}
+
+Unbounded fanout is taken for granted in classical circuit classes
+because it is physically realistic to implement using electrical
+devices. However, for quantum circuits, we must make use of the
+unbounded quantum fanout, $\text{FANOUT}_n$, to copy one output
+qubit of each gate.
+We can define quantum analogues of the above circuit complexity 
+classes by defining quantum analogues for each of the gates which
+is reversible.
+$NOT_1$ is already reversible, and we can use it as is.
+To replace $AND_2$ we can use the reversible $3$-qubit Toffoli gate,
+the so-called controlled-controlled-NOT.
+To replace $OR_2$ we can use the circuit given in
+Figure \ref{fig:or2}
+
+\begin{figure}
+% TODO 
+\caption{A perfectly normal $\text{OR}_2$ gate minding its own business.}
+\label{fig:or2}
+\end{figure}
+
+In fact this is special case of a much more powerful construction
+that will let us define a quantum $OR_n$ gate on unbounded inputs.
+
+\section{Quantum Compiling Rotations from a Fixed Set}
+
+WAIT! Insight. We only need to compile gates of the form
+$2\pi / n\log n$. I don't think that actually gives us anything.
+But if we use a co-prime multiple of $2^n$.
+
+\section{Circuit Resources}

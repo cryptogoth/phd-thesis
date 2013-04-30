@@ -1,0 +1,116 @@
+\section{Previous Threshold Circuits and Related Work}
+
+In order to understand techniques of decreasing depth for quantum 
+circuits, we can leverage a well-studied area of classical circuit
+complexity, namely that of threshold circuits.
+
+There is a more general class of threshold gates than $\text{TH}_n^t$
+defined earlier. These allow weights other than $+/-1$. In general, we
+allow them to be any real number, although this doesn't allow them to
+be 
+
+Classical circuit complexity studies the resources needed
+to implement a boolean function
+$f:\{0,1\}^n \rightarrow {0,1}$. The resources are usually the
+depth and size of the circuit in gates taken from some universal
+set, which may be of fixed size or vary with the size of the input.
+By adding gates, restricting their properties, or setting
+constraints on circuit depth and size, we can define what boolean
+functions are computable using the resulting circuit complexity
+class.
+
+A \emph{linear threshold element} (LTE) is a logic gate whose output is the
+sign of the weighted sum of $n$ input bits $x = \{x_1, x_2, \ldots, x_n\}$,
+where initially we take
+the weights $w_i$ to be any real number. There is a weight that is not
+associated with any input bit which is called the \emph{bias} of the
+LTE. It is the most elementary logic element in threshold circuits.
+Analogous to a simplified model of neurons in the human brain, an LTE can
+accept many inputs through its dendrites, which are the outputs of other
+neurons or sensory organs, and compute a function based on ``learned'' 
+weights. If the weighted sum passes some threshold (the bias), the neuron
+``fires,'' or sends signal down its axon, which then becomes the input to
+another neuron or ends in an actuator, like a muscle.
+
+\begin{equation}
+f(x) = \sgn\left( w_0 \sum_{i=1}^n w_i x_i \right)
+\end{equation}
+
+The class of boolean functions implementable with a single layer
+of LTE's is called
+$\textsf{LT}_1$. In fact, a circuit of LTEs of depth $1$ consists only
+of $1$ LTE gate. We are primarily interested in constant depth threshold
+circuits, which we denote $\textsf{LT}_k$ for depths $k>0$.
+
+An alternative way of expressing boolean functions is using a polynomial
+threshold element (PTE), which is a weighted sum over \emph{multilinear terms}
+in the input variables. In this representation, it is useful to
+map the bit values $\{0,1\}$ to $\{+1,-1\}$.
+
+\begin{equation}
+f(x) = \sgn\left( w_0 \sum_{a \in \{0,1\}^n} w_a X_a \right) \qquad X_a \equiv \prod_{i=1}^n x_i^{a_i}
+\end{equation}
+
+We call the class of functions implementable by $k$ layers of PTE's
+$\textsf{PT}_k$, where $\textsf{PT}_1$ indicates the class of functions
+implementable by a single PTE.
+It is easy to see that any boolean function can be implemented using
+a sum-of-products, with one multilinear term for each of the $2^n$
+rows in the function's truth table. The surprising relationship between
+these two primitive gates 
+
+As a practical consideration, we would like to restrict the weights
+to be rational numbers, and moreover, those that are bounded
+in magnitude by a polynomial in the number of inputs. 
+We can restrict the weights to be rational numbers without
+greatly diminishing their power, as well as limit  \cite{}
+\begin{enumerate}
+
+\item
+consider from exponential number of terms to polynomial number
+of terms. This definitely decreases power, but has a practical
+motivation in that we will quickly run out of space.
+
+\item
+change weights from real numbers to rational numbers. in fact,
+integers with $n \log n$ bits can be used. (doesn't change power) need citation. motivation is because we often have limited precision is
+implementing gates physically.
+
+\item
+change exponential weights to polynomially bounded weights (can simulate in constant-depth, polynomial increase in size), need
+citation.
+
+\item
+change to unit weights (majority gates). can simulate in
+constant depth polynomial increase in size) need citation.
+We can allow weights of $+1$ and $-1$ simply by putting a
+NOT gate in front of an input we want.
+
+\end{enumerate}
+
+There are (non-constructive) existence proofs of many interesting 
+arithmetic functions that can be implemented by threshold circuits
+of constant depth (called \emph{bounded depth} in the literature),
+often of very small sizes (5 or less). These exist in the class
+$\textsf{TC}^0$, and it is especially surprising because they are known
+not to be in the class $\textsf{AC}^0$, which proves the proper
+containment $\textsf{TC}^0 \subsetneq \textsf{AC}^0$. That is, in
+the classical setting, threshold gates appear to contain some
+special power that cannot be captured by AND and OR, gates, even those
+with unbounded fanin, in contant depth.
+
+In \cite{Reif1992}, it is shown that threshold circuits
+are equivalent (up to constant depth) to another class of
+circuits known as finite field ($Z_{P(n)}$) circuits, where each node
+computes either multiple sums or products of integers modulo a
+prime $P(n)$. However, in both of these cases, the fanin
+
+An important technique in any operation involving multiplication is
+the conversion between a binary representation, where numbers are
+treated as a linear combination from the basis of elements of
+size $O(2^n)$, to a so-called ``Chinese Remainder'' representation,
+where numbers are treated as a linear combination of residues
+modulo primes of size $O(n)$. This latter representation can be thought
+of as a ``mixed-radix'' representation, and is responsible for
+the depth-reduction of multiplication related operations in
+threshold circuits.
