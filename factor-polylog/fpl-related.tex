@@ -1,0 +1,123 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Related Work}
+\label{sec:fpl-related}
+
+Our work builds upon ideas in classical digital and reversible logic and their extension to quantum logic.
+Any circuit implementation for Shor's algorithm requires a quantum adder.
+Gossett proposed a quantum algorithm for addition using classical carry-save techniques to add
+in constant-depth and multiply in logarithmic-depth, with a quadratic
+cost in qubits (circuit width) \cite{Gossett1998}. The techniques relies on encoded addition, sometimes
+called a 3-2 adder, and derives from classical Wallace trees \cite{Wallace1964}.
+
+Takahashi and Kunihiro discovered a linear-depth
+and linear-size quantum adder using zero ancillae \cite{Takahashi2005}.
+They also developed an adder with tradeoffs between $O(n/d(n))$ ancillae and
+$O(d(n))$-depth for $d(n) = \Omega(\log n)$ \cite{Takahashi2009}. 
+Their approach assumes unbounded fanout, which had not previously been mapped to a
+nearest-neighbor circuit until our present work.
+
+Studies of architectural constraints, namely restriction to a 2D planar layout, 
+were experimentally motivated. For example, these layouts correspond
+to early ion trap proposals \cite{Kielpinski2002}
+and were later analyzed at the level of physical qubits and error correction in the context of Shor's algorithm \cite{Kubi09}.
+Choi and Van Meter designed one of the first adders targeted to a 2D architecture 
+and showed it runs in $\Theta(\sqrt{n})$-depth on \textsc{2D NTC} \cite{Choi2010}
+using $O(n)$-qubits with dedicated, special-purpose areas of a physical
+circuit layout.
+
+%Once an adder implementation is chosen, it can be extended 
+%To perform modular reduction, modular multiplication, 
+%Modular exponentiation, and ultimately
+%quantum period finding (QPF), the only quantum part of the factoring algorithm.
+Modular exponentiation is a key component of quantum period-finding (QPF),
+and its efficiency relies on that of its underlying adder implementation.
+Since Shor's algorithm is a probabilistic algorithm, multiple rounds of
+QPF are required to amplify success probability arbitrarily close to 1.
+It suffices to determine the resources
+required for a single round of QPF with a fixed, modest success probability
+(in the current work, $3/4$).
+
+The most common approach to QPF performs controlled
+modular exponentiation followed by an inverse quantum Fourier transform
+(QFT) \cite{Nielsen2000}. We will call this \emph{serial QPF}, which is
+used by the following implementations.
+%Quantum circuits proposed for factoring on a nearest-neighbor architecture have assumed a serial QPF circuit.
+
+Beauregard \cite{Beauregard2002}
+constructs a cubic-depth quantum period-finder using only $2n+3$ qubits on
+\textsc{AC}.
+It combines the ideas of Draper's transform adder \cite{Draper2000},
+Vedral et al.'s modular arithmetic blocks \cite{Vedral1996}, and a
+semi-classical QFT.
+This approach was subsequently adapted to \textsc{1D NTC} by Fowler, Devitt,
+and Hollenberg
+\cite{Fowler2004} to achieve resource counts for an $O(n^3)$-depth
+quantum period-finder. Kutin \cite{Kutin2006} later improved this using
+an idea from Zalka for approximate multipliers to produce a QPF circuit on
+\textsc{1D NTC}
+in $O(n^2)$-depth. Thus, there is only a constant overhead from
+Zalka's own factoring implementation on \textsc{AC}, which also has
+quadratic depth \cite{Zalka1998}.
+Takahashi and Kunihiro extended their earlier $O(n)$-depth adder to a factoring
+circuit in $O(n^3)$-depth with linear width \cite{Takahashi2006}.
+Van Meter and Itoh explore many different approaches for serial QPF,
+with their lowest achievable depth being $O(n^2\log n)$ with
+$O(n^2)$ on \textsc{NTC} \cite{VanMeter2005}. Cleve and Watrous
+calculate a factoring circuit depth of $O(\log^3 n)$ and corresponding
+circuit size of $O(n^3)$ on \textsc{AC},
+assuming an adder which has depth $O(\log n)$ and
+$O(n)$ size and width. We beat this depth and provide a concrete
+architectural implementation using an adder with $O(1)$-depth and $O(n)$
+size and width.
+
+In the current work, we assume that errors do not affect the storage of qubits
+during the circuit's operation. An alternate approach is taken by
+Miquel \cite{Miquel1996} and Garcia-Mata \cite{GarciaMata2007}, who both
+numerically simulate Shor's algorithm for factoring specific
+numbers to determine its sensitivity to errors. Beckman et al. provide a
+concrete factoring implementation in ion traps with $O(n^3)$ depth and size and
+$O(n)$ width \cite{Beckman1996}.
+
+In all the previous works,
+it is assumed that qubits are expensive (width) and that
+execution time (depth) is not the limiting constraint.
+We make the alternative assumption that ancillae are cheap and that fast classical control
+is available which allows access to all qubits in parallel.
+Therefore, we optimize circuit depth at the expense of width.
+We compare our work primarily to Kutin's method \cite{Kutin2006}.
+
+These works also rely on serial QPF which in turn relies on an inverse QFT.
+On an AC architecture, even when approximating the (inverse) QFT by truncating two-qubit
+$\pi/2^k$ rotations beyond $k = O(\log n)$, 
+the depth is $O(n \log n)$ to factor an $n$-bit number.
+To be implemented fault-tolerantly on a quantum device, rotations in the QFT must then be compiled into a discrete gate basis.
+This requires at least a $O(\log(1/\epsilon))$ overhead in depth to approximate a rotation with precision $\epsilon$ \cite{Harrow02, Kitaev2002}.
+We would like to avoid the use of a QFT due to its compilation overhead.
+
+There is an alternative, parallel version of phase estimation 
+\cite{Cleve2000,Kitaev2002}, which we call \emph{parallel QPF} (we refer the reader to Section 13 of \cite{Kitaev2002} for details), which decreases depth in exchange
+for increased width and additional classical post-processing.
+This eliminates the need to do an inverse QFT.
+%We refer the reader to \cite{Kitaev2002} 
+%and \cite{Pham2011b} 
+%for details.
+We develop a nearest-neighbor factoring circuit based on parallel QPF and our proposed 2D quantum arithmetic circuits.
+We show that it is asymptotically more efficient than the serial QPF method. 
+We compare the circuit resources required by our work with existing serial QPF implementations in Table
+\ref{tab:fpl-results} of Section \ref{sec:fpl-results}.
+However, a recent result by \cite{Jones2013} allows one to enact a
+QFT using only Clifford gates and a Toffoli gate in $O(\log^2 n)$ expected depth.
+This would allow us to
+greatly improve the constants in our circuit resource upper bounds in Section \ref{sec:modexp} by combining a QFT with parallel multiplication similar to
+the approach described in \cite{VanMeter2005,Cleve2000}.
+
+
+We also note that recent results by Browne, Kashefi, and Perdrix (BKP) connect the power of
+measurement-based quantum computing to the quantum circuit model augmented with
+unbounded fanout \cite{Browne2009}. Their model, which we adapt and call
+\textsc{CCNTC}, uses the classical controller mentioned in Section \ref{sec:cdc}.
+Using results by H{\o}yer and {\v S}palek \cite{Hoyer2002} that
+unbounded quantum fanout would allow for a constant-depth factoring algorithm,
+they conclude that a probabilistic polytime classical machine with access
+to a constant-depth one-way quantum computer would also be able to factor
+efficiently.
