@@ -81,7 +81,7 @@ y_i = \left\{
 \begin{array}{rl}
 1 & \text{ if } |x| \bmod 2^i = 0 \\
 0 & \text{ otherwise } 
-\end{array}
+\end{array} \right.
 \end{equation}
 
 Every round of the re-encoding reduces the number of bits in the
@@ -113,13 +113,20 @@ bitwise applications of the previous logarithmic reduction. The size of
 the output numbers produced after $k$ rounds of reduction is given below.
 
 \begin{equation}
-n_k = n + \sum_{l=1}^k \log_2^{(l)}n = O(n)
+n_k = n + \sum_{l=1}^k \lceil \log_2^{(l)}n
+\end{equation}
+
+Since any $n_k$ is smaller than the final size of the output numbers,
+we can upper-bound any $n_k$ as follows.
+
+\begin{equation}
+n_{\log^{(*)}n} \le 2n = O(n)
 \end{equation}
 
 %%%%%%%%%%%%%%%
 \begin{theorem}{Parallel Multiple Sum in Iterated-Logarithmic Depth}
 The sum of $t' \times n$-qubit numbers can be reduced to the sum
-of $2 \times n$-qubit numbers in $O(\log^{*}n)$ depth on CCNTC.
+of $2 \times 2n$-qubit numbers in $O(\log^{*}n)$ depth on CCNTC.
 \end{theorem}
 
 \begin{proof}
@@ -129,21 +136,19 @@ using quantum fanout and unfanout techniques to map them to CCNTC.
 \begin{enumerate}
 
 \item For round $k$ of $\lceil \log_2^{*} n \rceil$ rounds, perform the following
-steps on $t'\log_2^{(k)}$ input numbers of size $n + \sum_{l=1}^k \log_2^{(l)}n$. 
+steps on $t'\log_2^{(k)}$ input numbers of size $n_k = O(n)$. 
 
 \begin{enumerate}
 
 \item
 For each of (at most) $\log_2^{(k)}t'$ bits of significance $2^i$ in the summands, for 
 $0 \le i < n$, apply Theorem \ref{thm:log-sum} to re-encode them as the sum of
-$\log_2^{(k+1)}t'$ bits (of different significance). This leaves 
-
-\item
-Thi
+$\lceil \log_2^{(k+1)}t' \rceil$ bits (of different significance). 
 
 \end{enumerate}
 
 \end{enumerate}
 
-With the quantum compiling overhead discussed in Section \ref{fsl-qcompile},
-we can now 
+At the end of the last round, by definition, we are left with $2$ numbers of size
+at most $2n$ bits.
+\end{proof}

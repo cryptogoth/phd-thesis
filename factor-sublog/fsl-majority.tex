@@ -1,15 +1,44 @@
 \section{Quantum Majority Circuits for Modular Exponentiation}
 
-We now consider circuits made from majority gates, which we denote
-as $\text{MAJ}_n \equiv \text{TH}^{\lceil n/2 \rceil}_n$. These have the
-advantage of being simpler to implement than general threshold gates
-$\text{TH}^t_n$ while being equivalent in power. Namely, depth-$k$
-majority circuits are equivalent in power to depth-$k$ threshold circuits
+A quantum majority circuit is made from majority gates, a special case
+of a threshold gate with unit weights and threshold $n/2$. In this section, we refer
+to quantum majority gates by this label:
+$\text{MAJ}_n \equiv \text{TH}^{\lceil n/2 \rceil}_n$. There has been
+a lot of interest in majority gates in the classical circuit complexity
+research community due to their simplicity relative to general LTEs
+while being equivalent in power. Namely, depth-$k$
+majority circuits are equivalent in power to depth-$k$ LTE circuits
 with polynomially-bounded weights: $\textsf{MAJ}_k = \hat{\textsf{LT}}_k$
 \cite{Alon1994,Goldmann1994}.
 
-In many works on classical majority circuits, the fanin of a majority
-gate is not treated as an important consideration and can in 
+We are also interest in majority gates of polynomial fanin.
+In a majority circuit, the fanin of any one majority gate is
+bounded above by the circuit size, since in the worst case, one
+gate receives an output from every other gate as input. As long
+as we restrict ourselves to polynomial-size circuits, we are
+assured that our circuit fanin is also polynomial. This is the
+primary consideration in achieving sublogarithmic depth for
+quantum compiling single-qubit rotations, and therefore for
+factoring.
+
+We now contribute a quantum majority circuit for 
+modular exponentiation
+of an $n$-bit modulus on 2D CCNTCM. In this section, we show that each majority circuit
+can be implemented in a single module with $O(n)$ qubits. Any
+reordering needed between the output qubits of one timestep in a majority circuit
+and the input qubits of the next timestep is handled by teleportation
+in between modules, as allowed on 2D CCNTCM. Therefore, it suffices for
+us to do the following:
+
+\begin{enumerate}
+\item Show that a classical majority circuit exists for modular exponentiation
+\item Show a 2D CCNTC quantum architecture for a single majority gate, inside its own module.
+\end{enumerate}
+
+We do the first item by relying on the following two theorems from Yeh and Varvarigos,
+which we state again without proof. Both of these theorems
+allow an extra parameter $\epsilon \in (0,1]$ which determines the
+tradeoff between circuit depth and circuit size.
 
 \begin{theorem}{Multiple product in constant depth and polynomial size: \cite{Yeh1996}}
 The $n^2$-bit product of $n\times n$-bit numbers can be computed by a
@@ -26,9 +55,122 @@ size and width $O(\frac{1}{\epsilon}n^{1 + 2\epsilon})$, and
 fanin $O(n^2)$.
 \end{theorem}
 
+Both of these theorems rely on a Chinese Remainder representation for
+an $n$-bit number. A conventional binary representation of a number
+treats bits as coefficients for weights of $O(2^n)$, which requires exponential
+weight to represent in a threshold circuit. In a Chinese Remainder representation,
+a number is given a ``mixed-radix'' representation, where each coefficient
+is associated with a modular residue for a prime with $O(n)$ bits.
+A more detailed reference of this technique can be found in \cite{Reif1992}.
+
+We now accomplish the second item (a concrete architecture for a quantum majority gate)
+in the remainder of this section by a sequence of building blocks, each on 2D
+CCNTC with constant depths and polynomially-bounded sizes and widths.
+
+\begin{itemize}
+
+\item a $\text{BIAS}^{t,\phi}_n$ gate which distinguishes between $|x| = t$ and $|x| = (\lceil n/2 \rceil - t) \bmod n$ with a measurement bias of $e^{i\phi}$.
+This is described in Section \ref{subsec:mu-gate}.
+\item a $\text{EX}^t_{n\rightarrow \log_n}$ gate which reduces from $\text{EX}^t_n$ (on $n$ qubits)
+to $\text{EX}^t_{\log n}$ (on $\lceil \log_2(n+1) \rceil$ qubits).
+This is described in Section \ref{subsec:ex-reduce}.
+\item a $\text{EX}^t_{\log_n}$ gate which acts on $O(\log n)$ qubits.
+This is described in Section \ref{subsec:ex-log}.
+\end{itemize}
+
+%%%%%%%%%%%
+\subsection{BIAS Gate}
+\label{subsec:mu-gate}
+
+We define the BIAS gate using the results in \cite{Hoyer2002}, where it is called $\mu^{|x|-t}_{\phi}$ gate.
+It operates as follows:
+
+\begin{equation}
+\text{BIAS}^{t,\phi}_n\ket{x}\ket{+} \rightarrow \ket{x}\ket{\mu^{|x|-t}_{\phi}}
+\end{equation}
+
+The output qubit begins in the state $\ket{+}$, which has equal probability of
+being measured in the $\ket{0}$ state or the $\ket{1}$ state. It ends in
+the following state, which introduces a bias between measuring $\ket{0}$
+or $\ket{1}$ proportional to the difference Hamming weight of the input
+($|x|$) of a threshold $t$.
+
+\begin{equation}
+\ket{\mu^{|x|-t}_{\phi}} = \frac{1 + e^{i\phi(|x|-t)}}{2}\ket{0} + \frac{1 - e^{i\phi(|x|-t)}}{2}\ket{1}
+\end{equation}
+
+When $\phi = 2\pi / n$, then the BIAS gate allows us to distinguish perfectly
+between the case of $|x| = t$ or $|x| = (\lceil n/2 \rceil - t) \bmod n$. As we will
+see in the next section, multiples of $2\pi / n$ will allow us to reduce the
+size of an $\text{EX}^t_n$ gate.
+
+\begin{theorem}{Constant-depth BIAS gate}
+The $BIAS^{t,\phi}_n$ gate can be implemented on 2D CCNTCM with
+a depth of $O(1)$, a size and width of $O(n)$, and
+expected $O(n)$ teleported PAR qubits of the form $(\ket{0} + e^{i\phi}\ket{1})$
+and $(\ket{0} + e^{-i\phi\cdot t}\ket{1})$.
+\label{thm:bias}
+\end{theorem}
+
+\begin{proof}
+We can lay out the circuit from Figure 1 in \cite{Takahashi2011} on a 2D CCNTC lattice as
+shown in Figure \ref{fig:mu-circuit}. The size includes a Hadamard to transform
+the output qubit into $\ket{+}$, a fanout of this qubit over $n+1$ qubits,
+$O(n)$ gates to apply the rotations $R_Z(\phi)$ and $O(1)$ gates to apply
+the rotation $R_Z(-\phi\cdot t)$, and a corresponding unfanout, which is
+$O(n)$ total. This occurs on $O(n)$ qubits, and can be arranged to take
+$O(1)$ depth.
+\end{proof}
+
+% TODO: Fill this in
+\begin{figure}
+\caption{The circuit for a BIAS gate on 2D CCNTC.}
+\label{fig:mu-circuit}
+\end{figure}
+
+%%%%%%%%%%%
+\subsection{EX Reduction}
+\label{subsec:ex-reduce}
+
+Now we wish to show how to reduce the EXACT gate on $n$ bits to an EXACT
+gate on $\log n$ qubits. That is, we wish to implement the following gate
+$\text{EX}^t_{n\rightarrow \log_2 n}$ on an $n$-qubit input register $\ket{x}$
+to produce an $m$-qubit output register $\ket{y}$, where
+$m = \lceil \log_2 n + 1 \rceil$. Running $\text{EX}^t{n}$
+on $\ket{x}$ should produce the same output qubit $\ket{z}$ as running
+$\text{EX}^t_{m}$ on $\ket{y}$. This is formally defined below.
+
+\begin{eqnarray}
+\text{EX}^t_{n\rightarrow \log_2 n} \ket{x}\ket{0^m} & \rightarrow &\ket{x}\ket{y} \\
+\text{EX}^t_n \ket{x}\ket{0} & \rightarrow & \ket{x}\ket{z} \\
+\text{EX}^t_m \ket{y}\ket{0} & \rightarrow & \ket{y}\ket{z}
+\end{eqnarray}
+
+\begin{theorem}{Constant-depth EX reduction gate}
+The $EX^t_{n\rightarrow \log_2 n}$ gate can be implemented on 2D CCNTCM with
+a depth of $O(1)$, a size and width of $O(n\log n)$, and expected
+$O(n\log n)$ teleported PAR qubits of the form $(\ket{0} + e^{i\phi_k}\ket{1})$
+$(\ket{0} + e^{-i\phi_k\cdot t}\ket{1})$
+\label{thm:ex-reduce}
+\end{theorem}
+
+\begin{proof}
+We map the construction from Theorem 19 in \cite{Hoyer2002} onto
+2D CCNTCM.
+This step involves $m \le (n/2)+1$ parallel $\text{BIAS}^{t,\phi_k}_n$ gates from the last section for
+$1 \le k \le m$, where $\phi_k = \frac{2\pi}{m}k$, each in their own modules.
+This maintains constant circuit depth while 
+\end{proof}
+
+%%%%%%%%%%%
+\subsection{EX on Logarithmic Qubits}
+\label{subsec:or-exact}
+
+We now present an exact EXACT gate.
 
 
-\section{A Majority Gate in 2D CCNTCM in Sub-logarithmic Depth}
+%%%%%%%%%%%
+\subsection{A Majority Gate in 2D CCNTCM in Sub-logarithmic Depth}
 
 To map a majority gate to 2D CCNTCM, we use the $\textsf{AC}_f^0$ 
 constructions from Takahashi-Tani \cite{Takahashi2011},
@@ -36,14 +178,10 @@ based on the results of
 Hoyer-Spalek \cite{Hoyer2002}.
 We combine this with our architectural techniques
 from the previous chapter, including the 2D CCNTCM circuits
-for constant-depth teleportation, fanout, and unfanout.
+for constant-depth teleportation, fanout, and unfanout. 
 
-The majority gate is a threshold gate, with unit weights, a
-fan-in (input size) $n' = O(n)$ in the size of the input number to Shor's 
-factoring algorithm, and a threshold of $\lceil n/2 \rceil$.
-
-We describe the construction for $\text{MAJ}_{n'}$ below, given the
-$n'$-qubit input $x$.
+We describe the construction for $\text{MAJ}_{n}$ below, given the
+$n$-qubit input $x$.
 
 \begin{enumerate}
 
@@ -55,8 +193,8 @@ such gates.
 
 \begin{enumerate}
 \item 
-Compute the constant-depth reduction from $\text{EX}^t_{n'}$ to
-$\text{EX}^t_{m}$ where $m = \lceil \log_2(n'=1) \rceil$, using
+Compute the constant-depth reduction from $\text{EX}^t_{n}$ to
+$\text{EX}^t_{m}$ where $m = \lceil \log_2(n+1) \rceil$, using
 the reduction from $OR_n$ to $OR_{\log_n}$ \cite{Hoyer2002}.
 For $1 \le k \le m$, do the following:
 
@@ -77,7 +215,7 @@ threshold $t = \lceil n/2 \rceil$.
 Apply the circuit for exact $\text{OR}_{\log n}$ from Lemma 2 of
 \cite{Takahashi2011} to the output of the previous step. This can
 be done with a 2D CCNTCM circuit with $O(1)$-depth, $O(n \log n)$-size,
-and $O()$.
+and $O()$ width.
 
 \end{enumerate}
 
@@ -94,21 +232,4 @@ output is the output of the quantum majority gate $MAJ_{n}$.
 
 \end{enumerate}
 
-
-\subsection{OR Reduction of Hoyer-Spalek}
-\label{subsec:or-reduce}
-
-This step involves $m \le (n/2)+1$ gates $\mu^{|x|-t}_{\phi_k}$ for
-$1 \le k \le m$. Each gate is the same as Hoyer and Spalek's reduction from
-$O(n)$ bits to $O(\log n)$ bits as described in \cite{Hoyer2002}.
-
-The $\mu$ circuits 
-
-\subsection{Exact OR Circuit of Takahashi-Tani}
-\label{subsec:or-exact}
-
-
-
-\subsection{Parity Circuit}
-\label{subsec:parity}
 
