@@ -1,16 +1,34 @@
 \section{The Iterated Carry-Save Technique}
 \label{sec:blocksave}
 
-Now we mention an alternative, constructive technique to sublogarithmic
+Now we mention an alternative technique to sublogarithmic
 factoring by generalizing
 the carry-save technique in Section \ref{sec:csa}. We will call this
 \emph{iterated carry-save} to distinguish it from the block-save
 technique, which is another generalization using classical threshold
-circuits \cite{Siu1993}.
-Using iterated carry-save, we can replace the modular multiple addition module in
-Section \ref{sec:mma} of Chapter \ref{chap:factor-polylog}. This
+circuits \cite{Siu1993}. However, this technique is currently incomplete
+in that it depends on a currently unresolve conjecture. We present it
+here in the hopes that the reader can solve it.
+
+In Section \ref{subsec:fsl-itlog}, we define the iterated logarithm
+function and present the unresolved depth of this technique.
+
+\subsection{Iterated Logarithm and Diagonalization Depth}
+\label{subsec:fsl-itlog}
+
+Using iterated carry-save, we can replace the modular multiple adder in
+Chapter \ref{chap:factor-polylog}. This
 would reduce our modular multiplier from $O(\log n)$ depth to 
-a $O(\log^{(*)})$-depth algorithm, where $\log^{(*)}$ indicates
+a $O((\log^{(*)}n)\cdot f(x))$-depth algorithm. The quantity $f(x)$ indicates
+the compiled depth, in $\textsf{CCNTC}$, of a unitary matrix $T$ such that $TMT^{\dag} = D$
+where $M$ is the increment operator modulo a power of two, and $D$ is its diagonal form.
+The need for this 
+
+\begin{equation}
+M\ket{x} \rightarrow \ket{x \bmod 2^k}
+\end{equation}
+
+The function $\log^{(*)}n$ indicates
 the iterated logarithm function, or the number of times the
 logarithm can be applied to a number before it is less than a
 constant.
@@ -28,20 +46,23 @@ While this functions grows
 slowly (it only has meaningful values less than
 $6$ given the number of particles in the universe), it is not
 constant. Furthermore, its output is a non-unique carry-save encoding (CSE)
-and must be combined into a single unique conventional number in
+and must be combined into a single unique conventional number.
+This can be done by a classical threshold circuit, using a quantum $\text{MAJ}_n$
+gate from Section \ref{subsec:fsl-majority},  in
 $O(\log n)$ depth and $O(n^2 \log n)$ size as done in Section \ref{subsec:qcla}.
-Therefore, by itself, it cannot lead to a sub-logarithmic factoring
+Therefore, by itself, it cannot lead to a sublogarithmic factoring
 implementation.
 We mention the proof here for completeness. Future work
 may discover that this approach yields lower-depth empirical
-results than the majority circuit approach in Section \ref{fsl-majority},
-especially since it does not quantum compiling.
+results than the majority circuit approach in Section \ref{subsec:fsl-majority},
+especially since it does not require quantum compiling single-qubit rotations.
 
+\subsection{The Re-encoding Procedure}
 Now we sketch the proof of iterated carry-save.
 Instead of re-encoding the sum of 3 input bits ($x = 2^2 x_2 + 2 x_1  + x_0$)
 as the sum of 2 output bits ($y = 2 y_1 + y_0$),
 we could also re-encode the sum of 7 bits to be the
-sum of 3 bits. In analogy to the 3-2 adder, we call this a 7-3 adder.
+sum of 3 bits. In analogy to the $3 \rightarrow 2$ adder, we call this a 7-3 adder.
 Moreover, the sum of $2^n - 1$ input bits can be re-encoded into the sum
 of $n$ output bits. If there are in general $k$ input bits, for $2^{n-1} < k \ge 2^n$,
 they can be padded with zero bits up to $2^n$.
@@ -69,7 +90,7 @@ constant depth on CCNTC.
 We provide a circuit which is entirely classical, but can be applied to
 quantum inputs on a CCNTC architecture in order to achieve
 constant-depth communication.
-In the 3-2 adder, $y_1$ is the parity of the $x_i$ bits and
+In the $3 \rightarrow 2$ adder, $y_1$ is the parity of the $x_i$ bits and
 $y_0$ is their majority. In fact, the 
 generalization of this re-encoding is as follows:
 $y_0=1$ when $|x|$ is evenly divisible by $2$, $y_1=1$ when

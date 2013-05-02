@@ -1,12 +1,8 @@
 \section{Quantum Majority Circuits for Modular Exponentiation}
+\label{sec:fsl-majority}
 
-A quantum majority circuit is made from majority gates, a special case
-of a threshold gate with unit weights and threshold $n/2$. In this section, we refer
-to quantum majority gates by this label:
-$\text{MAJ}_n \equiv \text{TH}^{\lceil n/2 \rceil}_n$. There has been
-a lot of interest in majority gates in the classical circuit complexity
-research community due to their simplicity relative to general LTEs
-while being equivalent in power. Namely, depth-$k$
+A quantum majority circuit is made from quantum $\text{MAJ}_n$ gates.
+As mentioned before, depth-$k$
 majority circuits are equivalent in power to depth-$k$ LTE circuits
 with polynomially-bounded weights: $\textsf{MAJ}_k = \hat{\textsf{LT}}_k$
 \cite{Alon1994,Goldmann1994}.
@@ -23,66 +19,84 @@ factoring.
 
 We now contribute a quantum majority circuit for 
 modular exponentiation
-of an $n$-bit modulus on 2D CCNTCM. In this section, we show that each majority circuit
+of an $n$-bit modulus on \textsf{2D CCNTCM}. In this section, we show that each majority circuit
 can be implemented in a single module with $O(n)$ qubits. Any
 reordering needed between the output qubits of one timestep in a majority circuit
 and the input qubits of the next timestep is handled by teleportation
-in between modules, as allowed on 2D CCNTCM. Therefore, it suffices for
+in between modules, as allowed on \textsf{2D CCNTCM}. Therefore, it suffices for
 us to do the following:
 
 \begin{enumerate}
-\item Show that a classical majority circuit exists for modular exponentiation
-\item Show a 2D CCNTC quantum architecture for a single majority gate, inside its own module.
+\item Show that a (classical) majority circuit exists for (classical) modular exponentiation.
+We can translate this to a \textsf{2D CCNTCM} architecture where each $\text{MAJ}_n$ gate
+is translated to $O(1)$ modules of $\Omega(n)$ width.
+\item Show a \textsf{2D CCNTCM} quantum architecture for a single $\text{MAJ}_n$ gate in
+$O(1)$ modules of $\Omega(n)$ width,
+assuming the incoming teleportation of qubits of this form $\normtwo(\ket{0} + e^{i\phi}\ket{1})$.
+These qubits are used to perform the corresponding single-qubit rotations using the
+procedure of Jones et al. \cite{Jones2012}.
+\item Include the circuit resources for (KSV) quantum compiler modules that can produce
+the qubits in the previous step.
 \end{enumerate}
 
-We do the first item by relying on the following two theorems from Yeh and Varvarigos,
-which we state again without proof. Both of these theorems
+We do the first item by relying on the following two theorems from Yeh-Varvarigos,
+which we re-state below without proof. Both of these theorems
 allow an extra parameter $\epsilon \in (0,1]$ which determines the
-tradeoff between circuit depth and circuit size.
+tradeoff between circuit depth and circuit size. They apply to \emph{classical majority circuits}.
+Therefore, we must scale all their circuit resources by those for a quantum majority
+gate, calculated in Section \ref{subsec:maj-gate}.
 
-\begin{theorem}{Multiple product in constant depth and polynomial size: \cite{Yeh1996}}
+\begin{theorem}{\textbf{(Yeh-Varvarigos) Multiple product in constant depth and polynomial size: \cite{Yeh1996}.}}
 The $n^2$-bit product of $n\times n$-bit numbers can be computed by a
-circuit of depth $O(\frac{1}{\epsilon})$,
+majority circuit of depth $O(\frac{1}{\epsilon})$,
 size and width $O(\frac{1}{\epsilon}n^{3+2\epsilon})$, and
 fanin $O(n)$.
+\label{thm:mult-prod}
 \end{theorem}
 
-\begin{theorem}{Modular reduction in constant depth and polynomial size \cite{Yeh1996}}
+\begin{theorem}{\textbf{(Yeh-Varvarigos) Modular reduction in constant depth and polynomial size \cite{Yeh1996}.}}
 The $n$-bit binary representation of the modular residue $x \bmod m$, where
 $x$ is an $n^2$-bit number and $m$ is an $n$-bit modulus, can be computed
-by a circuit of depth $O(\frac{1}{\epsilon})$,
+by a majority circuit of depth $O(\frac{1}{\epsilon})$,
 size and width $O(\frac{1}{\epsilon}n^{1 + 2\epsilon})$, and
 fanin $O(n^2)$.
+\label{thm:mod-reduce}
 \end{theorem}
 
 Both of these theorems rely on a Chinese Remainder representation for
 an $n$-bit number. A conventional binary representation of a number
 treats bits as coefficients for weights of $O(2^n)$, which requires exponential
-weight to represent in a threshold circuit. In a Chinese Remainder representation,
+weight to represent in an LTE. In a Chinese Remainder representation,
 a number is given a ``mixed-radix'' representation, where each coefficient
-is associated with a modular residue for a prime with $O(n)$ bits.
+is associated with a modular residue for a prime with $O(n)$ bits. In this
+way, the weights needed to represent each coefficient are bounded
+polynomially and not exponentially.
 A more detailed reference of this technique can be found in \cite{Reif1992}.
 
+We delay discussion of quantum compiler considerations until Section
+\ref{sec:fsl-qcompile}.
+
 We now accomplish the second item (a concrete architecture for a quantum majority gate)
-in the remainder of this section by a sequence of building blocks, each on 2D
-CCNTC with constant depths and polynomially-bounded sizes and widths.
+in the remainder of this section by a sequence of building blocks, each on
+\textsf{2D CCNTC} with constant depths and polynomially-bounded sizes and widths.
 
 \begin{itemize}
 
 \item a $\text{BIAS}^{t,\phi}_n$ gate which distinguishes between $|x| = t$ and $|x| = (\lceil n/2 \rceil - t) \bmod n$ with a measurement bias of $e^{i\phi}$.
 This is described in Section \ref{subsec:mu-gate}.
-\item a $\text{EX}^t_{n\rightarrow \log_n}$ gate which reduces from $\text{EX}^t_n$ (on $n$ qubits)
+\item an $\text{EX}^t_{n\rightarrow \log_n}$ gate which reduces from $\text{EX}^t_n$ (on $n$ qubits)
 to $\text{EX}^t_{\log n}$ (on $\lceil \log_2(n+1) \rceil$ qubits).
 This is described in Section \ref{subsec:ex-reduce}.
-\item a $\text{EX}^t_{\log_n}$ gate which acts on $O(\log n)$ qubits.
-This is described in Section \ref{subsec:ex-log}.
+\item an $\text{EX}^t_{\log_n}$ gate which acts on $O(\log n)$ qubits.
+This is described in Section \ref{subsec:or-log}.
 \end{itemize}
 
 %%%%%%%%%%%
 \subsection{BIAS Gate}
 \label{subsec:mu-gate}
 
-We define the BIAS gate using the results in \cite{Hoyer2002}, where it is called $\mu^{|x|-t}_{\phi}$ gate.
+We define the BIAS gate using the results in \cite{Hoyer2002}, where it is called a $\mu^{|x|-t}_{\phi}$ gate.
+We can also think of it as rotating the output qubit $\ket{+}$ by Hamming weight with a threshold $t$ subtracted.
 It operates as follows:
 
 \begin{equation}
@@ -92,20 +106,19 @@ It operates as follows:
 The output qubit begins in the state $\ket{+}$, which has equal probability of
 being measured in the $\ket{0}$ state or the $\ket{1}$ state. It ends in
 the following state, which introduces a bias between measuring $\ket{0}$
-or $\ket{1}$ proportional to the difference Hamming weight of the input
-($|x|$) of a threshold $t$.
+or $\ket{1}$ proportional to the difference $(|x|-t)$.
 
 \begin{equation}
 \ket{\mu^{|x|-t}_{\phi}} = \frac{1 + e^{i\phi(|x|-t)}}{2}\ket{0} + \frac{1 - e^{i\phi(|x|-t)}}{2}\ket{1}
 \end{equation}
 
-When $\phi = 2\pi / n$, then the BIAS gate allows us to distinguish perfectly
+When $\phi = 2\pi / n$, then the BIAS gate allows us to distinguish
 between the case of $|x| = t$ or $|x| = (\lceil n/2 \rceil - t) \bmod n$. As we will
-see in the next section, multiples of $2\pi / n$ will allow us to reduce the
+see in the next section, rotations by multiples of $2\pi / n$ will allow us to reduce the
 size of an $\text{EX}^t_n$ gate.
 
-\begin{theorem}{Constant-depth BIAS gate}
-The $BIAS^{t,\phi}_n$ gate can be implemented on 2D CCNTCM with
+\begin{theorem}{\textbf{Constant-depth BIAS gate.}}
+The $BIAS^{t,\phi}_n$ gate can be implemented on \textsf{2D CCNTCM} with
 a depth of $O(1)$, a size and width of $O(n)$, and
 expected $O(n)$ teleported PAR qubits of the form $(\ket{0} + e^{i\phi}\ket{1})$
 and $(\ket{0} + e^{-i\phi\cdot t}\ket{1})$.
@@ -113,30 +126,30 @@ and $(\ket{0} + e^{-i\phi\cdot t}\ket{1})$.
 \end{theorem}
 
 \begin{proof}
-We can lay out the circuit from Figure 1 in \cite{Takahashi2011} on a 2D CCNTC lattice as
+We can lay out the circuit from Figure 1 in \cite{Takahashi2011} on a \textsf{2D CCNTC} lattice as
 shown in Figure \ref{fig:mu-circuit}. The size includes a Hadamard to transform
 the output qubit into $\ket{+}$, a fanout of this qubit over $n+1$ qubits,
 $O(n)$ gates to apply the rotations $R_Z(\phi)$ and $O(1)$ gates to apply
 the rotation $R_Z(-\phi\cdot t)$, and a corresponding unfanout, which is
 $O(n)$ total. This occurs on $O(n)$ qubits, and can be arranged to take
-$O(1)$ depth.
+$O(1)$ depth. This circuit is contained within a single module.
 \end{proof}
 
 % TODO: Fill this in
 \begin{figure}
-\caption{The circuit for a BIAS gate on 2D CCNTC.}
+\caption{The layout for a BIAS gate on 2D CCNTC.}
 \label{fig:mu-circuit}
 \end{figure}
 
 %%%%%%%%%%%
-\subsection{EX Reduction}
+\subsection{EX Logarithmic Reduction}
 \label{subsec:ex-reduce}
 
-Now we wish to show how to reduce the EXACT gate on $n$ bits to an EXACT
-gate on $\log n$ qubits. That is, we wish to implement the following gate
+Now we wish to show how to reduce $\text{EX}^t_n$ gate (on $n$ qubits) to an $\text{EX}^t_{\log n}$
+gate (on $O(\log n)$ qubits). That is, we wish to implement the following gate
 $\text{EX}^t_{n\rightarrow \log_2 n}$ on an $n$-qubit input register $\ket{x}$
 to produce an $m$-qubit output register $\ket{y}$, where
-$m = \lceil \log_2 n + 1 \rceil$. Running $\text{EX}^t{n}$
+$m = \lceil \log_2 n + 1 \rceil$. Running $\text{EX}^t_n$
 on $\ket{x}$ should produce the same output qubit $\ket{z}$ as running
 $\text{EX}^t_{m}$ on $\ket{y}$. This is formally defined below.
 
@@ -146,85 +159,186 @@ $\text{EX}^t_{m}$ on $\ket{y}$. This is formally defined below.
 \text{EX}^t_m \ket{y}\ket{0} & \rightarrow & \ket{y}\ket{z}
 \end{eqnarray}
 
-\begin{theorem}{Constant-depth EX reduction gate}
-The $EX^t_{n\rightarrow \log_2 n}$ gate can be implemented on 2D CCNTCM with
+\begin{theorem}{\textbf{Constant-depth EX reduction gate.}}
+The $EX^t_{n\rightarrow \log_2 n}$ gate can be implemented on \textsf{2D CCNTCM} with
 a depth of $O(1)$, a size and width of $O(n\log n)$, and expected
 $O(n\log n)$ teleported PAR qubits of the form $(\ket{0} + e^{i\phi_k}\ket{1})$
-$(\ket{0} + e^{-i\phi_k\cdot t}\ket{1})$
+and $(\ket{0} + e^{-i\phi_k\cdot t}\ket{1})$
 \label{thm:ex-reduce}
 \end{theorem}
 
 \begin{proof}
 We map the construction from Theorem 19 in \cite{Hoyer2002} onto
-2D CCNTCM.
-This step involves $m \le (n/2)+1$ parallel $\text{BIAS}^{t,\phi_k}_n$ gates from the last section for
+\textsf{2D CCNTCM}.
+This step involves $m = \lceil \log_2 (n+1) \rceil$ parallel $\text{BIAS}^{t,\phi_k}_n$ gates from the last section for
 $1 \le k \le m$, where $\phi_k = \frac{2\pi}{m}k$, each in their own modules.
-This maintains constant circuit depth while 
+This maintains constant circuit depth while only increasing circuit size by
+a $O(\log n)$ factor.
 \end{proof}
 
 %%%%%%%%%%%
-\subsection{EX on Logarithmic Qubits}
-\label{subsec:or-exact}
+\subsection{OR on Logarithmic Qubits}
+\label{subsec:or-log}
 
-We now present an exact EXACT gate.
+We now map an exact OR gate from Takahashi-Tani \cite{Takahashi2011} to \textsf{2D CCNTCM}.
+Unlike the approximate OR gate (and its variation, an approximate EXACT gate) from Hoyer-Spalek \cite{Hoyer2002}, it is both
+complete and sound with probability $1$ and it completes in
+constant depth. However, it has size exponential in its input size $n'$: $O(n'2^{n'})$.
+Therefore, the previous logarithmic reduction in Section \ref{subsec:ex-reduce}
+is necessary to reduce $O(n)$ qubits, the fanin of our majority circuit,
+to $n' = O(\log n)$, to give us a polynomial circuit size of $O(n\log n)$.
+We will denote this gate as $OR^t_{\log n} = OR^t_{n'}$ to emphasize that it
+can only be efficiently used when the number of qubits have been reduced to
+be logarithmic in the input size of the overall problem (in this case, factoring).
+The circuit depth will be constant no matter what, but circuit size is
+only polynomially-bounded if the previous condition is met.
 
+\begin{theorem}{\textbf{Constant-depth exact OR gate on logarithmic qubits.}}
+The $OR^t_{\log n}$ gate can be implemented on \textsf{2D CCNTCM} with a
+circuit depth of $O(1)$, a circuit size and width of $O(n\log n)$, and expected
+$O(n \log n)$ teleported PAR qubits of the form $(\ket{0} + e^{i \frac{2\pi}{O(n)}}\ket{1})$.
+This takes module depth of $O(1)$, module size of $O(n\log n)$, and
+module width $O(n\log n)$.
+\label{thm:or-log}
+\end{theorem}
+
+\begin{proof}
+Following the notation of Lemma 2 from \cite{Takahashi2011}, we have two
+modules:
+
+\begin{enumerate}
+\item One module contains the input qubits $x_i$ and the $R_j$ and $S$
+registers. We will call this the $RS$ module.
+\item One module contains the $T$ register, which we call the $T$ module.
+\end{enumerate}
+
+First, we consider the $RS$ module.
+This has a total of $n'2^{n'} = O(n\log n)$ qubits each.
+We use a sorting network from Rosenbaum \cite{Rosenbaum2012} to
+reorder qubits and allow for nearest-neighbor interactions.
+This requires size and width $O(n^2\log^2 n)$ and depth $O(1)$
+using constant-depth teleportation. We also need to perform $O(n\log n)$
+Hadamards.
+In addition, we need to
+perform the following fanouts (and corresponding unfanout).
+This is illustrated in Figure 3 from
+\cite{Takahashi2011}, which we repeat in Figure \ref{fig:exact-or}.
+
+\begin{itemize}
+\item
+$n' = O(\log n)$ constant-depth fanouts of $2^{n'} = O(n)$
+target qubits from each $x_i$ to each $R_j$ register.
+\item
+$2^{n'} = O(n)$ constant-depth fanouts of $2^{n'} = O(n)$
+target qubits from each $S$ qubit to the $R_j$ registers.
+\end{itemize}
+
+The two kinds of fanouts above take, in total, $O(1)$ depth, $O(n^2)$ size,
+and $O(n^2)$ width. These are subsumed by the resources needed
+for reordering qubits above. The operations in the $RS$ module
+do not require any PAR ancillae qubits to be teleported in.
+
+Second, we consider the $T$ module, into which the $O(\log n)$ input qubits
+$x_i$ and the $O(n)$ qubits from $S$ are teleported from the $RS$ module.
+There is a single
+Hadamard gate on the output qubit and a fanout
+(and corresponding unfanout) of $O(2^{n'}) = O(n)$ qubits,
+which takes a depth of $O(1)$ and a size and width of $O(n)$.
+Finally, we are left with $O(n)$ controlled-$R_z$ rotations of
+angle $\pi / 2^{n-1}$ which can be done in expected depth of $O(1)$,
+ size and width of $O(n)$, and $O(n)$ teleported PAR qubits
+ of the form $(\ket{0} + e^{i\phi_k}\ket{1})$.
+
+ This gives us the required resources stated in the theorem.
+\end{proof}
+
+\begin{figure}[hbt!]
+\caption{A circuit for exact $\text{OR}_3$ from Takahashi-Tani \cite{Takahashi2011}.}
+\label{fig:exact-or}
+\end{figure}
 
 %%%%%%%%%%%
-\subsection{A Majority Gate in 2D CCNTCM in Sub-logarithmic Depth}
+\subsection{A Majority Gate in \textsf{2D CCNTCM} in Sublogarithmic Depth}
+\label{subsec:maj-gate}
 
-To map a majority gate to 2D CCNTCM, we use the $\textsf{AC}_f^0$ 
-constructions from Takahashi-Tani \cite{Takahashi2011},
-based on the results of
-Hoyer-Spalek \cite{Hoyer2002}.
-We combine this with our architectural techniques
-from the previous chapter, including the 2D CCNTCM circuits
-for constant-depth teleportation, fanout, and unfanout. 
+Now we have all the building blocks needed to construct a
+$\text{MAJ}_n$ gate in sublogarithmic depth. Using the constant-depth
+majority circuits of $O(n)$ fanin from \cite{Yeh1996} mentioned at
+the beginning of this section, we will then have a sublogarithmic
+quantum circuit for modular exponetiation, and therefore for
+Shor's factoring algorithm.
 
-We describe the construction for $\text{MAJ}_{n}$ below, given the
+\begin{theorem}{\textbf{Constant-depth quantum $\text{MAJ}_n$ gate on \textsf{2D CCNTCM}.}}
+A quantum $\text{MAJ}_n$ gate can be implemented on \textsf{2D CCNTCM} with
+circuit depth $O(1)$, circuit size and width $O(n^2\log^2 n)$,
+module depth $O(1)$, and module size and width $O(n \log n)$.
+\label{thm:maj-gate}
+\end{theorem}
+
+\begin{proof}
+We combine the gates 
+Below we give the construction for $\text{MAJ}_{n}(x)$ on the
 $n$-qubit input $x$.
+
+
 
 \begin{enumerate}
 
 \item
-We compute in parallel the gates $\text{EX}^i_{n}$ for
+We compute in parallel the gates $\text{EX}^i_{n}(x)$ for
 $0 \le i \le \lceil n/2 \rceil$ to determine if the quantum
 threshold for majority is reached. There are at most $(n/2) + 1$
-such gates.
+such gates. To do this, we need to use Theorem \ref{thm:or-log}.
+Each gate $\text{EX}^i_{n}$ requires the following steps:
 
 \begin{enumerate}
 \item 
 Compute the constant-depth reduction from $\text{EX}^t_{n}$ to
 $\text{EX}^t_{m}$ where $m = \lceil \log_2(n+1) \rceil$, using
-the reduction from $OR_n$ to $OR_{\log_n}$ \cite{Hoyer2002}.
+the reduction from $\text{OR}_n$ to $\text{OR}_{\log_n}$ \cite{Hoyer2002}.
 For $1 \le k \le m$, do the following:
 
 \begin{enumerate}
 \item
-Compute the qubit $\mu^{|x|-t}_{\phi_k}$, which is the rotation by Hamming 
-weight of $x$, with a threshold $t$ subtracted, by the angle $\phi_k = 2\pi / 2^k$. Note that the precision
-of this angle is $O(\log \log n)$. This can be done by a 2D CCNTCM circuit
-with $O(1)$-depth, $O(n^2)$-size, and $O(n^2)$-width, as described in
-Section \ref{subsec:or-reduce}.
+Compute the qubit $\ket{\mu^{|x|-t}_{\phi_k}}$, which is the rotation by Hamming 
+weight of $x$, with a threshold $t$ subtracted, by the angle $\phi_k = 2\pi / 2^k$. Note that the
+required precision
+of this angle is $O(\log \log n)$. This uses the result of Theorem \ref{thm:bias}.
+This can be done by a \textsf{2D CCNTCM} circuit
+with $O(1)$-depth, $O(n^2)$-size, and $O(n^2)$-width.
 \end{enumerate}
 
-At the end of this step, we have $O(\log_2 n)$ bits $\ket{y_k}$ which 
-represent the degree to which the Hamming weight of $x$ is close to the
-threshold $t = \lceil n/2 \rceil$.
+At the end of this step, we have $m = O(\log_2 n)$ bits $\ket{y_k}$. If
+$|x| \ge t$ then the qubits $\ket{y_k}$ will be orthogonal
+to the state $\ket{0^m}$.
 
 \item
-Apply the circuit for exact $\text{OR}_{\log n}$ from Lemma 2 of
+Apply the \textsf{2D CCNTCM} circuit for exact $\text{OR}_{\log n}$ from
+Theorem \ref{thm:or-log} of
 \cite{Takahashi2011} to the output of the previous step. This can
-be done with a 2D CCNTCM circuit with $O(1)$-depth, $O(n \log n)$-size,
+be done with a \textsf{2D CCNTCM} circuit with $O(1)$-depth, $O(n \log n)$-size,
 and $O()$ width.
 
 \end{enumerate}
 
+At the end of this step, we have used expected circuit depth of
+$O(1)$, expected circuit size and width of $O(n^3 \log^2 n)$,
+expected module depth of $O(1)$, and expected module size and
+width of $O(n \log n)$.
+
 \item
 Apply the gate $\text{PA}_{\lceil n/2 \rceil}$ to the result of
-the previous step. This can be done by a 2D CCNTCM circuit of
+the previous step. This can be done by a \textsf{2D CCNTCM} circuit of
 $O(1)$-depth, $O(n)$-size, and $O(n)$-width using constant-depth
 fanout, as described in Section \ref{sec:cdc}, and conjugated by
-Hadamards on every qubit as described in \cite{Moore1998}.
+Hadamards on every qubit as described in \cite{Moore1998}. See
+the equivalence of these two steps in Figure \ref{fig:pa-fanout}.
+
+\begin{figure}[htb!]
+% TODO insert Figure 1 from Hoyer-Spalek
+\caption{The equivalence of $\text{PA}_n$ and $\text{FANOUT}_n$ conjugated by Hadamards.}
+\label{fig:pa-fanout}
+\end{figure}
 
 \item
 Apply a NOT to the output of the previous step. This final
@@ -232,4 +346,27 @@ output is the output of the quantum majority gate $MAJ_{n}$.
 
 \end{enumerate}
 
+The final resources for a quantum $\text{MAJ}_n$ gate is shown in
+Table \ref{tab:maj-resources}.
 
+\begin{table}[htb!]
+\begin{tabular}{c|c|}
+\hline
+$\langle D \rangle$ & $O(1)$ \\
+\hline
+$\langle S \rangle$ & $O(n^3\log^2 n)$ \\
+\hline
+$\langle W \rangle$ & $O(n^3 \log^2 n)$ \\
+\hline
+$\langle \overline{D} \rangle$ & $O(1)$ \\
+\hline
+$\langle \overline{S} \rangle$ & $O(n\log n)$ \\
+\hline
+$\langle \overline{W} \rangle$ & $O(n\log n)$ \\
+\hline
+\end{tabular}
+\caption{Expected circuit resources for a quantum $\text{MAJ}_n$ gate.}
+\label{tab:maj-resources}
+\end{table}
+
+\end{proof}

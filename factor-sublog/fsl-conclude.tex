@@ -1,4 +1,53 @@
 \section{Conclusion}
 \label{sec:fsl-conclude}
 
-In conclusion, we have concluded.
+In this section, we have contributed a nearest-neighbor factoring architecture with
+sub-logarithmic depth based on majority circuits. To do so, we've combined results from classical threshold
+circuit complexity and our low-depth quantum architectural techniques from
+Chapter $\ref{chap:factor-polylog}$.
+We dsicuss the effect of quantum compiling single-qubit rotations to a fixed, finite basis.
+To that end, we've given a concrete circuit for
+a quantum majority gate on \textsf{2D CCNTCM} to fit into a classical, constant-depth majority circuit
+for factoring. Table \ref{tab:sublog-resources} summarizes the final $\textsf{2D CCNTCM}$ resources for our sublogarithmic
+factoring architecture, combining Theorems \ref{thm:mult-prod}, \ref{thm:mod-reduce}, and \ref{thm:maj-gate}.
+
+\begin{table}[htb!]
+\begin{tabular}{c|c|}
+\hline
+$\langle D \rangle$ & $O(\frac{1}{\epsilon})$ \\
+\hline
+$\langle S \rangle$ & $O(\frac{1}{\epsilon}n^{6 + 2\epsilon}\log^2 n)$ \\
+\hline
+$\langle W \rangle$ & $O(\frac{1}{\epsilon}n^{6 + 2\epsilon}\log^2 n)$ \\
+\hline
+$\langle \overline{D} \rangle$ & $O(\frac{1}{\epsilon})$ \\
+\hline
+$\langle \overline{S} \rangle$ & $O(\frac{1}{\epsilon}n^{4+2\epsilon}\log n)$ \\
+\hline
+$\langle \overline{W} \rangle$ & $O(\frac{1}{\epsilon}n^{4+2\epsilon}\log n)$ \\
+\hline
+\end{tabular}
+\caption{Expected circuit resources for a sublogarithmic factoring architecture with time-space tradeoff $\epsilon = (0,1]$.}
+\label{tab:sublog-resources}
+\end{table}
+
+Now we conclude with some interesting open questions.
+Although we are able to compile arbitrary rotations down to \textsf{CCNTC} in $O((\log \log n)^2)$-depth
+for the resolution needed for factoring, can we reduce this to $O(1)$ depth if we relax our
+requirements? For example, if we have a finite basis which is fault-tolerant, but which is not fixed;
+it may vary based on the input size. quantum compiling makes truly constant-depth factoring architecture a challenging
+open problem. Perhaps we will solve this in Chapter \ref{chap:qcompile}, when we discuss quantum compiling on
+nearest-neighbor architectures.
+Another open question is: is our factoring architectures now optimal?
+What is the lower-bound for factoring on \textsf{CCNTC}, versus the $\Theta(1)$ bound for factoring on \textsf{CCAC}?
+Can we determine the optimality of our factoring architectures using some other time-space product?
+Perhaps we will this in Chapter \ref{chap:qcoherence}, when we discuss quantum circuit coherence. 
+
+%We've also discussed an alternative
+%approach to sub-logarithmic factor called iterated carry-save, which could
+%potentially beat our majority circuit construction.
+
+
+% In addition,
+%Quantum compiling itself is a procedure which can be mapped to a quantum
+%architecture, which is the topic of the next chapter.

@@ -1,4 +1,4 @@
-\section{Circuit Complexity Classes}
+\section{Circuit Complexity Background}
 \label{sec:fsl-circuits}
 
 A circuit can be thought of as a directed acyclic graph in which the nodes are
@@ -9,26 +9,30 @@ gate. This graph is not equivalent to, but is related to, the graph of an archit
 as described in Chapter \ref{chap:factor-polylog}. The edges of a circuit graph can
 be mapped to the nodes (qubits) of an architectural graph; the nodes of the
 circuit graph, for 2D CCNTC, can be mapped to single nodes or connected pairs of nodes
-in the architectural graph.
+in the architectural graph. The notion of a gate and a circuit are not mutually
+exclusive: both implement a boolean function, but a gate is usually treated as
+a primitive, subcircuit element for the purpose of counting resources in a larger circuit.
 
 \begin{figure}
 \caption{An example of a classical circuit implementing a Boolean function.}
 \end{figure}
 
 We can also define special nodes which are not gates, but rather
-are placeholder ``sources'' which provide the inputs to the circuit and 
-``sinks'' which provide the outputs to the circuit. The in-degree of a 
+are placeholder ``sources'' which provide the inputs to the circuit (they only
+have out-degree) and 
+``sinks'' which consume the outputs to the circuit (they only have in-degree).
+The in-degree of a 
 node is also known as its \emph{fanin} and the out-degree of a node is
 also known as its \emph{fanout}.
-Classical circuits implement Boolean functions, which take in $n$ input
+Classical circuits implement boolean functions, which take in $n$ input
 bits to one output bit.
 
 \begin{equation}
-f:{0,1}^n \rightarrow {0,1}
+f:\{0,1\}^n \rightarrow \{0,1\}
 \end{equation}
 
-We denote a gate by its fanin as a subscript and an optional
-second parameter as a superscript.
+We denote a gate by its fanin as a subscript and other optional
+parameters as superscripts ($n$ and $k$, respectively, in the equation below).
 
 \begin{equation}
 \text{GATE}_n^k
@@ -76,10 +80,12 @@ followed by $\text{PA}_{n-t}$ on the outputs.
 We have introduced a menagerie of interesting gates,
 all of which are universal with the $NOT$ gate. However depending
 on what gates are in our universal set, our circuits may have
-different depth and size. Therefore, we can define complexity classes
+different depth and size. Therefore, we define complexity classes
 of circuits based on the allowed gate set and study more general
-relationships among these classes beyond the special cases mentioned
-as the end of the last section. This will let us formalize the notion of
+relationships among these classes. As is usual in the literature,
+we will interchangeably use ``circuits'' to mean uniform
+circuit families parameterized by their input size $n$.
+ This will let us formalize the notion of
 which gates are more powerful than other gates and which are equivalent.
  
 In classical circuits, we take unbounded fanout
@@ -88,77 +94,152 @@ in the literature of classical circuits. We will list them in order
 of the size of their universal set, where each subsequent class adds
 more gates.
 
-\begin{definition}
-\item[\textsf{NC}]
+\begin{description}
+\item[\textsf{NC}:]
 circuits consisting of $\text{NOT}_1$ and $\text{AND}_2$ and
 $\text{OR}_2$ gates.
-\item[\textsf{AC}]
-NC circuits augmented with $\text{AND}_n$ and $\text{OR}_n$ gates,
+\item[\textsf{AC}:]
+\textsf{NC} circuits augmented with $\text{AND}_n$ and $\text{OR}_n$ gates,
 for $n \ge 2$.
-\item[\textsf{TC}]
-AC circuits augmented with $\text{TH}_n^t$ gates, for $n \ge 2$ and
+\item[\textsf{AC[q]}:] \textsf{AC} circuits augmented with $\text{MOD}[q]_n$ gates.
+\item[\textsf{ACC}:] the union of $\textsf{AC}[q]$ for all positive integers $q > 2$.
+\item[\textsf{TC}:]
+\textsf{AC} circuits augmented with $\text{TH}_n^t$ gates, for $n \ge 2$ and
 $0 \le t \le n$.
-\end{definition}
-
-A $\text{TH}^t_n$ gate is a threshold gate that is $1$ if the number
-of input bits in greater than or equal to the threshold $t$ and $0$
-otherwise. This is a special case of the linear threshold element (LTE)
-in Section \ref{sec:threshold}, but we can simulate any
-LTE with a circuit of $\text{TH}^t_n$ gates in constant depth
-and polynomial size (citation needed).
-
-\begin{equation}
-% TODO insert block piecewise bracket
-\end{equation}
+\end{description}
 
 We are often interested in the computing power of the above
 circuit classes restricted in some way, usually shallow depth.
 We denote by a superscript $k$ a complexity class of
-functions implementable by circuits of depth $k$.
+functions implementable by circuits of depth bounded by $O(\log^k n)$.
 
 For these classical circuit classes, it is known that containment
-is proper.
+is proper between $\textsf{NC}^0$, $\textsf{AC}^0$, and $\textsf{TC}$.
 
 \begin{equation}
 \textsf{NC}^0 \subsetneq \textsf{AC}^0 \subsetneq \textsf{TC}^0
 \end{equation}
 
+For example, the function $\text{AND}_n$ and $\text{OR}_n$ is known
+\emph{not} to be in $\textsf{NC}^0$ but is in $\textsf{AC}^0$ by
+definition. Likewise, the gate $\text{PA}_n$ is
+known \emph{not} to be in $\text{AC}^0$ but is in 
+$\text{TC}^0$ \cite{Bruck1990}.
+
+It is also known that $\textsf{AC}^0[q] \ne \textsf{AC}^0[p]$
+for $p$ and $q$ being powers of distinct primes \cite{Smolensky1987}.
+
+\subsection{Linear Threshold Elements}
+
+For historical reasons, we will mention here a more general
+version of $\text{TH}^t_n$ which was studied extensively in
+the 1990s. This threshold gate, 
+called a \emph{linear threshold element} (LTE), is a boolean
+function defined as
+the sign of a weighted sum of its input bits. There is a weight
+not associated with any input, called a bias.
+
+\begin{equation}
+f:{0,1}^n \rightarrow {0,1} = \sgn\left( w_0 + \sum_{i=1}^n w_i x_i \right)
+\end{equation}
+
+The LTE was biologically inspired by neurons in the human brain and
+subsequently the neural network model of computation. Computational
+neurons are simple elements which can be combined in highly parallel,
+shallow depth (less than $6$) networks to compute seemingly complicated
+arithmetic functions such as (multiple) addition, (multiple) multiplication,
+division, and comparison. These results are summarized in Siu et al. \cite{Siu1993}
+based on techniques by Beame et al. \cite{Beame1986}. LTE's are arguably the
+predecessors of logic elements (LE's) in modern day field-programmable
+gate-arrays (FPGA's).
+
+However, the most general kind of LTE can have real-valued weights,
+which can be difficult to implement fault-tolerantly on digital logic.
+A single LTE's power can be changed dramatically by restricting
+its weights, but this power goes away when we consider \emph{threshold circuits}
+of LTEs restricted to constant depth.
+Through a succession of results, it was shown that restricting the weights
+to be rational numbers bounded by a polynomial in $n$ \cite{Siu1991a}
+did not decrease the power of such constant-depth threshold circuits.
+That is, any threshold circuit with unrestricted-weight LTE's could be simulated
+with a constant-depth overhead with restricted-weight LTE's.
+
+Remarkably, this constant-depth simulability applies even when restricting
+LTE's to unit weight (weights of only $+1$) and integer bias $0 \le t \le n$,
+which is equivalent to the definition of $\text{TH}_n$ given above. It
+even applies when we restrict the threshold to be $\lceil n/2 \rceil$, which
+is the definition of $\text{MAJ}_n$ given above \cite{Goldmann1994}.
+In fact, where many arithmetic functions above have been shown to
+be implementable in majority circuits \cite{Reif1992,Yeh1996}.
+Therefore, without loss of generality, we can concentrate on
+majority circuits for the remainder of this paper.
+
 \subsection{Quantum Gates}
+
+We can define analogous quantum circuit complexity classes by
+considering circuits over (reversible) quantum gates. From
+now on, when we refer to a gate $\text{GATE}^k_n$, we mean
+its quantum version which behaves as follows on an $n$-qubit
+``input'' register $\ket{x}$ and a single-qubit ``output''
+register $\ket{y}$. We denote the single-bit output of the
+classical function $\text{GATE}^k_n(x)$ as $g(x)$.
+
+\begin{equation}
+\text{GATE}^k_n\ket{x}\ket{y} \rightarrow \ket{x}\ket{y \oplus g(x)}
+\end{equation}
 
 Unbounded fanout is taken for granted in classical circuit classes
 because it is physically realistic to implement using electrical
-devices. However, for quantum circuits, we must make use of the
-unbounded quantum fanout, $\text{FANOUT}_n$, to copy one output
-qubit of each gate.
-We can define quantum analogues of the above circuit complexity 
-classes by defining quantum analogues for each of the gates which
-is reversible.
-$NOT_1$ is already reversible, and we can use it as is (the Pauli $X$ gate).
-To replace $AND_2$ we can use the reversible $3$-qubit Toffoli gate,
-the so-called controlled-controlled-NOT.
-To replace $OR_2$ we can use the circuit given in
-Figure \ref{fig:or2}
+devices. However, for quantum circuits, we must make use of
+unbounded quantum fanout (described in detail in Chapter \ref{chap:factor-polylog})
+to create entangled copies of the output qubit for every subsequent
+gate which consumes it as an input. We can even define the
+gate $\text{FANOUT}_n$ on the source qubit $x$ onto target qubits
+$y_1, \ldots, y_n$.
 
-\begin{figure}
-% TODO 
-\caption{A quantum $\text{OR}_2$ gate (citation needed).}
-\label{fig:or2}
-\end{figure}
+\begin{equation}
+\text{FANOUT}_n\ket{x}\ket{y_1}\ldots\ket{y_n} \rightarrow \ket{x}\ket{y_1 \oplus x}\ldots\ket{y_n \oplus x}
+\end{equation}
 
-In fact this is special case of a much more powerful construction
-that will let us define a quantum $OR_n$ gate on unbounded inputs.
-We will use this construction in Section \ref{sec:fsl-majority}
-to build a quantum majority gate.
+There is not a clear, unique quantum version of the classical
+circuit classes above. However, the following quantum circuit
+complexity classes, taken from \cite{Hoyer2002}
+begin with the simplest universal set and augment it with
+quantum versions of the corresponding classical gates. Each
+class has a subscript $f$ to indicate the inclusion of
+$\text{FANOUT}_n$.
 
-\begin{definition}
-\item[$\textsf{QNC}^0_f$]
+\begin{description}
+\item[$\textsf{QNC}^0_f$:]
 constant-depth quantum circuits consisting of CNOT and single-qubit gates.
-\item[$\textsf{QAC}^0_f$]
+\item[$\textsf{QAC}^0_f$:]
 constant-depth $\textsf{QNC}^0_f$ circuits augmented with quantum $\text{AND}_n$ and $\text{OR}_n$ gates,
 for $n \ge 2$.
-\item[$\textsf{QTC}^0_f$]
+\item[$\textsf{QAC[q]}^0_f$:]
+constant-depth $\textsf{QAC}^0_f$ circuits augmented with quantum $\text{MOD}[q]_n$ gates,
+for $n \ge 2$.
+\item[$\textsf{QACC}^0_f$:] the union of all $\textsf{QAC[q]}^0_f$ for positive integers $q$.
+\item[$\textsf{QTC}^0_f$:]
 constant-depth $\textsf{QAC}^0_f$ circuits augmented with $\text{TH}_n^t$ gates, for $n \ge 2$ and
 $0 \le t \le n$.
-\end{definition}
+\end{description}
 
-\subsection{}
+It is an important result of Takahashi-Tani \cite{Takahashi2011} that the presence of
+$\text{FANOUT}_n$ equalizes the three classes below.
+
+\begin{equation}
+\textsf{QNC}^0_f \subsetneq \textsf{QAC}^0_f \subsetneq \textsf{QTC}^0_f
+\end{equation}
+
+Moore shows that parity is equivalent to fanout in a quantum setting \cite{Moore1999}.
+
+\begin{equation}
+\textsf{QAC}^0_f = \textsf{QAC}[2]^0_f
+\end{equation}
+
+Furthermore, it is has been discovered by Green et al. that including any $\text{MOD}[q]^0_f$
+leads to the same complexity class in constant depth.
+
+\begin{equation}
+\textsf{QACC}^0_f = \textsf{QAC}[q]^0_f \forall q \ge 2
+\end{equation}

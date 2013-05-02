@@ -1,7 +1,7 @@
 \section{Controlled Rotations for Factoring}
-\label{sec:factor-crz}
+\label{sec:fsl-qcompile}
 
-In Section \ref{sec:related}, we stated that we wished to avoid
+In Section \ref{sec:fpl-related} of Chapter \ref{chap:factor-polylog}, we stated that we wished to avoid
 factoring implementations that used a QFT due to the fine
 single-qubit rotations involved. Due to the requirements of
 fault-tolerance on a particular physical implementation,
@@ -64,7 +64,7 @@ for the size.
  }
  \end{displaymath}
 \caption{One round of programmable ancillae rotation (PAR) to probabilistically achieve arbitrary single-qubit rotations \cite{Jones2012}}
-\label{fig:crz}
+\label{fig:par}
 \end{figure}
 
 \begin{figure}[tb!]
@@ -96,13 +96,13 @@ for the size.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Quantum Compiler Module}
 
-We can augment any 2D CCNTCM circuit $\mathcal{C}$ with a set of modules that run a
+We can augment any \textsf{2D CCNTCM} circuit $\mathcal{C}$ with a set of modules that run a
 separate quantum compiler procedure. This quantum compiler is a source
 of ancillary qubits of the form 
 $\ket{0} + e^{i\phi}\ket{1}$. The angles $\phi$ are determined by
 the original $\mathcal{C}$ and are known in advance (classically-precomputed,
 or non-adaptive). In the case of majority gates for factoring,
-as described in Section \ref{sec:factor-majority}, the angles are of the
+as described in Section \ref{sec:fsl-majority}, the angles are of the
 form $\phi_k = \frac{2\pi}{2^k}$ where $k \le (\log_2 n' + 2)$ for a majority
 gate with fanin $n'$. Since this represents the most fine-grained resolution of
 rotation, our allowable error is $2^{-(k+1)} = 2^{-(\log_2 n' + 3)}$.
