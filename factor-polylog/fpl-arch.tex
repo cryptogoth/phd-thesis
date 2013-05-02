@@ -24,7 +24,7 @@ spatial layout of qubits (as a graph of vertices) and allowed interactions (edge
 following the constraints of a given model. In this section, we describe
 several models which try to incorporate resources of physical interest from
 experimental work. We also introduce a new model,
-\textsc{2D CCNTCM}, which we will use to analyze our current circuit.
+\textsc{\textsf{2D CCNTCM}}, which we will use to analyze our current circuit.
 
 The most general model is called Abstract Concurrent (\textsc{AC})
 and allows arbitrary, long-range interactions between any qubits and concurrent
@@ -168,7 +168,7 @@ The third extension to our model, and the most significant, is to consider
 multiple disconnected planar graphs, each of which is a 2D CCNTC
 architecture. This is described in more detail in the next section.
 
-\subsection{\textsc{2D CCNTCM}: Two-Dimensional Nearest-Neighbor Two-Qubit Concurrent Gates with Classical Controller and Modules}
+\subsection{\textsc{\textsf{2D CCNTCM}}: Two-Dimensional Nearest-Neighbor Two-Qubit Concurrent Gates with Classical Controller and Modules}
 \label{subsec:2dccntcm}
 
 A single, contiguous
@@ -194,10 +194,10 @@ A single module can be part of multiple teleportation operations in a single tim
 We justify this assumption in that it is
 possible to establish entanglement between multiple
 quantum computers
-in parallel. We call this new model \textsc{2D CCNTCM},
+in parallel. We call this new model \textsc{\textsf{2D CCNTCM}},
 and we argue that is captures the essential aspects of 2D architectures
 without being overly sensitive to the exact geometry of the lattices involved.
-An graphic depiction of three modules in \textsc{2D CCNTCM} is shown in
+An graphic depiction of three modules in \textsc{\textsf{2D CCNTCM}} is shown in
 Figure \ref{fig:modules}. Each module contains within it a
 \textsc{2D CCNTC} lattice. We can equivalently consider the omnipresent,
 single
@@ -209,12 +209,12 @@ classically and share a clock.
 \begin{center}
 \includegraphics[width=4in]{factor-polylog/figures/modules.pdf}
 \end{center}
-\caption{Three modules in the \textsc{2D CCNTCM} model}
+\caption{Three modules in the \textsc{\textsf{2D CCNTCM}} model}
 \label{fig:modules}
 \end{figure}
 
 \begin{definition}
-A \textsc{2D CCNTCM} architecture consists of
+A \textsc{\textsf{2D CCNTCM}} architecture consists of
 
 \begin{itemize}
 \item a quantum computer $\overline{QC}$ which is represented by a planar graph $(\overline{V},\overline{E})$. A
