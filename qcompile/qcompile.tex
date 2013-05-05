@@ -1,0 +1,73 @@
+\chapter{Quantum Compiling}
+\label{chap:qcompile}
+
+Quantum compiling is the process of approximating arbitrary,
+$n$-qubit unitary operations using a universal set which
+is usually fixed, finite, and contains only single-qubit
+and two-qubit gates. Like quantum architecture, quantum
+compiling plays an intermediate role in between quantum
+algorithms, which determine which gates to apply in a circuit,
+and quantum error correction, which determines the
+fault-tolerant gate set.
+Quantum compiling helps mitigate one source of error,
+the difference $\epsilon$ between a desired gate and its
+finite approximation,
+and consumes its own circuit resources, usually measured in
+$(1 / \epsilon)$.
+Therefore, it is important to study efficient quantum 
+compiling so that we don't lose any quantum algorithmic speedups.
+Most interestingly to this dissertation, quantum compiling itself
+is an algorithm and can be mapped to a low-depth, nearest-neighbor
+architecture. That is the subject of this chapter.
+
+In Section \ref{sec:qcompile-bg}, we provide preliminary definitions
+and key results in quantum compiling. We discuss both upper
+and lower bound results, and the primary division of labor in
+the literate: compiling single-qubit gates, and reducing
+multi-qubit gates to single-qubit ones. We discuss the
+two problems of approximating quantum gates and exact synthesis.
+We also discuss the main techniques used in recent works
+to improve the exponent in the SK works to meet the lower
+bound.
+
+In Section \ref{sec:ksv-resource}, we provide a pedagogical
+review of the KSV algorithm, compared to the conventional SK
+algorithm. We also calculate resources needed to implement
+KSV on 2D CCNTCM.
+
+In Section \ref{sec:ksv-error}, we discuss one particular
+empirical optimization for quantum circuits, that of measuring
+early. In the case of KSV quantum compiling, some
+processing may be offloaded to a classical computer if one does
+not perform coherent measurements. This trades off quantum
+computer resources of circuit depth and size for width.
+
+In Section \ref{sec:qcompile-misc}, we contribute several
+results related to single-qubit quantum compiling. These
+procedures are probabilistic and have some limitations.
+One is not universal, the other does not compile to a
+fixed basis. However, both may be useful as parts of
+larger quantum compiling approaches in the future.
+
+Finally, in Section \ref{sec:qcompile-conclude}, we present the results of
+our comparison and conclude with interesting open problems and
+future directions for results in this field.
+
+We discuss the seminal work
+in this field by Solovay-Kitaev \cite{Solovay1995} and a
+parallelized version which trades circuit depth for circuit width
+by Kitaev-Shen-Vyalyi \cite{Kitaev2002}. We discuss two primary
+ways to divide up the problem of quantum compiling: 
+compiling single-qubit gates, reducing multi-qubit gates to
+single-qubit ones. We also provide a pedagogical review of
+startling recent advances in quantum compiling
+
+In the last year, many recent advances
+
+\input{qcompile/qcompile-bg.tex}
+
+\input{qcompile/qcompile-ksv-resources.tex}
+
+\input{qcompile/qcompile-ksv-error.tex}
+
+\input{qcompile/qcompile-conclude.tex}
