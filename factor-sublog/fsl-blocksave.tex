@@ -7,7 +7,9 @@ the carry-save technique in Section \ref{sec:csa}. We will call this
 \emph{iterated carry-save} to distinguish it from the block-save
 technique, which is another generalization using classical threshold
 circuits \cite{Siu1993}. However, this technique is currently incomplete
-in that it depends on a currently unresolve conjecture. We present it
+in that it depends on a currently unresolve conjecture. It repeatedly
+re-encodes the sum of $t\times O(n)$-bit numbers into the
+sum of $O(\log t) \times O(n)$-bit numbers We present it
 here in the hopes that the reader can solve it.
 
 In Section \ref{subsec:fsl-itlog}, we define the iterated logarithm
@@ -45,7 +47,10 @@ had converted the sum of $t'\times n$-bit numbers to $2 \times n$-bit numbers.
 While this functions grows
 slowly (it only has meaningful values less than
 $6$ given the number of particles in the universe), it is not
-constant. Furthermore, its output is a non-unique carry-save encoding (CSE)
+constant.
+
+\subsection{Converting Back to a Conventional Number}
+Furthermore, the output is a non-unique carry-save encoding (CSE)
 and must be combined into a single unique conventional number.
 This can be done by a classical threshold circuit, using a quantum $\text{MAJ}_n$
 gate from Section \ref{subsec:fsl-majority},  in
