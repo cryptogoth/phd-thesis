@@ -1,0 +1,15 @@
+\section{Quantum Compiler Comparison}
+\label{sec:qcompile-compare}
+
+\begin{table}[hbt!]
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|c}
+\hline
+Algorithm & A/E & P/D & Gen? & $R$ & $D'$ & $S'$ & $W'$ & $\langle T_c \rangle$ & $\langle D' \rangle$ \\
+\hline
+Solovay-Kitaev (Dawson-Nielsen) & A & Y & $O(\log^{2.71}(1/\epsilon))$ & $O(\log^{3.97}(1/\epsilon))$ & 0 & & \\
+Solovay-Kitaev (KSV) & A & Y & $O(\log^{3+\nu}(1/\epsilon))$ & $O(\log^{3+\nu}(1/\epsilon))$ & 0 & & \\
+Phase Kickback (KSV) & A & N &  & & & & \\
+\end{tabular}
+\caption{A comparison of single-qubit quantum compilers.}
+\label{tab:qcompile-compare}
+\end{table}
