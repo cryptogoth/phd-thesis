@@ -35,6 +35,14 @@ review of the KSV algorithm, compared to the conventional SK
 algorithm. We also calculate resources needed to implement
 KSV on 2D CCNTCM.
 
+In Section \ref{sec:qcompile-compare}, we provide an
+at-a-glance comparison
+of all known quantum compiling algorithms to date.
+We also evaluate the suitability of each algorithm
+for common tasks as well as summarize current trends
+in quantum compiling.
+
+
 In Section \ref{sec:ksv-error}, we discuss one particular
 empirical optimization for quantum circuits, that of measuring
 early. In the case of KSV quantum compiling, some
@@ -53,21 +61,24 @@ Finally, in Section \ref{sec:qcompile-conclude}, we present the results of
 our comparison and conclude with interesting open problems and
 future directions for results in this field.
 
-We discuss the seminal work
-in this field by Solovay-Kitaev \cite{Solovay1995} and a
-parallelized version which trades circuit depth for circuit width
-by Kitaev-Shen-Vyalyi \cite{Kitaev2002}. We discuss two primary
-ways to divide up the problem of quantum compiling: 
-compiling single-qubit gates, reducing multi-qubit gates to
-single-qubit ones. We also provide a pedagogical review of
-startling recent advances in quantum compiling
+%We discuss the seminal work
+%in this field by Solovay-Kitaev \cite{Solovay1995} and a
+%parallelized version which trades circuit depth for circuit width
+%by Kitaev-Shen-Vyalyi \cite{Kitaev2002}. We discuss two primary
+%ways to divide up the problem of quantum compiling: 
+%compiling single-qubit gates, reducing multi-qubit gates to
+%single-qubit ones. We also provide a pedagogical review of
+%startling recent advances in quantum compiling
 
-In the last year, many recent advances
+%In the last year, many recent advances
 
 \input{qcompile/qcompile-bg.tex}
 
-\input{qcompile/qcompile-ksv-resources.tex}
+%\input{qcompile/qcompile-ksv-resources.tex}
 
-\input{qcompile/qcompile-ksv-error.tex}
+%\input{qcompile/qcompile-ksv-error.tex}
 
-\input{qcompile/qcompile-conclude.tex}
+\input{qcompile/qcompile-compare.tex}
+
+
+%\input{qcompile/qcompile-conclude.tex}
