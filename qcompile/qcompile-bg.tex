@@ -1,2 +1,251 @@
-\section{Background for Quantum Compiling}
+\section{Quantum Compiling Background}
 \label{sec:qcompile-bg}
+
+Quantum compiling, like
+classical compiling, translates arbitrarily complex high-level ``software''
+operations to physically simple,
+universal, machine-dependent ``assembly'' instructions.
+Equivalently, it transforms quantum circuits from those that are
+convenient to specify in theoretical algorithms 
+
+\begin{figure}
+\begin{center}
+\begin{displaymath}
+\begin{array}{ccc}
+
+%%%%%%%%%%%%%%%%
+% Source circuit
+%\underbrace{
+\begin{array}{c}
+S = 2 \\
+\Qcircuit @C=0.5em @R=.5em { 
+	& \multigate{4}{U_1} & \qw & \multigate{4}{U_2} & \qw \\ 
+	& \ghost{U_1}        & \qw & \ghost{U_2}        & \qw \\
+	& \ghost{U_1}        & \qw & \ghost{U_2}        & \qw \\
+	& \ghost{U_1}        & \qw & \ghost{U_2}        & \qw \\
+	& \ghost{U_1}        & \qw & \ghost{U_2}        & \qw 
+	\gategroup{1}{2}{5}{4}{.7em}{--}
+}\\
+\xymatrix {
+  & D=2 \ar[l] \ar[r] & \\
+ }
+\end{array}
+%}_{C}
+
+%& 
+%\begin{array}{c}
+%\textsc{Quantum Compiler} \\
+\rightarrow
+%\end{array}
+%&
+
+%%%%%%%%%%%%%%%%
+% Target circuit
+%\underbrace{
+\begin{array}{c}
+S' = 15 \\
+\Qcircuit @C=0.5em @R=.5em { 
+	& \gate{H} & \qw & \ctrl{1} & \gate{H} & \qw & \qw      & \ctrl{1} & \qw \\ 
+	& \gate{H} & \qw & \targfix & \ctrl{2} & \qw & \gate{K} & \targfix & \qw \\
+	& \gate{H} & \qw & \gate{K} & \qw      & \qw & \gate{H} & \qw      & \qw \\
+	& \gate{H} & \qw & \ctrl{1} & \targfix & \qw & \gate{H} & \qw      & \qw \\
+	& \gate{H} & \qw & \targfix & \gate{H} & \qw & \qw      & \qw      & \qw
+	\gategroup{1}{2}{5}{9}{.7em}{--}
+}\\
+\xymatrix {
+  & & D'=5 \ar[ll] \ar[rr] & & \\
+ }
+\end{array}
+%}_{C}
+
+\end{array}
+\end{displaymath}
+
+\caption{A quantum compiler in action}
+\label{fig:qcompile}
+\end{center}
+\end{figure}
+
+Quantum compilers take a
+generic unitary matrix $U$ on $n$-qubits, that is, an element of $SU(2^n)$, and
+attempts to approximate it with a sequence of gates
+(that is, a product of some matrices $V_1\cdots V_k$ )
+from some universal set using a distance metric.
+
+One distance metric used in theoretical literature
+is the operator norm of a matrix $M$, $|| M || = || M ||_{\infty}$,
+is defined as the maximum amount it scales the vector norm
+of all unit-length vectors. This is sometimes also called the
+infinity-norm, or supremum-norm (sup-norm).
+
+\begin{equation}
+|| M || = \max_{|| \ket{v} || = 1} || M \ket{v} ||
+\end{equation}
+
+\begin{equation}
+|| U - V_1\cdots V_k || < \epsilon
+\end{equation}
+
+However, this is not an operational definition.
+Moreover, we often wish to neglect a global phase in a unitary matrix,
+which is not measurable in quantum physics. This is equivalent to
+defining the set of valid $n$-qubit quantum gates as the
+group $SU(2^n) = U(2^n) \ U(1)$. To measure phase-independent
+distance between two unitary matrices, we can use the following
+distance measure due to Fowler \cite{Fowler2011}.
+
+\begin{equation}
+dist(U, V) = \sqrt{\frac{2^n - |tr(U^{\dag}V)|}{2^n}}
+\end{equation}
+
+Quantum compilers are generally classical algorithms that run on a
+digital computer to produce a deterministic sequence of quantum gates.
+They accept as
+input a classical description of a quantum circuit, and their output
+(called a \emph{compiled sequence} is
+taken from 
+the universal, fault-tolerant gate set which depends on a particular
+physical quantum computer technology.
+an input quantum circuit. The compiled sequence then runs on a quantum
+computer to enact your original quantum circuit in the machine-dependent
+``assembly language'' of your quantum computer. We can measure the
+efficiency of a quantum compiler by the resources it consumes, which are
+detailed below.
+
+\begin{description}
+\item[classical runtime:] the classical time it takes to return a 
+compiled quantum circuit.
+\item[compiled depth:] the compiled quantum circuit depth
+\item[compiled size:] the compiled quantum circuit size, which is
+identical to compiled depth if no ancillae are used (compiled width is zero).
+\item[compiled width:] the compiled quantum circuit width, which includes
+the width of the input circuit as well as any ancillae introduced by
+the compiler.
+\end{description}
+
+The last three resources are quantum in nature. They include any
+
+Quantum compilers in the literature are often divided up along
+the following three axes.
+
+\begin{description}
+\item[single-qubit versus multi-qubit axis]
+\item[exact sequence versus approximate sequence]
+\item[deterministic protocols versus probabilistic protocols]
+\item[provably optimal versus conjectured optimal with empirical verification]
+\end{description}
+
+These axes are described below.
+
+%%%%%%%%%%%
+\subsection{Single-Qubit Quantum Compiling}
+
+Restricting ourselves to the simplest case of
+single-qubit circuits allows us to exploit a lot of structure
+in the group $SU(2)$ in order to make our compilers more
+efficient. This is an example of modularity which allows us
+to divide the effort of quantum compiling between the
+single-qubit case and then decomposition to a single-qubit
+and two-qubit gates. This is a heuristic which often results
+in simple decompositions to implement in (classical) software.
+However, it may not be optimal compared to generic 
+multi-qubit protocols.
+
+The single-qubit case often concentrate on enacting arbitrary
+phase rotations about the $Z$-axis, discretized by a resolution of
+$2^n$. The multiple $\ell \in \mathbb{Z}_{2^n}$ indicates the
+closest approximation of an arbitrary angle $\phi \in [0,2\pi)$.
+There is some error in representing an angle as a multiple of
+$2\pi$ with a finite ($n)$ number of bits, which we upper-bound by
+$\frac{1}{2^{n+1}}$, where ties are broken arbitrarily.
+
+\begin{equation}
+| \frac{2\pi \ell}{2^n} - \frac{\phi} | \le \frac{1}{2^{n+1}}
+\end{equation}
+
+These rotations are denoted as $R_Z(\phi)$, or in the case
+of their discrete approximation, $R_Z(\frac{\pi \ell}{2^{n-1}})$.
+
+\begin{equation}
+ R_Z(\phi) = 
+ \left[
+  \begin{array}{cc}
+    1 & 0 \\
+    0 & e^{i\phi} \\
+  \end{array} \right]
+\end{equation}
+
+Note that the Clifford gates Pauli $Z$ gate and the phase gate $S$,
+as well as the non-Clifford gate $T$ are special cases of $R_Z(\phi)$
+are shown below.
+
+\begin{equation}
+Z =  \left[
+  \begin{array}{cc}
+    1 & 0 \\
+    0 & e^{i\pi} \\
+  \end{array} \right]
+\qquad
+S =  \left[
+  \begin{array}{cc}
+    1 & 0 \\
+    0 & e^{i\frac{\pi}{2}} \\
+  \end{array} \right]
+\qquad
+T =  \left[
+  \begin{array}{cc}
+    1 & 0 \\
+    0 & e^{i\frac{\pi}{4}} \\
+  \end{array} \right]
+\end{equation}
+
+
+Once we have handled the single-qubit case.
+
+%%%%%%%%%%%
+\subsection{Decomposition to Single-Qubit and Two-Qubit Gates}
+
+Now that we have handled the single-qubit case, how can we leverage this
+to compile general $n$-qubit gates? The usual reduction uses
+a two-level decomposition, as shown in several places.
+We need to fact-check this.
+\cite{Kitaev2002}
+
+The optimal bound needed for this 
+
+We can
+also characterize the quantum compiler on the properties that we
+have discussed above.which are
+detailed below.
+
+
+
+They accept an input circuit and produce a compiled
+output circuit that approximates it, with some increase in circuit size,
+width, and depth.
+
+Compilation is therefore
+one area where one can generically decrease circuit depth, without
+regard to the particular algorithm being compiled.
+%, independently of the
+%algorithm.
+The first efficient quantum compiler due to
+Solovay and Kitaev (SK) had a depth overhead of $O(\log^3+\nu(n/\epsilon))$,
+where $\nu$ is a constant which can be made arbitrarily small, and no
+ancillae (the width was $O(n)$) \cite{Dawson2005}.
+A more parallel compiling procedure was discovered by Kitaev, Shen, and
+Vyalyi (KSV) with a depth overhead of $O(\log n + \log\log(1/\epsilon))$ but
+with a width of $O(n^3)$ on an $\textsc{AC}$ architecture \cite{Kitaev2002}.
+Numerical comparisons between SK and KSV can be found in Ref. \cite{Pham2012a}.
+Moreover, the KSV procedure relies on a prior decomposition of
+a unitary matrix in $SU(N=2^n)$ into (controlled) single-qubit gates,
+for example the multiply-controlled single-qubit gates in
+the palindrome transform of Aho and Svore \cite{Aho2003}.
+
+Austin Fowler's compiler uses a brute force search over group elements of
+$\mathcal{C}_1$ alternating with $R_Z(\pi/8)$ which still runs in time
+exponential in sequence length.
+This may be optimized using classical parallelization and hardware acceleration
+\cite{Booth2012}, possibly also for scaling this approach to
+two-qubit compilation with $\mathcal{C}_2$ (containing 11,520
+elements).
