@@ -1,0 +1,25 @@
+\section{Quantum Compiler Review}
+\label{sec:qcompile-review}
+
+\subsection{Alternative Bases and Resources}
+
+Now we turn to three recent works which use magic state distillation to compile
+arbitrary single-qubit gates. These works either compile to an alternate
+basis from the Clifford group $\mathcal{C}_n$ and $T$
+
+A recent approach by Bocharov-Gurevich-Svore \cite{Bocharov2013}
+compiles to subsets of the Clifford group augmented with the non-Clifford $V$-basis, which was proven to permit the lower-bound of compiled sequence length $O(\log^1(1/\epsilon)$
+\cite{Harrow2003}.
+
+\begin{equation}
+V_1 = TODO \qquad V_2 = TODO \qquad V_3 = TODO
+\end{equation}
+
+This work uses the properties of Lipschitz quaternions with norms $5^l$, ($l \in \mathbb{Z}, l \ge 0$). It
+contains a randomized algorithm whose running time is based on a conjecture from geometric number theory.
+There is currently no complete, fault-tolerant method of compiling all three gates from the $V$ basis into
+our usual universal set of $\mathcal{C}_1 \cup \{T\}$. However, the appendix of \cite{Bocharov2013}
+gives a method for implementing the exact $V_2$ gate using the (probabilistic) magic state distillation of
+Duclos-Cianci and Svore \cite{DuclosCianci2012}. 
+We cannot compare it directly to previous algorithms which consider the number of $T$ gates ($T_c$)
+the primary resource, or the compiled sequence length $D'$ as an upper bound to $T_c$.
