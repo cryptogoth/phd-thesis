@@ -1,6 +1,61 @@
 \section{Quantum Compiler Review}
 \label{sec:qcompile-review}
 
+\subsection{Magic States for Quantum Compiling}
+
+Instead of using non-Clifford gates to complete our basis into a universal
+gate set, we can include ``non-Clifford'' states as an additional resource.
+These states are called \emph{magic states} if, combined with the Clifford
+gates, enable universal quantum computation.
+Quantum compilers which use these magic states count them as a non-Clifford
+resource instead of $T$ or Toffoli gates, since such states cannot
+be produced directly using Clifford gates. Rather, they must be
+distilled in a probabilistic procedure which itself uses only 
+Clifford gates and measurement.
+
+There are two types of magic states, 
+The most famous such example is the $+1$ eigenstate of the Hadamard operator,
+often written as:
+
+% TODO Fact check this, what about \ket{0} + e^{i\pi/4}\ket{1}
+\begin{equation}
+\ket{H} = \cos(\pi/8)\ket{0} + \sin(\pi/8)\ket{1}
+\end{equation}
+
+Magic state distillation was originally proposed by Bravyi and Kitaev
+\cite{Bravyi2005} as a model of universal quantum computation (UQC) which
+allowed for noisy, or imperfectly prepared, initial quantum states. These
+noisy states could be ``purified'' or distilled down to certain states
+that are ``magic'' in that, combined with the Clifford gates, they enable
+UQC. These magic states come in two types, the eigenstates
+of the $H$ or another operator, which we call $A$.
+
+\begin{equation}
+H = 
+\normtwo
+\left[ \begin{array}{cc}
+1 & 1\\
+1 & -1
+\end{array} \right]
+\qquad
+A = e^{i\pi / 4} SH = \frac{e^{i\pi/4}}{\sqrt{2}}
+\left[ \begin{array}{cc}
+1 & 1\\
+i & -i
+\end{array} \right]
+\label{eqn:T}
+\end{equation}
+
+The noisy initial states can be considered to be prepared
+These states are distilled via successive rounds of recursive error
+correction, where the efficiency of distillation with each round,
+and the resources required to do so, depend on the code used.
+
+% TODO Insert here a comparison of different codes used
+% Original Knill result
+% Bravyi-Kitaev
+% Bravyi-Haah
+
 \subsection{Alternative Bases and Resources}
 
 Now we turn to three recent works which use magic state distillation to compile
@@ -8,7 +63,9 @@ arbitrary single-qubit gates. These works either compile to an alternate
 basis from the Clifford group $\mathcal{C}_n$ and $T$
 
 A recent approach by Bocharov-Gurevich-Svore \cite{Bocharov2013}
-compiles to subsets of the Clifford group augmented with the non-Clifford $V$-basis, which was proven to permit the lower-bound of compiled sequence length $O(\log^1(1/\epsilon)$
+compiles to subsets of the Clifford group augmented with the non-Clifford
+$V$-basis, which was proven to permit the lower-bound of compiled sequence length
+$O(\log^1(1/\epsilon)$
 \cite{Harrow2003}.
 
 \begin{equation}
@@ -20,6 +77,20 @@ contains a randomized algorithm whose running time is based on a conjecture from
 There is currently no complete, fault-tolerant method of compiling all three gates from the $V$ basis into
 our usual universal set of $\mathcal{C}_1 \cup \{T\}$. However, the appendix of \cite{Bocharov2013}
 gives a method for implementing the exact $V_2$ gate using the (probabilistic) magic state distillation of
-Duclos-Cianci and Svore \cite{DuclosCianci2012}. 
+Duclos-Cianci and Svore \cite{DuclosCianci2012}. The average cost in $\ket{H}$
+states for enacting a $V_2$ gate is $22.75$. It is an open problem how many
+$\ket{H}$ states are needed to enact the gates $V_1$ and $V_3$.
 We cannot compare it directly to previous algorithms which consider the number of $T$ gates ($T_c$)
 the primary resource, or the compiled sequence length $D'$ as an upper bound to $T_c$.
+However, the SK algorithm allows us to provide an alternate basis. By
+comparing the compiled sequence lengths in the $V$ basis and noting any
+improvements over the $\mathcal{C}_1 \cup \{T\}$ basis, 
+measuring the length of compiled sequences 
+
+The previous works all assume a minimal basis which only includes a fixed
+number (usually one) non-Clifford gate (a $T$ gate or Toffoli). We can
+call these ``reduced instruction set computing'' (RISC) bases, in analogy to
+digital processor architectures.
+In contrast, Landahl and
+Cesare consider a ``complex instruction set computing'' (CISC) basis which
+includes 
