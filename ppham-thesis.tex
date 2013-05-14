@@ -79,23 +79,9 @@
 \usepackage{amsmath}
 \usepackage{amssymb}
 \usepackage[osf]{mathpazo} % Use Palatino / Euler fonts
+\usepackage{algorithmic}
 
-\newcommand{\sgn}{\text{sgn}}
-\newcommand{\braket}[2]{\langle #1|#2 \rangle}
-\newcommand{\normtwo}{\frac{1}{\sqrt{2}}}
-\newcommand{\norm}[1]{\parallel #1 \parallel}
-\newcommand{\card}[1]{\left| #1 \right|}
-\newcommand{\ci}{\perp\!\!\!\perp}
-\newtheorem{definition}{Definition}
-\newtheorem{lemma}{Lemma}
-\newtheorem{theorem}{Theorem}
-
-% To fix Qcircuit target with new Xypic
-\newcommand{\targfix}{\qw {\xy {<0em,0em> \ar @{ - } +<.39em,0em>
-\ar @{ - } -<.39em,0em> \ar @{ - } +
-<0em,.39em> \ar @{ - }
--<0em,.39em>},<0em,0em>*{\rule{.01em}{.01em}}*+<.8em>\frm{o}
-\endxy}}
+\input{macros.tex}
 
 \input{Qcircuit}
 
@@ -228,16 +214,19 @@ to circuit depth, size, width, and so forth.
 \printendnotes
 
 %
+% ==========   Appendices
+%
+\appendix
+\raggedbottom\sloppy
+
+\input{appendices/ksv-error}
+
+%
 % ==========   Bibliography
 %
 \nocite{*}   % include everything in the uwthesis.bib file
 \bibliographystyle{plain}
 \bibliography{ppham-thesis}
-%
-% ==========   Appendices
-%
-\appendix
-\raggedbottom\sloppy
  
 
 \end{document}
