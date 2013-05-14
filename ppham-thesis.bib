@@ -1002,7 +1002,6 @@ url = {http://arxiv.org/abs/1112.6063},
 year = {2011}
 }
 
-
 @article{Moore1999,
 abstract = {We propose definitions of QAC\^{}0, the quantum analog of the classical class AC\^{}0 of constant-depth circuits with AND and OR gates of arbitrary fan-in, and QACC\^{}0[q], where n-ary Mod-q gates are also allowed. We show that it is possible to make a `cat' state on n qubits in constant depth if and only if we can construct a parity or Mod-2 gate in constant depth; therefore, any circuit class that can fan out a qubit to n copies in constant depth also includes QACC\^{}0[2]. In addition, we prove the somewhat surprising result that parity or fanout allows us to construct Mod-q gates in constant depth for any q, so QACC\^{}0[2] = QACC\^{}0. Since ACC\^{}0[p] != ACC\^{}0[q] whenever p and q are mutually prime, QACC\^{}0[2] is strictly more powerful than its classical counterpart, as is QAC\^{}0 when fanout is allowed.},
 archivePrefix = {arXiv},
@@ -1016,4 +1015,85 @@ primaryClass = {quant-ph},
 title = {{Quantum Circuits: Fanout, Parity, and Counting}},
 url = {http://arxiv.org/abs/quant-ph/9903046},
 year = {1999}
+}
+
+@article{Bocharov2012,
+abstract = {Given an arbitrary single-qubit operation, an important task is to efficiently decompose this operation into an (exact or approximate) sequence of fault-tolerant quantum operations. We derive a depth-optimal canonical form for single-qubit quantum circuits, and the corresponding rules for exactly reducing an arbitrary single-qubit circuit to this canonical form. We focus on the single-qubit universal H,T basis due to its role in fault-tolerant quantum computing, and show how our formalism might be extended to other universal bases. We then extend our canonical representation to the family of Solovay-Kitaev decomposition algorithms, in order to find an $\backslash$epsilon-approximation to the single-qubit circuit in polylogarithmic time. For a given single-qubit operation, we find significantly lower-depth $\backslash$epsilon-approximation circuits than previous state-of-the-art implementations. In addition, the implementation of our algorithm requires significantly fewer resources, in terms of computation memory, than previous approaches.},
+archivePrefix = {arXiv},
+arxivId = {1206.3223},
+author = {Bocharov, Alex and Svore, Krysta M.},
+eprint = {1206.3223},
+file = {:Users/ppham/Dropbox/arXiv/1206.3223v1.pdf:pdf},
+month = jun,
+pages = {},
+title = {{A Depth-Optimal Canonical Form for Single-qubit Quantum Circuits}},
+url = {http://arxiv.org/abs/1206.3223},
+year = {2012}
+}
+
+@article{Bocharov2013,
+abstract = {We develop the first constructive algorithms for compiling single-qubit unitary gates into circuits over the universal \$V\$ basis. The \$V\$ basis is an alternative universal basis to the more commonly studied \$\backslash\{H,T\backslash\}\$ basis. We propose two classical algorithms for quantum circuit compilation: the first algorithm has expected polynomial time (in precision \$\backslash log(1/\backslash epsilon)\$) and offers a depth/precision guarantee that improves upon state-of-the-art methods for compiling into the \$\backslash\{H,T\backslash\}\$ basis by factors ranging from 1.86 to \$\backslash log\_2(5)\$. The second algorithm is analogous to direct search and yields circuits a factor of 3 to 4 times shorter than our first algorithm, and requires time exponential in \$\backslash log(1/\backslash epsilon)\$; however, we show that in practice the runtime is reasonable for an important range of target precisions.},
+archivePrefix = {arXiv},
+arxivId = {1303.1411},
+author = {Bocharov, Alex and Gurevich, Yuri and Svore, Krysta M.},
+eprint = {1303.1411},
+file = {:Users/ppham/Library/Application Support/Mendeley Desktop/Downloaded/Bocharov, Gurevich, Svore - 2013 - Efficient Decomposition of Single-Qubit Gates into \$V\$ Basis Circuits.pdf:pdf},
+month = mar,
+pages = {},
+title = {{Efficient Decomposition of Single-Qubit Gates into \$V\$ Basis Circuits}},
+url = {http://arxiv.org/abs/1303.1411},
+year = {2013}
+}
+
+@article{Selinger2012,
+abstract = {We give an efficient randomized algorithm for approximating an arbitrary element of SU(2) by a product of Clifford+T operators, up to any given error threshold epsilon>0. Under a mild hypothesis on the distribution of primes, the algorithm's expected runtime is polynomial in log(1/epsilon). If the operator to be approximated is a z-rotation, the resulting gate sequence has T-count K+4log\_2(1/epsilon), where K is approximately equal to 11. We also prove a worst-case lower bound of K'+4log\_2(1/epsilon), where K'=-9, so that our algorithm is within an additive constant of optimal for z-rotations. For an arbitrary member of SU(2), we achieve approximations with T-count 3K+12log\_2(1/epsilon). By contrast, the Solovay-Kitaev algorithm achieves T-count O(log\^{}c(1/epsilon)), where c is approximately 3.97.},
+archivePrefix = {arXiv},
+arxivId = {1212.6253},
+author = {Selinger, Peter},
+eprint = {1212.6253},
+file = {:Users/ppham/Dropbox/arXiv/1212.6253v1.pdf:pdf},
+month = dec,
+title = {{Efficient Clifford+T approximation of single-qubit operators}},
+url = {http://arxiv.org/abs/1212.6253},
+year = {2012}
+}
+
+@article{Kliuchnikov2012,
+abstract = {In this paper, we show the equivalence of the set of unitaries computable by the circuits over Clifford and T library and the set of unitaries over the ring \$\backslash mathbb\{Z\}[\backslash frac\{1\}\{\backslash sqrt\{2\}\},i]\$, in the single qubit case. We report an efficient synthesis algorithm, with exact optimality guarantee on the number of Hadamard gates used. We conjecture that the equivalence of the sets of unitaries implementable by circuits over Clifford and T library and unitaries over the integer ring \$\backslash mathbb\{Z\}[\backslash frac\{1\}\{\backslash sqrt\{2\}\},i]\$ holds in the \$n\$-qubit case.},
+archivePrefix = {arXiv},
+arxivId = {1206.5236},
+author = {Kliuchnikov, Vadym and Maslov, Dmitri and Mosca, Michele},
+eprint = {1206.5236},
+file = {:Users/ppham/Dropbox/arXiv/1206.5236v4.pdf:pdf},
+month = jun,
+title = {{Fast and efficient exact synthesis of single qubit unitaries generated by Clifford and T gates}},
+url = {http://arxiv.org/abs/1206.5236},
+year = {2012}
+}
+
+@article{Kliuchnikov2012a,
+abstract = {We present an algorithm, along with its implementation, to approximate single-qubit unitaries using quantum circuits consisting of Clifford and T gates. In addition to meeting the known logarithmic lower bounds on the number of gates required to approximate a unitary by a quantum circuit, we give computational evidence that a very close to the best, or the best existing approximation for unitaries of the type diag\{1, exp(i*phi)\} were indeed found. In particular, the quality of our approximation is determined by the ability of the PARI software package to find the solution of a certain type of Diophantine equation, and the choice of internal parameter Delta determining the size of a computer search. We have furthermore structured our search to guarantee that our near-optimal approximations can be found for reasonable error parameters---currently, down to 10\^{}\{-17\}, allowing to execute very long quantum circuits. We discuss how to improve our implementation further to handle even smaller errors (by a few orders of magnitude) that would enable the high-precision synthesis of even larger quantum algorithms.},
+archivePrefix = {arXiv},
+arxivId = {1212.6964},
+author = {Kliuchnikov, Vadym and Maslov, Dmitri and Mosca, Michele},
+eprint = {1212.6964},
+file = {:Users/ppham/Dropbox/arXiv/1212.6964v1.pdf:pdf},
+month = dec,
+pages = {9},
+title = {{Practical approximation of single-qubit unitaries by single-qubit quantum Clifford and T circuits}},
+url = {http://arxiv.org/abs/1212.6964},
+year = {2012}
+}
+
+@article{Kliuchnikov2012b,
+abstract = {We present an algorithm for building a circuit that approximates single qubit unitaries with precision \{$\backslash$epsilon\} using O(log(1/\{$\backslash$epsilon\})) Clifford and T gates and employing up to two ancillary qubits. The algorithm for computing our approximating circuit requires an average of O(log\^{}2(1/\{$\backslash$epsilon\})log log(1/\{$\backslash$epsilon\})) operations. We prove that the number of gates in our circuit saturates the lower bound on the number of gates required in the scenario when a constant number of ancillae are supplied, and as such, our circuits are asymptotically optimal. This results in significant improvement over the current state of the art for finding an approximation of a unitary, including the Solovay-Kitaev algorithm that requires O(log\^{}\{3+\{$\backslash$delta\}\}(1/\{$\backslash$epsilon\})) gates and does not use ancillae and the phase kickback approach that requires O(log\^{}2(1/\{$\backslash$epsilon\})log log(1/\{$\backslash$epsilon\})) gates, but uses O(log\^{}2(1/\{$\backslash$epsilon\})) ancillae.},
+archivePrefix = {arXiv},
+arxivId = {1212.0822},
+author = {Kliuchnikov, Vadym and Maslov, Dmitri and Mosca, Michele},
+eprint = {1212.0822},
+file = {:Users/ppham/Library/Application Support/Mendeley Desktop/Downloaded/Kliuchnikov, Maslov, Mosca - 2012 - Asymptotically optimal approximation of single qubit unitaries by Clifford and T circuits using a constant number of ancillary qubits.pdf:pdf},
+month = dec,
+title = {{Asymptotically optimal approximation of single qubit unitaries by Clifford and T circuits using a constant number of ancillary qubits}},
+url = {http://arxiv.org/abs/1212.0822},
+year = {2012}
 }
