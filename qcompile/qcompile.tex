@@ -20,46 +20,44 @@ Most interestingly to this dissertation, quantum compiling itself
 is an algorithm and can be mapped to a low-depth, nearest-neighbor
 architecture. That is the subject of this chapter.
 
-In Section \ref{sec:qcompile-bg}, we provide preliminary definitions
-and key results in quantum compiling. We discuss both upper
-and lower bound results, and the primary division of labor in
-the literate: compiling single-qubit gates, and reducing
-multi-qubit gates to single-qubit ones. We discuss the
-two problems of approximating quantum gates and exact synthesis.
-We also discuss the main techniques used in recent works
-to improve the exponent in the SK works to meet the lower
-bound.
+In Section \ref{sec:qcompile-bg}, we define the problem of
+quantum compiling more rigorously and provide useful definitions
+and notation for the rest of this chapter. We also discuss
+variations of quantum compiling that are common in the
+literature: exact synthesis versus approximation, and
+single-qubit gates versus multi-qubit gates.
 
-In Section \ref{sec:ksv-resource}, we provide a pedagogical
-review of the KSV algorithm, compared to the conventional SK
-algorithm. We also calculate resources needed to implement
-KSV on 2D CCNTCM.
+In Section \ref{sec:qcompile-sk}, we discuss the foundational
+result in this field, the Solovay-Kitaev algorithm, and how it
+continues to shape quantum compiler research. We also discuss
+lower bounds on any SK-style appraoch to quantum compiling.
+Building upon this,
+In Section \ref{sec:qcompile-review}, we review the large
+amount of recent literature on single-qubit quantum compiling with
+constant width, representing
+a startling amount of progress with the last year. We present
+the cross-cutting themes of this research and provide an
+at-a-glance comparison of all known single-qubit quantum compiling methods
+to date in Section \ref{sec:qcompile-compare}.
 
-In Section \ref{sec:qcompile-compare}, we provide an
-at-a-glance comparison
-of all known quantum compiling algorithms to date.
-We also evaluate the suitability of each algorithm
-for common tasks as well as summarize current trends
-in quantum compiling.
+As an alternative method of single-qubit quantum compiling,
+in Section \ref{sec:qcompile-qfs} we
+discuss a popular method of trading low depth for increased
+width: combining phase kickback with a quantum Fourier state.
+In Section \ref{sec:ksv}, we provide a pedagogical review
+of the KSV algorithm for generating quantum Fourier states
+useful for phase kickback. We also provide the calculation of
+parameters necessary for any practical implementation as well as
+the particular circuit resources consumed on \textsf{2D CCNTCM}.
+We then compare the KSV approach to a recent alternative
+by Jones which distills quantum Fourier states recursively \cite{Jones2013}.
 
-
-In Section \ref{sec:ksv-error}, we discuss one particular
-empirical optimization for quantum circuits, that of measuring
-early. In the case of KSV quantum compiling, some
-processing may be offloaded to a classical computer if one does
-not perform coherent measurements. This trades off quantum
-computer resources of circuit depth and size for width.
-
-In Section \ref{sec:qcompile-misc}, we contribute several
-results related to single-qubit quantum compiling. These
-procedures are probabilistic and have some limitations.
-One is not universal, the other does not compile to a
-fixed basis. However, both may be useful as parts of
-larger quantum compiling approaches in the future.
-
-Finally, in Section \ref{sec:qcompile-conclude}, we present the results of
-our comparison and conclude with interesting open problems and
-future directions for results in this field.
+In Section \ref{sec:qcompile-cd}, we contribute a method for
+quantum compiling the single-qubit rotations needed for a
+sublogarithmic depth quantum majority gate from Chapter \ref{chap:factor-sublog}.
+Finally, in Section \ref{sec:qcompile-conclude}, we conclude by summarizing
+the overall themes of quantum compiling and presenting interesting
+directions for future research.
 
 %We discuss the seminal work
 %in this field by Solovay-Kitaev \cite{Solovay1995} and a
@@ -74,11 +72,16 @@ future directions for results in this field.
 
 \input{qcompile/qcompile-bg.tex}
 
-%\input{qcompile/qcompile-ksv-resources.tex}
+\input{qcompile/qcompile-sk.tex}
 
-%\input{qcompile/qcompile-ksv-error.tex}
+\input{qcompile/qcompile-review.tex}
 
 \input{qcompile/qcompile-compare.tex}
 
+\input{qcompile/qcompile-qfs.tex}
 
-%\input{qcompile/qcompile-conclude.tex}
+\input{qcompile/qcompile-ksv.tex}
+
+\input{qcompile/qcompile-maj.tex}
+
+\input{qcompile/qcompile-conclude.tex}
