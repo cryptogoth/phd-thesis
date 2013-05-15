@@ -1,5 +1,28 @@
-\section{Quantum Fourier States}
+\section{Phase Kickback and Quantum Fourier States}
 \label{sec:qfs}
+
+In this section, we discuss the \emph{phase kickback} procedure for
+producing a qubit with arbitrary phase: $\ket{0} + e^{i\phi}\ket{1}$.
+From the PAR procedure, a qubit could be prepared in such a state
+``offline' and then teleported later into a \textsf{2D CCNTCM} module to
+probabilistically enact rotations $R_Z(\phi)$ \cite{Jones2011}.
+
+Phase kickback requires controlled addition on a target state in 
+the quantum Fourier basis. This will provide us the foundation
+to understand the KSV procedure for generating such quantum Fourier
+states in the next section.
+
+In Section \ref{subsec:qfs-basis}, we discuss the properties of the
+basis of quantum Fourier states, including their relationship with
+addition modulo $2^n$. In Section \ref{subsec:qfs-resources},
+we calculate circuit resources for performing these adders
+on \textsf{2D CCNTCM}. Although the adders are generic, they will be
+used in the resource calculations of KSV phase estimation in
+Section \ref{sec:ksv-pe}, which operates on quantum Fourier states.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Properties of the Quantum Fourier Basis}
+\label{subsec:qfs-basis}
 
 The following states are well-known as $n$-qubit quantum Fourier states,
 the result of applying the quantum Fourier transform (QFT)
@@ -19,28 +42,17 @@ of all computational basis states, or the tensor product of
 $n$ qubits in the state $\ket{+}$, or the result of applying
 $n$ Hadamard's qubit-wise to a state beginning in $\ket{0}^n$.
 
-Suppose you were given the state $\ket{\psi_{n,k}}$
-parameterized by the
-integers $n$ and $k$ such that
+Note that these states $\ket{\psi}^{(k)}_n$ are the
+QFT states of the $n$-qubit computational basis. The usual method of
+creating these states involves performing phase estimation of the
+modular addition operator. These are implicitly hard in that
+all known procedures take size $O(n\log n)$, even if the depths
+can be decreased to $O(\log n)$ \cite{Jones2012} or in some cases $O(1)$
+given unbounded quantum fanout
+\cite{Browne2009}.
 
-
-where  and $k$ is odd.
-
-Note that these states $\ket{\psi}$ are the
-QFT states of the computational basis.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% actually there is a more precise description here. QFT over 2^n ?
-This implicitly argues that these states are hard to create,
-because QFT in general requires
-$O(n^2)$-depth and we need a logarithmic-depth compiler.
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% we should mention the difficulty even of approximate QFT
-% and use circuit size, not depth since constant-depth QFT was shown in
-% Brown, Kasheffi, Perdrix (cite here too, just to show off)
-
-However, what we can do is create a superposition over all odd $k=(2s-1)$
+However, we can create a superposition in constant depth
+over all odd $k=(2s-1)$
 by starting in the state $\ket{0}^{\otimes n}$,
 then applying a Hadamard and $\sigma^z$ to the most significant qubit.
 
@@ -99,17 +111,42 @@ in this equation:
 
 Stipulating $k$ to be odd guarantees that there is a unique solution $p$.
 
-We then apply $A^p$ as follows:
+We then apply $A^p$ as follows, where $\Upsilon_n(A)$ means to
+apply $A$ to the second register $p$ times, where $p$ is an $n$-qubit
+number in the first register.
 
 \begin{equation}
 \label{eqn:upsilon}
-\Upsilon_n(A) \ket{p, \psi_{n,k}} \rightarrow
-e^{2\pi i l/2^n} \ket{p, \psi_{n,k}}
+\Upsilon_n(A) \ket{p}\ket{\psi_{n,k}} \rightarrow
+e^{2\pi i l/2^n} \ket{p}\ket{\psi_{n,k}}
 \end{equation}
 
-But $p$ is in general hard to solve for, unless $k=1$, in which case
-$p = l$. Therefore, we will later see that $\ket{\psi_{n,1}}$ is a desirable
-state to have.
+If we control the operation of $\Upsilon_n(A)$ on a source qubit $\ket{+}$,
+it will acquire the phase $e^{2\pi i l}$.
+
+\begin{equation}
+\Lambda(\Upsilon_n(A))\ket{+}\ket{p}\ket{\psi}^{(k)} \rightarrow
+\left( \ket{0} + e^{2\pi i l}\ket{1} \right) \ket{p}\ket{\psi}^{(k)}
+\end{equation}
+
+This is not quite the phase kickback procedure, since
+we must still solve for $p$ using the equation below by finding the
+modular inverse $(2s - 1)^{-1} \bmod 2^n$,
+making use of the following expansion from Section 13
+of \cite{Kitaev2002}
+
+\begin{equation}
+p \equiv -l\sum_{j=0}^{m-1} (2s)^j \equiv -l \prod_{r=1}^{t-1}\left(1 + (2s)^{2^r}\right) \mod 2^n
+\end{equation}
+
+where $m = O(n)$ is $n$ rounded to the nearest power of $2$.  In general,
+this requires a circuit of size $O(n^2 \log n)$ and depth $O((\log n)^2)$ and
+represents the most expensive part of the KSV procedure as originally
+presented in \cite{Kitaev2002}.
+
+Ideally, we would obviate the need for the expensive circuit above
+by ensuring that $k=1$, in which case
+$p = l$. We will see how to do this in Section \ref{sec:ksv-pe}.
 
 Finally, to copy the state $\ket{\psi_{n,k}}$ it suffices to apply the following
 operator which only uses subtraction (addition with one addend and the
@@ -127,4 +164,83 @@ W : \ket{x_1,\ldots,x_{m-1},x_m} \rightarrow \\
  \ket{x_1,\ldots,x_{m-1},x_1+\ldots+x_m \bmod 2^n}
 \end{multline}
 
-Armed with these properties, we're now ready to outline the main steps in KSV.
+Having complained about the cost of modular division, how can we now
+implement the operators $A$ and $W$ more efficiently on our
+nearest-neighbor architecture?
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Circuit Resources for Adders on Quantum Fourier States}
+
+First we prove a general result for mapping any \textsf{AC} circuit
+to a \textsf{2D CCNTCM} circuit.
+Then we use it to 
+map the operator $A$ (increment modulo $2^n$) and the operator
+$W$ (multiple addition modulo $2^n$) to \textsf{2D CCNTCM}.
+
+\begin{lemma}
+Suppose an \textsf{AC} circuit $\mathcal{C}$ has
+depth $D(n)$, size $S(n)$, and width $W(n)$. Then it can be mapped
+onto a \textsf{2D CCNTCM} circuit $\mathcal{C'}$ with circuit depth
+$D(n)$, circuit size $S(n)$, circuit width $D(n)\cdot W(n)$,
+module depth $D(n)$, module size $D(n)\cdot W(n)$, and module width
+$D(n)$.
+\label{lem:ac-ccntcm}
+\end{lemma}
+
+\begin{proof}
+Each of $D(n)$ layers in $\mathcal{C}$ could operate on non-nearest-neighbors.
+We teleport all
+$W(n)$ qubits from the first module to the last module in sequence,
+reordering them at each module so that we can execute the gates of that
+layer only on nearest-neighbor qubits.
+This gives the desired circuit and module resources on
+\textsf{2D CCNTCM}.
+\end{lemma}
+
+\begin{lemma}
+The operator $A\ket{j} \rightarrow \ket{j+1 \bmod 2^n}$ on
+$n$-qubit register can be
+implemented in circuit/module depth $O(\log n)$, circuit size $O(n)$, 
+circuit width $O(n\log n)$, module size of $O(n \log n)$, and
+module width of $O(\log n)$ on
+\textsf{2D CCNTCM}.
+\label{lem:a}
+\end{lemma}
+
+\begin{proof}
+We modify the QCLA adder from
+Section \ref{subsec:qcla} mapped to \textsf{2D CCNTCM} using
+Lemma \ref{lem:ac-ccntcm}.
+To add $2 \times n$-bit numbers, the original \text{AC} adder has
+depth $O(\log n)$ and size and width of $O(n)$.
+Therefore, we have the desired resources for a \textsf{2D CCNTCM} circuit.
+\end{proof}
+
+\begin{lemma}
+The operator $W\ket{x_1}\ket{x_2}\cdots\ket{x_m} \rightarrow \ket{x_1}\ket{x_2}\cdots\ket{x_1 + x_2 + \ldots + x_m \bmod 2^n}$,
+which operates on $m \times n$-qubit registers, can be
+implemented in circuit/module depth $O(\log n + \log nm)$, circuit size $O(mn)$, 
+circuit width $O(mn + n\log n)$, module size of $O(mn + n \log n)$, and
+module width of $O(m + \log n)$ on
+\textsf{2D CCNTCM}.
+\label{lem:w}
+\end{lemma}
+
+\begin{proof}
+This reduces to the problem of modular multiple addition from
+Section \ref{subsec:mma}, with the following variation. Instead of
+addition modulo $m < 2^n$, we perform addition modulo $2^n$, which is
+much simpler. It does not involve any truncation and adding back of
+modular residues. Namely, we just perform one round of constant-depth
+$3 \rightarrow 2$ addition, then we redo the computation of the
+highest-order bit $v_n$ to uncompute it.
+
+Therefore, we have a $O(\log m)$-depth binary tree of $O(m)$ modules,
+which requires a total of $O(mn)$ teleportation of qubits between them.
+Within each module, the addition takes depth $O(1)$ and size and width
+of $O(n)$. Combine this in series with the circuit for $A$ in
+Lemma \ref{lem:a} and we have the desired resource bounds.
+\end{proof}
+
+Armed with these properties, we're now ready to describe our version of the
+KSV phase estimation procedure to product quantum Fourier states.

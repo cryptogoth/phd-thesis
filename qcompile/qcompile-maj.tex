@@ -19,7 +19,7 @@ in this case are
 given in Table \ref{tab:pk-ksv-resources}, based on calculations
 from Section \ref{sec:qcompile-ksv}. Note that these resources
 are deterministic, since they represent the worst case for any
-single rotation $R_Z{e^{i\phi}$. To convert from $n'$ to $n$,
+single rotation $R_Z(e^{i\phi})$. To convert from $n'$ to $n$,
 we use the relationship $n' = O(\log m) = O(\log n)$.
 However, we note that it is possible to modify the Jones method of
 Fourier state distillation to have similar performance.
@@ -29,7 +29,7 @@ Fourier state distillation to have similar performance.
 \hline
 $D'$ & $O((\log \log n)^2)$ \\
 $S'$ & $O()$ \\
-$W'$ & $O()$
+$W'$ & $O()$ \\
 \hline
 \end{tabular}
 \caption{Quantum compiling resources for PK-KSV for quantum majority gates
@@ -56,7 +56,8 @@ quantum algorithms, perhaps one where we must produce the
 PAR qubit $\ket{0} + e^{2\pi / m}\ket{1}$ ``offline'' and then produce
 the rotation $R_Z(2\pi k / m)$ ``online.''
 
-\begin{theorem}{The single-qubit rotation $R_Z(2\pi k /m)$, where $m = poly(n)$,
+\begin{theorem}{Compiling a single-qubit rotation over a non-fixed, finite basis}
+The single-qubit rotation $R_Z(2\pi k /m)$, where $m = poly(n)$,
 $k \in \mathbb{Z}_m$,
 can be implemented in expected depth $O(1)$ and expected size and width $O(k)$ on
 \textsf{2D CCNTCM} over the finite

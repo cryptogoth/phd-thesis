@@ -387,35 +387,23 @@ All other things being equal, a circuit with low depth will complete
 faster than one with high depth, although in practice we can only execute
 fixed-width circuits.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Asymptotic Circuit Bounds}
+\subsection{Multi-Qubit Circuit Synthesis}
+\label{subsec:qcompile-multi}
 
-The SK and KSV algorithms compile circuits with
-a size and depth which depend on the desired per-gate precision $n$.
-These asymptotic bounds are listed in
-Table \ref{tab:asymptotics}, which actually refer to an improved version of
-SK described in Theorem 8.5 of \cite{ksv02}, where 
-$\nu$ is a small positive constant.
-However, we describe a simpler version of SK in Section \ref{sec:sk-algo}
-which has a fixed exponent of about $c=3.97$, which is easier to understand,
-and does not significantly change the asymptotic relationship between SK and
-KSV.
+Many single-qubit compilation algorithms exploit the special structure
+of single-qubit gates (that is, matrices in $U(2)$ or its related subgroups
+of $SU(2)$ and $PSU(2)$). Often, these do not generalize efficiently to general
+$n$-qubit gates ($SU(2^n)$ and related groups). From a volume argument
+given the lower bound
+result given previously \cite{Harrow2003}, we can also lower-bound the
+multi-qubit case. We can expect any
+SK-style algorithm to produce worst-case sequence lengths $\ell_d$ that
+are longer than worst-case single-qubit sequence lengths $\ell_1$ by a certain multiplicative
+prefactor. This prefactor has a dependence that is at least
+polynomial in the gate-dimensionality
+$d = 2^n$. 
 
-We will see these asymptotic bounds reflected
-later in the actual numerical results in Section \ref{sec:results}.
-
-\begin{center}
-\begin{table}
-\label{tab:asymptotics}
-\begin{tabular}{|c|c|c|}
-\hline
-   & SK & KSV \\
-\hline
-$S'$ & $O(Sn^{3+\nu})$ & $O(Sn + n^2 \log n)$\\
-$D'$ & $O(Dn^{3+\nu})$ & $O(D \log{n} + (\log{n})^2))$\\ 
-$W'$ & $0$             & $$ \\
-\hline
-\end{tabular}
-\caption{Asymptotic circuit resources for SK and KSV compilers}
-\end{table}
-\end{center}
+\begin{equation}
+% TODO fact check this!
+\ell_d \ge \left( d^2 -1 / \log |\mathcal{B}| \right )
+\end{equation}
