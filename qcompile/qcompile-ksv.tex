@@ -1,20 +1,20 @@
-\section{Circuit Resources for Phase Kickback with KSV}
+\section{Circuit Resources for the KSV Quantum Compiler}
 \label{sec:ksv-resources}
 
-This work contributes the calculation of physical resources needed
-to run the SK and KSV quantum compilers on a single-qubit phase gate
-of the form $\ket{0}\bra{0} + e^{i\phi}\ket{1}\bra{1}$ to perform phase
-kickback as described in Section \ref{sec:qfs}.
-We also contribute open source code to duplicate
-these results, which is available at \texttt{http://quantum-compiler.org}.
-Finally, we give a pedagogical review of KSV and its building blocks from the
-perspective of implementation on an architecture allowing arbitrary concurrent
-operations. This model is known as \textsc{AC} in the literature.
-\cite{VanMeter2008}. Therefore, this current work can be read in combination
-with Chapter 13 of \cite{ksv02} to gain a full understanding of the KSV
-compiler.
+This section gives a pedagogical review of the method by
+Kitaev-Shen-Vyalyi \cite{Kitaev2002} to compile single-qubit gates,
+specifically those of the form $R_Z(\phi)$. This method is henceforth
+called the KSV quantum compiler. Furthermore, we present an
+original optimization
+called \emph{early measurement} which does not significantly increase
+our compilation resources (see Appendix \ref{app:ksv-error}).
+Finally, we contribute the architectural resources for running the KSV
+compiler on \textsf{2D CCNTCM}.
 
-The rest of this report is organized as follows.
+In Section \ref{subsec:ksv-steps} we present the high-level overview
+of the KSV algorithm. In Section \ref{subsec:precompile} we contribute
+the constant-depth precompiling step. 
+The rest of this section is organized as follows.
 First, Section \ref{sec:prelims} defines terms and parameters
 so that we can discuss quantum compilers with some rigor as well as
 giving asymptotic bounds for specific algorithms.
@@ -30,34 +30,9 @@ our methods for the performance comparisons, which are given in Section
 \ref{sec:results}. Finally, we make some comments about these results
 and suggest future directions for extending this work.
 
-KSV takes a radically different approach than SK by identifying that most gates
-can be easily constructed from sequences in
-$\mathcal{G}$ in constant time with the exception of the ``targetless''
-controlled phase operator, which takes the most work to approximate.
-
-\begin{displaymath}
-\Lambda(e^{i\phi}) = 
- \left(
-  \begin{array}{cc}
-    1 & 0 \\
-    0 & e^{i\phi} \\
-  \end{array} \right)
-\end{displaymath}
-
-\cite{ksv02} is a self-contained reference
-for enacting $\Lambda(e^{i\phi})$ with several modules which are useful in
-their own right:
-parallelized phase estimation, parallel iteration of finite
-automata, and a logarithmic depth quantum arithmetic operations such
-as addition (and subtraction) described in \ref{subsec:add},
-multiplication described in \ref{subsec:mult}, and division described
-in \ref{subsec:div}.
-
-In order to do all of this, however, we will need to introduce the eigenstates
-of the $\bmod 2^n$ addition operator.
-
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{KSV Steps}
+\label{subsec:ksv-steps}
 
 Given a circuit $C$ to compile,
 
@@ -70,10 +45,10 @@ the values $\{l_1, \ldots , l_m\}$ that allow us to approximate our
 desired $m$
 $\Lambda(e^{i\phi})$ gates as $\phi \approx l/2^n$ to within precision
 $2^{-n}$.
-\item Create the state magic state $\ket{\psi_{n,0}}$ with $n$ Hadamards.
+\item Create the state $\ket{\psi^{(0)}_{n,0}}$ with $n$ Hadamards.
 \item Turn it into $\ket{\psi_{n,1}} = \Upsilon(e^{-2\pi i / 2^n}) \ket{\psi_{n,0}}$
-using the registered phase shift procedure in Section \ref{subsec:phase-shift}
-This is done with a circuit of size $O(n^2\log n)$ and $O((\log n)^2)$ depth.
+using phase kickback and parallelized phase estimation in Section \ref{subsec:phase-shift}
+This is done with a circuit of size $O(n^2\log n)$ and $O(\log n)$ depth.
 \item Make $m$ copies of the state $\ket{\psi_{n,1}}$ out of one copy by 
 applying the addition operation $A$.
 \item Simulate each $\Lambda(e^{2\pi i l / 2^n})$
@@ -85,98 +60,6 @@ all these phase shifts in parallel.
 
 Now for the resource calculations of these individual steps and their
 substeps.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Precompiling to the Standard Set}
-\label{subsec:precompile}
-
-This is the completely classical preprocessing step for Super-Kitaev which
-assumes we can express any $n$-qubit gate as a tensor product of
-single- and two-qubit gates.
-From there, how do we get down to our universal set?
-
-%\begin{theorem}[Lemma 8.2]
-%\label{lemma82}
-%Any arbitrary unitary operator $U$ of dimension $d \times d$ can be represented
-%as a product of $d(d-2)/2$ matrices of the form:
-%
-%\begin{equation*}
-%\left( \begin{array}{cccccccc}
-%     1 & 0      & \cdots & \cdots & \cdots & \cdots & \cdots & \cdots\\
-%     0 & 1      & \cdots & \cdots & \cdots & \cdots & \cdots & \cdots\\
-%\vdots & \cdots & \ddots & \cdots & \cdots & \cdots & \cdots & \cdots\\
-%\vdots & \cdots & \cdots &      a &      b & \cdots & \cdots & \cdots\\
-%\vdots & \cdots & \cdots &      c &      d & \cdots & \cdots & \cdots\\
-%\vdots & \cdots & \cdots & \cdots & \cdots & \vdots & \cdots & \cdots\\
-%\vdots & \cdots & \cdots & \cdots & \cdots & \cdots & 1 & 0\\
-%\vdots & \cdots & \cdots & \cdots & \cdots & \cdots & 0 & 1\\
-%\end{array}
-%\right)
-%\end{equation*}
-%
-%where $\left( \begin{array}{cc}
-%a & b\\
-%c & d\\
-%\end{array} \right) \in SU(2)$
-%\end{theorem}
-%
-%\begin{proof}
-%The running time of this algorithm is $O(M^3) \cdot \mathrm{poly}(\log(1/\delta)$.
-%\end{proof}
-
-We use the Euler angle decomposition into $X$ and $Z$ rotations,
-we can express any
-unitary $U$ as follows, with real angles $\phi$, $\gamma$, $\beta$, $\alpha$:
-
-\begin{equation*}
-U = e^{i\phi}e^{i(\gamma/2)\sigma^z}e^{i(\beta/2)\sigma^x}e^{i(\alpha/2)\sigma^z}
-\end{equation*}
-This involves solving four equations in four variables and can be done in
-constant time.
-
-Now how do we implement each of the elements of the Euler angle decomposition from
-the $\mathcal{Q}$? Using these identities:
-
-\begin{equation*}
-e^{i\phi} = \Lambda(e^{i\phi})\sigma^x\Lambda(e^{i\phi})\sigma^x
-\end{equation*}
-\begin{equation*}
-\sigma^x = H\Lambda(e^{i\pi})H
-\end{equation*}
-\begin{equation*}
-e^{i\phi\sigma^z} = \Lambda(e^{-i\phi}\sigma^x\Lambda(e^{i\phi})\sigma^x
-\end{equation*}
-\begin{equation*}
-e^{i\phi\sigma^x} = H e^{i\phi\sigma^z} H
-\end{equation*}
-
-In addition,
-any controlled operator $\Lambda(U)$ where $U \in SU(2)$ can be simulated
-using
-$\mathcal{Q} \cup \{ \Lambda(e^{i\phi})$.
-
-We can represent the controlled operator as $\Lambda(U) = \Lambda(e^{i\phi})\Lambda(V)$.
-$\Lambda(e^{i\phi})$ is already in our set, so it remains to implement
-$\Lambda(V)$, where $V \in SU(2)$. Geometrically, we can decompose any
-three-dimensional rotation into two $180^{\circ}$ rotations about appropriate
-axes. Using the homomorphism between $SO(3)$ and $SU(2)$ and the fact that
-$X = R_X(\pi)$, we have:
-
-\begin{equation*}
-V = A\sigma^x A^{-1} B\sigma^x B^{-1}
-\end{equation*}
-
-We can compile these single-qubit gates $\{A, A^{-1}, B, B^{-1}\}$ down
-to our basis using any of the techniques mention in Section \ref{sec:qcompile-review}.
-Therefore, we can implement the circuit for $\Lambda(U)$ as follows.
-
-\begin{figure}[hbt]
-\begin{displaymath}
-\end{displaymath}
-\label{fig:controlled-u}
-\caption{Decomposition of a two-qubit $\Lambda(U)$ gate into a CNOT and
-single-qubit gates $A$ and $B$}.
-\end{figure}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Parallelized Phase Estimation}
@@ -242,6 +125,43 @@ To avoid the inverse QFT,
 we can do a classical postprocessing step, which we'll mostly skip over
 for fairly good reasons, and then we'll do a detailed resource count of
 parallelized phase estimation.
+
+The main steps in parallelized phase estimation as applied to Super-Kitaev
+are:
+
+\begin{enumerate}
+
+\item Begin with a $t$-qubit ancilla register initialized to $\ket{0}^{\otimes t}$.
+%\textsc{Resources} $= [0,0,0,0,0,t]$
+
+\item Place the $t$-qubit register into an equal superposition by
+applying $n$ Hadamard gates.
+%\textsc{Resources} $= [0,0,0,n,1,0]$
+
+\item Treat $t$ as $2s$ groups of bits, each encoding an $n$-bit number.
+Sum them up out-of-place, retaining only the lowest $n$-bits,
+to get the superposition
+of all $n$-bit numbers, $1/(\sqrt{2^{n}}) \sum_{i=0}^{2^n-1} \ket{q_i}$.
+Call this register $\ket{q_i}$.
+%\textsc{Resources} $= ADD-OUT(2s \times n)$
+
+\item Reverse the first step by applying another $n$ Hadamards.
+%\textsc{Resources} $= [0,0,0,n,1,0]$
+
+\item Apply the gate $\Upsilon(A)$ to the target $\ket{\nu}$ controlled
+on $\ket{q_i}$, which is equivalent to adding all $q_i$ in superposition
+(in place).
+%\textsc{Resources} $= ADD-IN(2 \times n)$
+
+\item Measure the register $\ket{q_i}$ in the computational basis to get 
+a particular value $q$ and collapse the register to $\ket{q}$. All $t=(n-2)s$
+now contain classical $0$ or $1$ as outcomes of $(n+2)s$ Bernoulli trials.
+
+\item Read out these outcomes into our classical controller
+and perform the postprocessing
+described above to get an approximation of $\phi$ with precision $\delta$.
+
+\end{enumerate}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Classical Postprocessing}
@@ -333,7 +253,7 @@ $1/4$      & $0.0310880$ & $    517$\\
 
 By making our $\delta'$
 exponentially worse (doubling it) we are only increasing the range of
-$j$ a linear amount (by one). In general, for $\delta'=1/2^l$, we get
+$j$ a linear amount (by one). In general, for $\delta'=\frac{1}{2^l}$, we get
 a final estimate for $\phi = 2^{m-3}$
 
 However, projective measurements are irreversible, and we may wish to
@@ -348,43 +268,3 @@ However, to simplify our analysis, we assume the case
 in the previous paragraph, and accept the
 loss of $n$ ancilla qubits, After all, we only run phase estimation once
 to get our initial $\ket{\psi_{n,1}}$ state.
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Steps in the Parallelized Phase Estimation Algorithm}
-
-The main steps in parallelized phase estimation as applied to Super-Kitaev
-are:
-
-\begin{enumerate}
-
-\item Begin with a $t$-qubit ancilla register initialized to $\ket{0}^{\otimes t}$.
-%\textsc{Resources} $= [0,0,0,0,0,t]$
-
-\item Place the $t$-qubit register into an equal superposition by
-applying $n$ Hadamard gates.
-%\textsc{Resources} $= [0,0,0,n,1,0]$
-
-\item Treat $t$ as $2s$ groups of bits, each encoding an $n$-bit number.
-Sum them up out-of-place, retaining only the lowest $n$-bits,
-to get the superposition
-of all $n$-bit numbers, $1/(\sqrt{2^{n}}) \sum_{i=0}^{2^n-1} \ket{q_i}$.
-Call this register $\ket{q_i}$.
-%\textsc{Resources} $= ADD-OUT(2s \times n)$
-
-\item Reverse the first step by applying another $n$ Hadamards.
-%\textsc{Resources} $= [0,0,0,n,1,0]$
-
-\item Apply the gate $\Upsilon(A)$ to the target $\ket{\nu}$ controlled
-on $\ket{q_i}$, which is equivalent to adding all $q_i$ in superposition
-(in place).
-%\textsc{Resources} $= ADD-IN(2 \times n)$
-
-\item Measure the register $\ket{q_i}$ in the computational basis to get 
-a particular value $q$ and collapse the register to $\ket{q}$. All $t=(n-2)s$
-now contain classical $0$ or $1$ as outcomes of $(n+2)s$ Bernoulli trials.
-
-\item Read out these outcomes into our classical controller
-and perform the postprocessing
-described above to get an approximation of $\phi$ with precision $\delta$.
-
-\end{enumerate}
