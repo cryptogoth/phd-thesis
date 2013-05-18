@@ -132,10 +132,11 @@ and the resources required to do so, depend on the code used.
 % Bravyi-Haah
 
 \subsection{Alternative Bases and Resources}
+\label{subsec:alt-resources}
 
 Now we turn to three recent works which use magic state distillation to compile
 arbitrary single-qubit gates. These works either compile to an alternate
-basis from the Clifford group $\mathcal{C}_n$ and $T$
+basis from $\mathcal{C}_n \cup \{T,T^{\dagger}\}$.
 
 A recent approach by Bocharov-Gurevich-Svore \cite{Bocharov2013}
 compiles to subsets of the Clifford group augmented with the non-Clifford
@@ -169,3 +170,12 @@ digital processor architectures.
 In contrast, Landahl and
 Cesare consider a ``complex instruction set computing'' (CISC) basis which
 includes 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Generalizations to Quantum Compiling}
+\label{subsec:alt-tasks}
+
+The literature of quantum compiling has traditionally drawn boundaries
+around itself, restricting its study to approximation of unitary gates
+with perfect operations. However, s
+around 
