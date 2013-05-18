@@ -1,6 +1,81 @@
 \section{Quantum Compiler Review}
 \label{sec:qcompile-review}
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Quantum Compiling Before 2012}
+\label{subsec:qcompiile-pre2012}
+
+The first known quantum compiling result by Lloyd showed that almost any two
+distinct single-qubit gates were universal for single-qubit compiling
+\cite{Lloyd1995}. However, the runtime and length of a compiled sequence of gates
+could take exponentially long in the desired error precision: $O(1/\epsilon)$
+The first \emph{efficient} quantum compiler due to
+Solovay-Kitaev (SK) as implemented by Dawson-Nielsen had an original depth overhead
+of $O(\log^{2.71}(1/\epsilon))$ and classical
+running time of $O(\log^{3.97}(1/\epsilon))$. This is a seminal result in
+the field of quantum computation, and as such it was reviewed in the previous
+section (\ref{sec:qcompile-sk}). We will abbreviate it afterwards as SK-DN.
+It was later improved by Kitaev-Shen-Vyalyi
+to have a longer running time but smaller depth overhead of $O(\log^{3+o(1)}(n/\epsilon))$
+\cite{Kitaev2002}, an algorithm we will call SK-KSV.
+This improvement was achieved by repeated rounds of sparsifying and
+telescoping finer nets based on coarser nets. Both SK-DN and SK-KSV can be
+generalized to $n$-qubit compiling, but in the latter case the multiplicative
+prefactor has a doubly exponentially dependence of $exp(2^n)$. Suggestions
+for improving this to be $poly(2^n)$ are provided in the text, but this remains
+an interesting open problem.
+
+In the same text, a more parallel compiling procedure was discovered by Kitaev-Shen-
+Vyalyi with a depth overhead of $O(\log n + \log\log(1/\epsilon))$ but
+with a width of $O(n^3)$ on $\textsc{AC}$ \cite{Kitaev2002}.
+
+This involves the generation of an $n$-qubit quantum Fourier state into a register
+and the controlled-addition
+modulo $2^n$ into this register. The first step is done using phase estimation
+and an approximative inverse QFT using classical post-processing.
+This controlled-addition step is known as
+\emph{phase kickback} in recent literature \cite{Jones2012}. Therefore, we
+refer to this algorithm as PK-KSV.
+Moreover, the KSV procedure relies on a prior decomposition into
+single-qubit gates.
+a unitary matrix in $SU(N=2^n)$ into (controlled) single-qubit gates,
+An equivalent, alternative proof is given by Cleve-Watrous \cite{Cleve2000}.
+
+%Numerical comparisons between SK and KSV can be found in Section \ref{sec:ksv-results}.
+
+As early as 2004, Austin Fowler pioneered the use of optimized enumeration
+of gate sequences over a single-qubit basis, using efficient data structures
+and heuristics to de-dupe (remove duplicates) a database of optimal, unique
+sequences up to
+a certain length \cite{Fowler2011}. He used the basis $\mathcal{C}_1 \cup \{ T, T^{\dagger} \}$
+and gave efficient, fault-tolerant implementations of this basis in the
+Steane code. Due to the fact that the Clifford group is closed under
+matrix multiplication, every compiled Fowler sequence can be simplified as a
+Clifford gate alternating with $T$. Asymptotically, this still runs in time
+$|\mathcal{B}|^\ell$ to produce compiled sequences of optimal length $\ell$.
+It is a single-qubit, exact-synthesis
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Quantum Compiling in 2012 and After}
+\label{subsec:qcompiile-post2012}
+
+This may be optimized using classical parallelization and hardware acceleration
+\cite{Booth2012}, possibly also for scaling this approach to
+two-qubit compilation with $\mathcal{C}_2$ (containing 11,520
+elements).
+
+Matsumoto-Amano
+
+Bocharov-Svore
+
+Kliuchnikov 1,2,3
+
+VanMeter, Horseman
+
+Selinger
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Magic States for Quantum Compiling}
 
 Instead of using non-Clifford gates to complete our basis into a universal
