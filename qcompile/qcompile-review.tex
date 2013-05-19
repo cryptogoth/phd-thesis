@@ -45,7 +45,7 @@ An equivalent, alternative proof is given by Cleve-Watrous \cite{Cleve2000}.
 
 As early as 2004, Austin Fowler pioneered the use of optimized enumeration
 of gate sequences over a single-qubit basis, using efficient data structures
-and heuristics to de-dupe (remove duplicates) a database of optimal, unique
+and heuristics to search and de-dupe (remove duplicates) a database of optimal, unique
 sequences up to
 a certain length \cite{Fowler2011}. He used the basis $\mathcal{C}_1 \cup \{ T, T^{\dagger} \}$
 and gave efficient, fault-tolerant implementations of this basis in the
@@ -53,19 +53,45 @@ Steane code. Due to the fact that the Clifford group is closed under
 matrix multiplication, every compiled Fowler sequence can be simplified as a
 Clifford gate alternating with $T$. Asymptotically, this still runs in time
 $|\mathcal{B}|^\ell$ to produce compiled sequences of optimal length $\ell$.
-It is a single-qubit, exact-synthesis
+It is an exact-synthesis, deterministic, provably optimal compiler.
+In its current form, it is a single-qubit compiler because it takes as input
+$\mathcal{C}_1 \cup \{T\}$, but it can be generalized to $n$-qubits by enumerating
+and feeding in $\mathcal{C}_n \cup \{T\}$. Unfortunately, the size of the
+Clifford group increases at least exponentially in $n$, which places practical
+limits on any such enumerative compiler for $n \ge 2$.
 
+In 2007, Matsumoto-Amano used the idea of a \emph{normalized circuit} to
+improve the enumeration and search approach to compiling \cite{Matsumoto2007}. Two circuits in
+normalized form compute the same gate if and only if they are the same
+circuit. If a normalized form can be computed efficiently, then a
+database of normalized forms can be easily searched to determine the
+uniqueness of a gate sequence. Their case exploits the special structure
+of the single-qubit basis $\{H,T,T^{\dagger}\}$ and is an exact-synthesis,
+deterministic, provably-optimal compiler over this basis. Both the Fowler
+and the Matsumoto-Amano compiler can be plugged into Solovay-Kitaev to
+optimize the basic (0-level) approximations. (Fact, check if anyone
+has done this yet).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Quantum Compiling in 2012 and After}
 \label{subsec:qcompiile-post2012}
+
+In 2012, two approaches improved upon the Fowler method by considering a
+meet-in-the-middle approach: the work by Amy-Mosca-Maslov-Roetteler (AMMR) The Fowler approach searches for an
+optimal path from identity to the desired target gate using an optimal
+length of $\ell$. The meet-in-the-middle approach divides this into two tasks of
+reaching a middle point, searching simultaneously from identity and the
+target gate, to find optimal paths of length $\lceil \ell/2 \rceil$
+and $\lfloor \ell/2 \rfloor$. This gives a quadratic speed improvement over
+the Fowler approach.
+
 
 This may be optimized using classical parallelization and hardware acceleration
 \cite{Booth2012}, possibly also for scaling this approach to
 two-qubit compilation with $\mathcal{C}_2$ (containing 11,520
 elements).
 
-Matsumoto-Amano
+
 
 Bocharov-Svore
 
