@@ -104,7 +104,13 @@ with no error ($\epsilon = 0$). If this is possible, a quantum compiler
 should return the sequence of gates which constitute the exact
 synthesis. Furthermore, exact synthesizers often have a goal of
 returning the \emph{optimal} sequence of compiled gates, that is,
-one with minimal length $\ell$.
+one with minimal length $\ell$. In the compilers that we review
+in Section \ref{sec:qcompile-revew}, $\ell$ stands for the optimal
+depth of non-Clifford resources in a basis which also contains Clifford
+gates. Therefore, counting $\ell$ as non-Clifford resources is always
+within a constant factor of counting $\ell$ as all resources, and so we
+will not distinguish between the two,.
+
 Exact synthesizers often enumerate over all circuits of
 a certain length from a certain basis $\mathcal{B}$. Therefore, their
 resources are upper bounded by a brute force search, which takes
@@ -115,6 +121,19 @@ exact synthesis algorithms can be used to build basic approximations
 for the Solovay-Kitaev algorithm more efficiently, and therefore help
 achieve better approximative upper bounds as verified by numerical
 simulation over random unitaries.
+
+What is the relationship between $\ell$ and $\epsilon$? By a volume
+argument, the minimum number of points in an $\epsilon_0$-net for
+$SU(d=2^n)$ is $1/(\epsilon^{d^2 - 1})$. If we were to do an approximative
+search within error $\epsilon_0$
+for a circuit in $SU(d)$ which is known to have optimal length
+$\ell$, we would have to enumerate all sequences from a basis $\mathcal{B}$
+of up to length $\ell$ in the worst case, of which there are $|\mathcal{B}|^{\ell}$.
+Therefore, we have the following relationship.
+
+\begin{equation}
+\ell \ge (d^2 - 1) \log_{|B|}(1/\epsilon) + O(1)
+\end{equation}
 
 The third axis is whether a quantum compiling algorithm uses randomness
 or is completely deterministic. For known randomized algorithms, it is
