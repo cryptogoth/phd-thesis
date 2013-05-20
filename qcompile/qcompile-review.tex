@@ -25,21 +25,33 @@ prefactor has a doubly exponentially dependence of $exp(2^n)$. Suggestions
 for improving this to be $poly(2^n)$ are provided in the text, but this remains
 an interesting open problem.
 
-In the same text, a more parallel compiling procedure was discovered by Kitaev-Shen-
-Vyalyi with a depth overhead of $O(\log n + \log\log(1/\epsilon))$ but
-with a width of $O(n^3)$ on $\textsc{AC}$ \cite{Kitaev2002}.
-
+In the same text \cite{Kitaev2002},
+a more parallel compiling procedure was discovered by Kitaev-Shen-
+Vyalyi with a depth overhead of $D' = O(D\log(1/\epsilon) + (\log\log(1/\epsilon))^2)$ but
+a size overhead of $S' = O(S\log(1/epsilon) + (\log(1/\epsilon))^2 (\log\log(1/\epsilon))$
+and a width overhead of $W' = O(W(\log(1/\epsilon))^2$
+on \textsf{AC}.
 This involves the generation of an $n$-qubit quantum Fourier state into a register
 and the controlled-addition
 modulo $2^n$ into this register. The first step is done using phase estimation
 and an approximative inverse QFT using classical post-processing.
 This controlled-addition step is known as
-\emph{phase kickback} in recent literature \cite{Jones2012}. Therefore, we
+\emph{phase kickback} in recent literature \cite{Jones2012}.
+
+Therefore, we
 refer to this algorithm as PK-KSV.
-Moreover, the KSV procedure relies on a prior decomposition into
-single-qubit gates.
+Moreover, the KSV procedure assumes a basis of
+relies on a prior decomposition into
+single-qubit gates
 a unitary matrix in $SU(N=2^n)$ into (controlled) single-qubit gates,
 An equivalent, alternative proof is given by Cleve-Watrous \cite{Cleve2000}.
+PK-KSV was the first quantum compiler to make a time-space (circuit depth
+versus circuit width) tradeoff,
+using ancillae to decrease depth. Therefore, it has non-trivial circuit space
+and circuit width, and it is the first compiler where architectural concerns
+matter.
+We will calculate its resources when mapped to
+\textsf{2D CCNTCM} in Section \ref{sec:qcompile-ksv-resources}.
 
 %Numerical comparisons between SK and KSV can be found in Section \ref{sec:ksv-results}.
 
@@ -74,10 +86,16 @@ has done this yet).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Quantum Compiling in 2012 and After}
-\label{subsec:qcompiile-post2012}
+\label{subsec:qcompile-post2012}
+
+In 2012 and after, quantum compiling experienced a renewed interest in the
+research community. Many different themes from the previous section were
+taken up and developed. These developments are summarized below.
 
 In 2012, two approaches improved upon the Fowler method by considering a
-meet-in-the-middle approach: the work by Amy-Mosca-Maslov-Roetteler (AMMR) The Fowler approach searches for an
+meet-in-the-middle approach: the work by Amy-Mosca-Maslov-Roetteler (AMMR)
+\cite{Amy2012} and that by Booth (\cite{Booth2012}.
+The Fowler approach searches for an
 optimal path from identity to the desired target gate using an optimal
 length of $\ell$. The meet-in-the-middle approach divides this into two tasks of
 reaching a middle point, searching simultaneously from identity and the
@@ -85,21 +103,112 @@ target gate, to find optimal paths of length $\lceil \ell/2 \rceil$
 and $\lfloor \ell/2 \rfloor$. This gives a quadratic speed improvement over
 the Fowler approach.
 
+Both the AMMR and Booth compilers can be generalized to
+multi-qubit circuits by feeding in a multi-qubit basis. In fact, the AMMR compiler
+was able to generate the two-qubit Clifford group with
+size $|\mathcal{C}_2}| = 11,520$ and the three-qubit Clifford
+$|\mathcal{C}_3}| = 92,897,280$, and therefore it is able to optimize
+the depth of $T$ gates in a circuit, in addition to optimizing the total
+count of $T$ gates. However, for multi-qubit gates of $n \ge 4$,
+the running time of enumerative search, even with optimizations, is
+doubly exponential (exponential enumeration over an exponential-sized
+set of Clifford group elements), which quickly encounters practical limits
+of modern digital computers.
+On a more positive note, the AMMR compiler gives the first new decomposition
+of the Toffoli gate in terms of $\mathcal{C}_1 \cup \{T, T^{\dagger}\}$
+since 1995 \cite{Barenco1995a}. Interestingly, the AMMR paper states without
+proof the
+exact equivalence of single-qubit circuits over the basis
+$\{H, T, T^{\dagger}\ }$ and $U(2)$ matrices with elements from the ring $\mathbb{Z}\left[i,\frac{1}{\sqrt{2}}\right]$.
+However, this is not proven until a later paper \cite{Kliuchnikov2013}.
 
-This may be optimized using classical parallelization and hardware acceleration
-\cite{Booth2012}, possibly also for scaling this approach to
-two-qubit compilation with $\mathcal{C}_2$ (containing 11,520
-elements).
+The Bocharov-Svore (BS) compiler combines the idea of normalizing circuits
+and enumerative search to compile \emph{canonical circuits} on single-qubits.
+Canonical circuits
+implement the same circuit if their matrices are the same up to
+conjugation by two (possibly distinct) Clifford gates. This leads to
+a fourth-root speedup of search time for this exact-synthesis, single-qubit
+compiler over the $\{H, T, T^{\dagger} \}$ basis. While its circuit resources
+can be expressed in terms of basis size $|\mathcal{B}|$ for comparison with
+the AMMR, Booth, and Fowler compilers, in fact the BS compiler is only known
+to work for one particular single-qubit basis. Furthermore, the BS exact
+compiler can be plugged into SK to optimize the enumeration and storage of
+basic (0-level) approximations. When this is done and simulated for
+random unitaries, numerical experiments reveal an improved compiled
+sequence length of $O(\log^{3.4}(1/\epsilon)$. We can call this hybrid
+compiler SK-BS.
 
+Kliuchnikov-Mosca-Maslov (KMM) provide significant advances for both the
+exact-synthesis and approximative approaches to compiling, which we can
+abbreviate KMMe and KMMa, respectively.
 
+For the
+exact-synthesis case \cite{Kliuchnikov2012e},
+KMMe provides a rigorous proof of the equivalence
+of circuits over the basis $\mathcal{C}_1 \cup \{T, T^{\dagger} \}$ and $U(2)$ matrices
+with elements from the ring $\mathbb{Z}\left[i,\frac{1}{\sqrt{2}}\right]$.
+Reducing the problem of circuit synthesis over this basis to state
+generation, with elements from $\mathbb{Z}\left[i,\frac{1}{\sqrt{2}}\right]$,
+KMMe remarkably finds sequences of optimal length $\ell$ in time
+polynomial in $\ell$
+($O(\ell ^2)$ bit operations), and not exponential in $\ell$ as
+all previous approaches. This is a fair comparison because other 
+exact-synthesis algorithms above implicitly
+depend on a fixed-precision floating-point
+arithmetic, and KMMe makes its bit-dependence explicit. The KMMe is
+a single-qubit compiler, but its generalization to higher dimensions
+depends on proving the conjecture that
+$U(2^n)$ matrices of elements from $\mathbb{Z}\left[i,\frac{1}{\sqrt{2}}\right]$
+are equivalent to $n$-qubit circuits over the same basis.
 
-Bocharov-Svore
+For the approximative case \cite{Kliuchnikov2012a}, KMMa saturates the lower
+bound of $\Omega(\log(1/\epsilon)$ by using two ancillae prepared in the
+$\ket{00}$ state and basis of $\mathcal{C}_1 \cup \{ T \}$.
+It reduces the problem of approximating a
+$R_Z(\phi)$ single-qubit rotation with expressing a large integer $M$ as the
+sum of four squares. There is a known probabilistic algorithm to
+solve this Diophantine equation
+by Rabin-Shallit \cite{Rabin} that takes $O(\log^2(M)\log\log M)$. Therefore,
+the KMMa compiler runs in classical time $O(\log^2(1/\epsilon)\log\log(1/\epsilon))$
+and returns sequences of length $O(\log(1/\epsilon)$, which is optimal up to
+a constant factor.
 
-Kliuchnikov 1,2,3
+A natural improvement is to see if the ancillae of KMMa can be done away with
+completely. This question is answered in the affirmative by a single-qubit,
+approximative compiler by Selinger
+\cite{Selinger2012}. In that work, general unitaries are approximated up to
+error $\epsilon$ via the $R_Z(\phi)$ (or equivalently, $R_X(\phi)$ rotations)
+of accuracy $\epsilon/3$ using elements of the
+ring $\mathcal{R}$ so that a known, optimal exact-synthesizer such as KMMe
+can be used. The approximation to $R_Z(\phi)$ involves solving
+Diophantine equations to find approximations to real numbers in the
+ring $\mathbb{Z}\left[\sqrt{2}\right]$. Solutions to this require
+random sampling of candidate solutions from $\mathcal{R}$ whose average
+success probability depends on an open conjecture about the distribution
+of odd primes. The running time and optimal sequence-depth of the
+Selinger compiler is verified by numerical simulation.
 
-VanMeter, Horseman
+Improving SK-style approximative and Fowler-style enumerative compilers has
+dominated most of the progress in the years 2012-2013. However, we now mention
+a work which uniqely improves on phase-kickback and the PK-KSV-style of
+compilation that allows $O(n)$ ancillae in order to achieve $o(\log(1/\epsilon)$
+depth.
 
-Selinger
+Based on previous multilevel distillation protocols for magic states \cite{Jones2012},
+Jones devised a remarkable way to recursively distill Fourier states using an
+initial approximation of $2$-qubit states using only Clifford gates. This provides
+an alternative to generating quantum Fourier states to PK-KSV to be used with
+phase kickback; therefore we abbreviate this method PK-Jones. Fourier state
+distillation results
+in an asymptotic improvement in the number of non-Clifford (Toffoli) gates
+required versus PK-KSV ($O(n\log n)$ versus $O(n^2\log n)$ for an
+$n$-qubit Fourier state), while maintaining the same asymptotic depth overhead
+($O(\log n)$). The resources of PK-Jones are compared with PK-KSV in
+Section \ref{sec:qcompile-ksv-resources}.
+
+All of these approaches, which admit direct comparison more-or-less, are
+displayed in Table \ref{tab:qcompile-compare} in Section
+\ref{sec:qcompile-compare}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Magic States for Quantum Compiling}
@@ -166,12 +275,35 @@ basis from $\mathcal{C}_n \cup \{T,T^{\dagger}\}$.
 
 A recent approach by Bocharov-Gurevich-Svore \cite{Bocharov2013}
 compiles to subsets of the Clifford group augmented with the non-Clifford
-$V$-basis, which was proven to permit the lower-bound of compiled sequence length
+$V$-basis, first discovered by Lubotsky-Phillips-Sarnak \cite{Lubotsky1987},
+which was proven to permit the lower-bound of compiled sequence length
 $O(\log^1(1/\epsilon)$
 \cite{Harrow2003}.
 
 \begin{equation}
-V_1 = TODO \qquad V_2 = TODO \qquad V_3 = TODO
+V_1 = \frac{1}{\sqrt{5}}
+\left[
+\begin{array}{cc}
+1  & 2i \\
+2i & 1
+\end{array}
+\right]
+\qquad
+V_2 = \frac{1}{\sqrt{5}}
+\left[
+\begin{array}{cc}
+1  & 2\\
+-2 & 1
+\end{array}
+\right]
+\qquad
+V_3 = \frac{1}{\sqrt{5}}
+\left[
+\begin{array}{cc}
+1+2i & 0 \\
+   0 & 1-2i
+\end{array}
+\right]
 \end{equation}
 
 This work uses the properties of Lipschitz quaternions with norms $5^l$, ($l \in \mathbb{Z}, l \ge 0$). It
@@ -194,14 +326,37 @@ number (usually one) non-Clifford gate (a $T$ gate or Toffoli). We can
 call these ``reduced instruction set computing'' (RISC) bases, in analogy to
 digital processor architectures.
 In contrast, Landahl and
-Cesare consider a ``complex instruction set computing'' (CISC) basis which
-includes 
+Cesare consider a ``complex instruction set computing'' (CISC) basis
+\cite{Landahl2012}
+which
+can include certain non-Clifford states of the form
+$\ket{0} + e^{i\pi / 2^k} \ket{1} = R_Z(\pi/{2^k})\ket{+}$. These
+non-Clifford states can be distilled to a certain error $\epsilon'$ using
+a probabilistic procedure using only Clifford gates similar to distilling
+the state $\ket{H}$ described above. This error $\epsilon'$ is proportional
+to the desired error of gate compilation: $\epsilon' \tilde \epsilon$.
+Therefore, the work of Landahl-Cesare also unifies into the sum of the 
+exponent of the logarithm $\alpha + \beta + \gamma$ the
+normally distinct procedures of
+magic state distillation ($\alpha$),
+quantum compiling ($\beta$),
+and error-correction ($\gamma$) into
+the sum of exponents of the logarithm.
+
+\begin{equation}
+R,D = O(\log ^{\alpha + \beta + \gamma} (1/\epsilon)
+\end{equation}
+
+By optimizing over magic state distillation and quantum compiling as a
+single task, Landahl-Cesare achieves $\alpha + \beta \approx 1$, when the
+best that can be achieved with these two procedures separately is
+$\alpha + beta \ge 2$.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Generalizations to Quantum Compiling}
-\label{subsec:alt-tasks}
+%\subsection{Generalizations to Quantum Compiling}
+%\label{subsec:alt-tasks}
 
-The literature of quantum compiling has traditionally drawn boundaries
-around itself, restricting its study to approximation of unitary gates
-with perfect operations. However, s
-around 
+%The literature of quantum compiling has traditionally drawn boundaries
+%around itself, restricting its study to approximation of unitary gates
+%with perfect operations. However, s
+%around 
