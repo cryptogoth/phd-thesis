@@ -1,40 +1,32 @@
 \section{Quantum Compiler Comparison}
 \label{sec:qcompile-compare}
 
+\begin{landscape}
+
 \begin{table}[hbt!]
-\begin{tabular}{|c|c|c|c|c|c|c|c|}
+\begin{tabular}{|c|c|c|c|c|c|c|c|c|}
 \hline
-Algorithm                  & A/E & P/D & Multi? & $R$                             & $D'$             & $S'$ & $W'$ \\
+Algorithm                  & A/E & D/R & P/C & Multi? & $R$                             & $D'$                    & $S'$                  & $W'$ \\
 \hline
-SK-DN\cite{Dawson2005}      & A   & D   & Y    & $O(n^{2.71} + \mathcal{B}^{l_0})$                    & $O(D n^{3.97})$  & $D'$ & 1    \\
-SK-KSV\cite{Kitaev2002}     & A   & D   & N    & $O(n^{3+\nu})$\footnote{TODO Basic approx}                   & $O(D n^{3+\nu})$ & $D'$ & 1    \\
-Fowler\cite{Fowler2011}     & A   & D   & Y    & $O(\ell |\mathcal{B}|^{\ell})$   & $\ell$           & $D'$ & 1    \\
-Booth \cite{Booth2012}      & A   & D   & Y    & $O(\ell |\mathcal{B}|^{\ell/2})$ & $\ell$           & $D'$ & 1    \\
-AMMR \cite{Amy2012}         & E   & D   & Y    & $O(\ell |\mathcal{B}|^{\ell/2})$ & $\ell$           & $D'$ & 1    \\
-BS \cite{Bocharov2012}      & E   & D   & N    & $O(\ell |\mathcal{B}|^{\ell/4})$ & $\ell$           & $D'$ & 1    \\
-SK-BS \cite{Bocharov2012}   & A   & P   & N    & $O(n^{2.71} + \mathcal{B}^{l_0})$ & $O(Dn^{3.4})$           & $D'$ & 1    \\
-BSG \cite{Bocharov2013}     & A   & D   & N    & $O(\ell |\mathcal{B}|^{\ell/4})$ & $\ell$           & $D'$ & 1    \\
-KMM-e\cite{Kliuchnikov2012} & E   & D   & ?    & $\ell^2$                         & $\ell$           & $D'$ & 1    \\
-KMM-a\cite{Kliuchnikov2012b}& A   & P   & N    & $O(n^2\log n)$                   & $O(Dn)$          & $D'$ & 1    \\
-Selinger\cite{Selinger2012} & A   & P   & N    & $O(n^4)$                         & $(48n + 44)D$    & $D'$ & 1    \\
-PK-KSV \cite{Kitaev2002,Cleve2000} & E & D & N & $O(1)$                           & $O(D\log n + \log^2 n)$ & $O(S n + n^2 \log n)$ & ? \\
-PK-Jones \cite{Jones2013}   & E  & D   & N     & $O(1)$                           & $O(D\log n + n \log n)$ & $O(S n + n \log n)$ & $2n + O(1)$ \\
+Fowler\cite{Fowler2011}     & A   & D   & P  & Y    & $O(\ell |\mathcal{B}|^{\ell})$    &                         &                       &     \\
+Booth \cite{Booth2012}      & A   & D   & P  & Y    & $O(\ell |\mathcal{B}|^{\ell/2})$  &                         &                       & 1    \\
+AMMR \cite{Amy2012}         & E   & D   & P  & Y    & $O(\ell |\mathcal{B}|^{\ell/2})$  &                         &                       & 1    \\
+BS \cite{Bocharov2012}      & E   & D   & P  & N    & $O(\ell |\mathcal{B}|^{\ell/4})$  &                         &                       & 1    \\
+%BSG \cite{Bocharov2013}     & A   & D   & N    & $O(\ell |\mathcal{B}|^{\ell/4})$ & $\ell$           & $D'$ & 1    \\
+KMM-e\cite{Kliuchnikov2012} & E   & D   & P  & ?    & $\ell^2$                          &                         &                       & 1    \\
+SK-DN\cite{Dawson2005}      & A   & D   & P  & Y    & $O(n^{2.71} + \mathcal{B}^{l_0})$ & $O(D n^{3.97})$         &                       & 1    \\
+SK-KSV\cite{Kitaev2002}     & A   & D   & P  & N    & $O(n^{3+o(1)})$                   & $O(D n^{3+\nu})$        &                       & 1    \\
+SK-BS \cite{Bocharov2012}   & A   & D   & C  & N    & $O(n^{2.71} + \mathcal{B}^{l_0})$ & $O(Dn^{3.4})$           &                       & 1    \\
+KMM-a\cite{Kliuchnikov2012b}& A   & P   & C  & N    & $O(n^2\log n)$                    & $O(Dn)$                 &                       & 1    \\
+Selinger\cite{Selinger2012} & A   & P   & C  & N    & $O(n^4)$                          & $D(48n + 44)$           &                       & 1    \\
+PK-KSV \cite{Kitaev2002,Cleve2000} & E & D & P & N  & $O(1)$                            & $O(D\log n + \log^2 n)$ & $O(S n + n^2 \log n)$ & $O(n^2)$ \\
+PK-Jones \cite{Jones2013}   & E  & D    & P  & N     & $O(1)$                           & $O(D\log n + n \log n)$ & $O(S n + n \log n)$   & $2n + O(1)$ \\
 \end{tabular}
-\caption{A comparison of single-qubit quantum compilers, where $n = \log_2(1/\epsilon)$, for a desired error $\epsilon$.}
+\caption{A comparison of single-qubit quantum compilers, where $n = \log_2(1/\epsilon)$, for a desired error $\epsilon$.
+Blank depths $D'$ are $\ell$. Blank sizes $S'$ are equal to $D'$. Blank widths $W'$ are equal to $1$.
+A/E: Approximate versus exact-synthesis. D/R: Deterministic versus randomized. P/C: provable bounds versus conjecture + numerical verification.
+Multi?: Y if it can be generalized to a multi-qubit compiler.}
 \label{tab:qcompile-compare}
 \end{table}
 
-\begin{description}
-\item[SK (DN):] The Solovay-Kitaev approximation algorithm implemented by
-Dawson-Nielsen \cite{Dawson2005}, with code available here:
-\url{http://gitorious.com/}
-\item[SK (KSV):] The improved successive approximation algorithm in the
-style of Solovay-Kitaev, using sparsified nets, appearing in
-the Kitaev-Shen-Vyalyi text \cite{Kitaev2002}.
-\item[PK (KSV):] Using phase kickback to apply a phase from a Fourier
-basis state from phase estimation of the modular addition operator. This
-is described in Section 13 of the Kitaev-Shen-Vyalyi text
-\cite{Kitaev2002} as well as an equivalent
-proof in Cleve-Watrous \cite{Cleve2000}.
-\item[Phase ]
-\end{description}
+\end{landscape}
