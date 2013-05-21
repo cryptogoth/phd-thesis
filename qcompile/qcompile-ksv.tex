@@ -261,7 +261,7 @@ uncompute the phase estimation procedure to restore our ancilla to
 their initialized state and reuse them later on. In that case, the
 postprocessing can actually be done on a quantum computer using
 reversible gates and without projective measurements. That's why
-the authors of \cite{ksv02} go to some care to show that all the classical
+the authors of \cite{Kitaev2002} go to some care to show that all the classical
 postprocessing steps can be done in polynomial-size and logarithmic-depth
 circuit.
 However, to simplify our analysis, we assume the case
@@ -287,7 +287,7 @@ We now map both the KSV and Jones algorithms for QFS generation
 to \textsf{2D CCNTCM} and compare their resources. We do not consider
 the phase kickback part of the quantum compiler, since this controlled addition
 is the same for both QFS algorithms. Like PK-Jones \cite{Jones2012}, we
-set our error as $\epsilon = \(\frac{\pi}{2^n}\)^2$. It is not clear why
+set our error as $\epsilon = \left(\frac{\pi}{2^n}\right)^2$. It is not clear why
 this error was chosen, since for factoring or other polynomial-sized circuits,
 an inverse-polynomial error precision is sufficient. However, for the
 purpose of comparison, we set the same error.
@@ -297,7 +297,7 @@ pure Fourier state $\ket{\psi}^{(1)}_n$ and a distilled
 Fourier state $\ket{\tilde{\psi}}^{(1,m)}_n$ after $m$ rounds.
 
 \begin{equation}
-1 - | \braket{\tilde{\psi}}^{(1,m)}_n}{\psi^{(1)}} |^2 = \epsilon \le \left( \frac{\pi}{2^n} \right)^2 
+1 - | \braket{\tilde{\psi}^{(1,m)}_n}{\psi^{(1)}} |^2 = \epsilon \le \left( \frac{\pi}{2^n} \right)^2 
 \end{equation}
 
 The condition for error in PK-KSV is that an incorrect phase indexed by $k$ is returned,
@@ -310,10 +310,6 @@ $\ket{\psi^{(k)}_n}$ with another register containing a measured phase $y$.
 The error in phase estimation is then the sum of all the probabilities that
 given that our procedure ``selects'' state $\ket{\psi^{(k)}_n}$, we
 measure some $y \ne k$.
-
-\begin{equation}
-
-\end{equation}
 
  Several differences exist in resource
 calculation methods and those of PK-Jones \cite{Jones2012}. First, they 

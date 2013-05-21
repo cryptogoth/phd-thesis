@@ -73,7 +73,7 @@ Clifford group increases at least exponentially in $n$, which places practical
 limits on any such enumerative compiler for $n \ge 2$.
 
 In 2007, Matsumoto-Amano used the idea of a \emph{normalized circuit} to
-improve the enumeration and search approach to compiling \cite{Matsumoto2007}. Two circuits in
+improve the enumeration and search approach to compiling \cite{Matsumoto2008}. Two circuits in
 normalized form compute the same gate if and only if they are the same
 circuit. If a normalized form can be computed efficiently, then a
 database of normalized forms can be easily searched to determine the
@@ -106,8 +106,8 @@ the Fowler approach.
 Both the AMMR and Booth compilers can be generalized to
 multi-qubit circuits by feeding in a multi-qubit basis. In fact, the AMMR compiler
 was able to generate the two-qubit Clifford group with
-size $|\mathcal{C}_2}| = 11,520$ and the three-qubit Clifford
-$|\mathcal{C}_3}| = 92,897,280$, and therefore it is able to optimize
+size $|\mathcal{C}_2| = 11,520$ and the three-qubit Clifford
+$|\mathcal{C}_3| = 92,897,280$, and therefore it is able to optimize
 the depth of $T$ gates in a circuit, in addition to optimizing the total
 count of $T$ gates. However, for multi-qubit gates of $n \ge 4$,
 the running time of enumerative search, even with optimizations, is
@@ -119,7 +119,7 @@ of the Toffoli gate in terms of $\mathcal{C}_1 \cup \{T, T^{\dagger}\}$
 since 1995 \cite{Barenco1995a}. Interestingly, the AMMR paper states without
 proof the
 exact equivalence of single-qubit circuits over the basis
-$\{H, T, T^{\dagger}\ }$ and $U(2)$ matrices with elements from the ring $\mathbb{Z}\left[i,\frac{1}{\sqrt{2}}\right]$.
+$\{H, T, T^{\dagger}\}$ and $U(2)$ matrices with elements from the ring $\mathbb{Z}\left[i,\frac{1}{\sqrt{2}}\right]$.
 However, this is not proven until a later paper \cite{Kliuchnikov2013}.
 
 The Bocharov-Svore (BS) compiler combines the idea of normalizing circuits

@@ -14,7 +14,7 @@
     Year = {2011}
 }
 
-@article{Harrow02,
+@article{Harrow2002,
 author = {Harrow, Aram W. and Recht, Benjamin and Chuang, Isaac L.},
 title = {Efficient Discrete Approximations of Quantum Gates},
 journal = {J. Math. Phys.},
@@ -516,7 +516,7 @@ arxivid = {quant-ph/0111031},
 	Keywords = {Mesoscale and Nanoscale Physics,Quantum Physics},
 	Month = nov,
 	Number = {5},
-	Pages = {7},
+	Pages = {},
 	Title = {{Universal quantum computation in a semiconductor quantum wire network}},
 	Url = {http://arxiv.org/abs/1007.4204},
 	Volume = {82},
@@ -771,7 +771,7 @@ author = {Eastin, Bryan},
 eprint = {1212.4872},
 file = {:Users/ppham/Dropbox/arXiv/1212.4872v1.pdf:pdf},
 month = dec,
-pages = {8},
+pages = {},
 title = {{Distilling one-qubit magic states into Toffoli states}},
 url = {http://arxiv.org/abs/1212.4872},
 year = {2012}
@@ -804,7 +804,7 @@ journal = {Physical Review Letters},
 keywords = {Quantum Physics},
 month = jan,
 number = {2},
-pages = {9},
+pages = {},
 primaryClass = {quant-ph},
 title = {{Effective Fault-Tolerant Quantum Computation with Slow Measurements}},
 url = {http://arxiv.org/abs/quant-ph/0607047},
@@ -876,10 +876,12 @@ author = {Jones, N. Cody and Whitfield, James D. and McMahon, Peter L. and Yung,
 eprint = {1204.0567},
 file = {:Users/ppham/Dropbox/arXiv/1204.0567v1.pdf:pdf},
 month = apr,
-pages = {33},
+pages = {},
 title = {{Simulating chemistry efficiently on fault-tolerant quantum computers}},
 url = {http://arxiv.org/abs/1204.0567},
-year = {2012}
+year = {2012},
+number = {115023},
+journal = {New Journal of Physics}
 }
 
 @article{Reif1992,
@@ -996,7 +998,7 @@ eprint = {1112.6063},
 file = {:Users/ppham/Library/Application Support/Mendeley Desktop/Downloaded/Takahashi, Tani - 2011 - Constant-Depth Exact Quantum Circuits for the OR and Threshold Functions.pdf:pdf},
 keywords = {Computational Complexity,Quantum Physics},
 month = dec,
-pages = {17},
+pages = {},
 title = {{Constant-Depth Exact Quantum Circuits for the OR and Threshold Functions}},
 url = {http://arxiv.org/abs/1112.6063},
 year = {2011}
@@ -1125,11 +1127,13 @@ arxivId = {arXiv:quant-ph/0406176v5},
 author = {Shende, Vivek V and Bullock, Stephen S and Markov, Igor L},
 eprint = {0406176v5},
 file = {:Users/ppham/Library/Application Support/Mendeley Desktop/Downloaded/Shende, Bullock, Markov - 2004 - Synthesis of Quantum Logic Circuits(2).pdf:pdf},
-journal = {Electrical Engineering},
-pages = {1--19},
+journal = {IEEE Transactions on Computer-Aided Design},
+number = {6},
+pages = {1000 -- 1010},
 primaryClass = {arXiv:quant-ph},
 title = {{Synthesis of Quantum Logic Circuits}},
-year = {2004}
+volume = {25},
+year = {2006}
 }
 
 @inproceedings{Shende2004, 
@@ -1138,7 +1142,7 @@ booktitle={Design, Automation and Test in Europe Conference and Exhibition, 2004
 title={Smaller two-qubit circuits for quantum communication and computation}, 
 year={2004}, 
 volume={2}, 
-pages={980-985 Vol.2}, 
+pages={980-985}, 
 keywords={bound states;quantum communication;quantum gates;CNOT gates;communication protocols;elementary gates;generic circuit;library-less logic synthesis;quantum circuit;quantum communication;quantum computation;quantum gate libraries;two-qubit circuits;two-qubit unitary operation;upper bound;upper bounds;CMOS logic circuits;CMOS technology;Circuit synthesis;Computational modeling;Cryptography;Electrons;Libraries;Logic circuits;Quantum computing;Upper bound}, 
 doi={10.1109/DATE.2004.1269020}, 
 ISSN={1530-1591}
@@ -1172,10 +1176,76 @@ journal = {Physical Review Letters},
 keywords = {Quantum Physics},
 month = nov,
 number = {24},
-pages = {3},
+pages = {},
 primaryClass = {quant-ph},
 title = {{Practical Scheme for Quantum Computation with Any Two-Qubit Entangling Gate}},
 url = {bare},
 volume = {89},
 year = {2002}
+}
+
+@article{Matsumoto2008,
+abstract = {In this paper, we introduce the notion of a normal form of one qubit quantum circuits over the basis \$\backslash\{H, P, T\backslash\}\$, where \$H\$, \$P\$ and \$T\$ denote the Hadamard, Phase and \$\backslash pi/8\$ gates, respectively. This basis is known as the \{$\backslash$it standard set\} and its universality has been shown by Boykin et al. [FOCS '99]. Our normal form has several nice properties: (i) Every circuit over this basis can easily be transformed into a normal form, and (ii) Every two normal form circuits compute same unitary matrix if and only if both circuits are identical. We also show that the number of unitary operations that can be represented by a circuit over this basis that contains at most \$n\$ \$T\$-gates is exactly \$192 \backslash cdot (3 \backslash cdot 2\^{}n - 2)\$.},
+author = {Matsumoto, Ken and Amano, Kazuyuki},
+file = {:Users/ppham/Library/Application Support/Mendeley Desktop/Downloaded/Matsumoto, Amano - 2008 - Representation of Quantum Circuits with Clifford and \$pi8\$ Gates.pdf:pdf},
+month = jun,
+pages = {},
+title = {{Representation of Quantum Circuits with Clifford and \$\backslash pi/8\$ Gates}},
+url = {http://arxiv.org/abs/0806.3834},
+year = {2008}
+}
+
+@article{Booth2012,
+abstract = {A quantum computer consists of a set of quantum bits upon which operations called gates are applied to perform computations. In order to perform quantum algorithms, physicists would like to design arbitrary gates to apply to quantum bits. However, the physical limitations of the quantum computing device restrict the set of gates that physicists are able to apply. Thus, they must compose a sequence of gates from the permitted gate set, which approximates the gate they wish to apply - a process called quantum compiling. Austin Fowler proposes a method that finds optimal gate sequences in exponential time, but which is tractable for common problems. In this paper, I present several optimizations to this algorithm. While my optimizations do not improve its overall exponential behavior, they improve its empirical performance by one to two orders of magnitude.},
+archivePrefix = {arXiv},
+arxivId = {1206.3348},
+author = {Booth, Jeffrey},
+eprint = {1206.3348},
+file = {:Users/ppham/Dropbox/arXiv/1206.3348v1.pdf:pdf},
+month = jun,
+title = {{Quantum Compiler Optimizations}},
+url = {http://arxiv.org/abs/1206.3348},
+year = {2012}
+}
+
+@article{Bravyi2005,
+abstract = {We consider a model of quantum computation in which the set of elementary operations is limited to Clifford unitaries, the creation of the state \$|0>\$, and qubit measurement in the computational basis. In addition, we allow the creation of a one-qubit ancilla in a mixed state \$\backslash rho\$, which should be regarded as a parameter of the model. Our goal is to determine for which \$\backslash rho\$ universal quantum computation (UQC) can be efficiently simulated. To answer this question, we construct purification protocols that consume several copies of \$\backslash rho\$ and produce a single output qubit with higher polarization. The protocols allow one to increase the polarization only along certain ``magic'' directions. If the polarization of \$\backslash rho\$ along a magic direction exceeds a threshold value (about 65\%), the purification asymptotically yields a pure state, which we call a magic state. We show that the Clifford group operations combined with magic states preparation are sufficient for UQC. The connection of our results with the Gottesman-Knill theorem is discussed.},
+archivePrefix = {arXiv},
+arxivId = {quant-ph/0403025},
+author = {Bravyi, Sergey and Kitaev, Alexei},
+doi = {10.1103/PhysRevA.71.022316},
+eprint = {0403025},
+issn = {1050-2947},
+journal = {Physical Review A},
+month = feb,
+number = {2},
+pages = {},
+primaryClass = {quant-ph},
+title = {{Universal quantum computation with ideal Clifford gates and noisy ancillas}},
+url = {http://arxiv.org/abs/quant-ph/0403025},
+volume = {71},
+year = {2005}
+}
+
+@article{DuclosCianci2012,
+abstract = {An important task required to build a scalable, fault-tolerant quantum computer is to efficiently represent an arbitrary single-qubit rotation by fault-tolerant quantum operations. Traditionally, the method for decomposing a single-qubit unitary into a discrete set of gates is Solovay-Kitaev decomposition, which in practice produces a sequence of depth O($\backslash$log\^{}c(1/$\backslash$epsilon)), where c\~{}3.97 is the state-of-the-art. The proven lower bound is c=1, however an efficient algorithm that saturates this bound is unknown. In this paper, we present an alternative to Solovay-Kitaev decomposition employing state distillation techniques which reduces c to between 1.12 and 2.27, depending on the setting. For a given single-qubit rotation, our protocol significantly lowers the length of the approximating sequence and the number of required resource states (ancillary qubits). In addition, our protocol is robust to noise in the resource states.},
+archivePrefix = {arXiv},
+arxivId = {1210.1980},
+author = {Duclos-Cianci, Guillaume and Svore, Krysta M.},
+eprint = {1210.1980},
+file = {:Users/ppham/Library/Application Support/Mendeley Desktop/Downloaded/Duclos-Cianci, Svore - 2012 - A State Distillation Protocol to Implement Arbitrary Single-qubit Rotations.pdf:pdf},
+month = oct,
+pages = {},
+title = {{A State Distillation Protocol to Implement Arbitrary Single-qubit Rotations}},
+url = {http://arxiv.org/abs/1210.1980},
+year = {2012}
+}
+
+@article{Lubotsky1987,
+author = {Lubotsky, A. and Phillips, R. and Sarnak, P.},
+journal = {International Communications of Pure and Applied Mathematics},
+number = {401},
+title = {},
+volume = {40},
+year = {1987}
 }
