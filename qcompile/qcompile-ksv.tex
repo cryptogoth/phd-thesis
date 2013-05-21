@@ -268,3 +268,53 @@ However, to simplify our analysis, we assume the case
 in the previous paragraph, and accept the
 loss of $n$ ancilla qubits, After all, we only run phase estimation once
 to get our initial $\ket{\psi_{n,1}}$ state.
+
+Since we have seen KSV-style phase estimation in
+Chapter \ref{chap:factor-polylog}, it is important to mention here several
+differences between applying phase estimation to factoring versus
+applying it to QFS generation. The first difference is that a constant
+success probability of $\frac{3}{4}$ is no longer good enough. We would
+like to drive down our error exponentially low as $\epsilon = 2^{-l}$.
+Second, the operator whose phase we are estimating is now
+addition modulo $2^n$, which is more efficient in circuit resources
+than modular multiplication (see Section \ref{subsec:qfs-adder}).
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Resource Comparisons}
+\label{subsec:qcompile-ksv-compare}
+
+We now map both the KSV and Jones algorithms for QFS generation
+to \textsf{2D CCNTCM} and compare their resources. We do not consider
+the phase kickback part of the quantum compiler, since this controlled addition
+is the same for both QFS algorithms. Like PK-Jones \cite{Jones2012}, we
+set our error as $\epsilon = \(\frac{\pi}{2^n}\)^2$. It is not clear why
+this error was chosen, since for factoring or other polynomial-sized circuits,
+an inverse-polynomial error precision is sufficient. However, for the
+purpose of comparison, we set the same error.
+
+The condition for error for PK-Jones is one minus the overlap between a
+pure Fourier state $\ket{\psi}^{(1)}_n$ and a distilled
+Fourier state $\ket{\tilde{\psi}}^{(1,m)}_n$ after $m$ rounds.
+
+\begin{equation}
+1 - | \braket{\tilde{\psi}}^{(1,m)}_n}{\psi^{(1)}} |^2 = \epsilon \le \left( \frac{\pi}{2^n} \right)^2 
+\end{equation}
+
+The condition for error in PK-KSV is that an incorrect phase indexed by $k$ is returned,
+one that does not correspond to the eigenstate $\ket{\psi}^{(1)}$. The target
+register for phase estimation begins in a superposition of eigenstates
+$\ket{1} = \sum_{s = 1}^{2^{n-1}} \ket{\psi^{(2s-1)}_n}$, and does not deteriorate
+since none of the measuring operators mix between the orthogonal decomposition of the
+QFS basis. We can now augment our register containing a QFS
+$\ket{\psi^{(k)}_n}$ with another register containing a measured phase $y$.
+The error in phase estimation is then the sum of all the probabilities that
+given that our procedure ``selects'' state $\ket{\psi^{(k)}_n}$, we
+measure some $y \ne k$.
+
+\begin{equation}
+
+\end{equation}
+
+ Several differences exist in resource
+calculation methods and those of PK-Jones \cite{Jones2012}. First, they 
+

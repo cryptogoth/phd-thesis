@@ -170,6 +170,7 @@ nearest-neighbor architecture?
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Circuit Resources for Adders on Quantum Fourier States}
+\label{subsec:qfs-adder}
 
 First we prove a general result for mapping any \textsf{AC} circuit
 to a \textsf{2D CCNTCM} circuit.
@@ -242,5 +243,18 @@ of $O(n)$. Combine this in series with the circuit for $A$ in
 Lemma \ref{lem:a} and we have the desired resource bounds.
 \end{proof}
 
+In fact, we also provide numerical upper bounds for circuit resources
+of both $A$ and $W$ in Table \ref{tab:qfs-adder}.
+
+\begin{table}[hbt!]
+\begin{tabular}{|c|c|c|c|c|c|c|}
+\hline
+Operation & $D$ & $S$ & $W$ & $\overline{D}$ & $\overline{S}$ & $\overline{W}$ \\
+\hline
+$A$: CSE Addition of $3\times n$-bit Numbers Modulo $2^n$ & $66$ & $56n$ & $5n$ & 0 & 0 & 1 \\
+$Q$: QCLA Adder from CSE & $4\log_2 n + 6$ & $10n - 48\log_2 n - 78$ & $8n \log_2 n + 12n$ & $D$ & $W'$ & $D$  \\
+$W$: Multiple CSE Addition of $t\times n$-bit Numbers Modulo $2^n$ & $57\log_2 t$ & $100nt - 200n$ & $5nt - 10n$ & $1.71\log_2 t$ & $2nt + 3t - 4n - 6$ & $t-2$
+\end{tabular}
+\end{table}
 Armed with these properties, we're now ready to describe our version of the
 KSV phase estimation procedure to product quantum Fourier states.
