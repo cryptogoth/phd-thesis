@@ -22,6 +22,11 @@ Most interestingly to this dissertation, quantum compiling itself
 is an algorithm and can be mapped to a low-depth, nearest-neighbor
 architecture. That is the subject of this chapter.
 
+In Section \ref{sec:qcompile-basis}, we provide the foundation
+for quantum compiling by reviewing important quantum gates,
+how circuits correspond to unitary matrices, distance metrics,
+and universal gate sets.
+
 In Section \ref{sec:qcompile-bg}, we define the problem of
 quantum compiling more rigorously and provide useful definitions
 and notation for the rest of this chapter. We also discuss
@@ -46,7 +51,7 @@ As an alternative method of single-qubit quantum compiling,
 in Section \ref{sec:qcompile-qfs} we
 discuss a popular method of trading low depth for increased
 width: combining phase kickback with a quantum Fourier state.
-In Section \ref{sec:ksv}, we provide a pedagogical review
+In Section \ref{sec:qcompile-ksv}, we provide a pedagogical review
 of the KSV algorithm for generating quantum Fourier states
 useful for phase kickback. We also provide the calculation of
 parameters necessary for any practical implementation as well as
@@ -54,23 +59,14 @@ the particular circuit resources consumed on \textsf{2D CCNTCM}.
 We then compare the KSV approach to a recent alternative
 by Jones which distills quantum Fourier states recursively \cite{Jones2013}.
 
-In Section \ref{sec:qcompile-cd}, we contribute a method for
+In Section \ref{sec:qcompile-maj}, we contribute a method for
 quantum compiling the single-qubit rotations needed for a
 sublogarithmic depth quantum majority gate from Chapter \ref{chap:factor-sublog}.
 Finally, in Section \ref{sec:qcompile-conclude}, we conclude by summarizing
 the overall themes of quantum compiling and presenting interesting
 directions for future research.
 
-%We discuss the seminal work
-%in this field by Solovay-Kitaev \cite{Solovay1995} and a
-%parallelized version which trades circuit depth for circuit width
-%by Kitaev-Shen-Vyalyi \cite{Kitaev2002}. We discuss two primary
-%ways to divide up the problem of quantum compiling: 
-%compiling single-qubit gates, reducing multi-qubit gates to
-%single-qubit ones. We also provide a pedagogical review of
-%startling recent advances in quantum compiling
-
-%In the last year, many recent advances
+\input{qcompile/qcompile-basis.tex}
 
 \input{qcompile/qcompile-bg.tex}
 
@@ -78,7 +74,7 @@ directions for future research.
 
 \input{qcompile/qcompile-review.tex}
 
-%\input{qcompile/qcompile-compare.tex}
+\input{qcompile/qcompile-compare.tex}
 
 \input{qcompile/qcompile-qfs.tex}
 

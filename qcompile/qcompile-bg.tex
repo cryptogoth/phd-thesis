@@ -67,8 +67,9 @@ S' = 15 \\
 
 can be subdivided into more special-purpose tasks along several axes,
 which are cross-cutting themes in any literature review of quantum compilers.
-These themes also provide a context for understanding resource consumption
-for quantum compiling, which we define in Section \ref{subsec:qcompile-resources}.
+These themes also provide a context for understanding the resource consumption
+for a wide variety of quantum compilers. We provide such a resource
+comparison in Section \ref{sec:qcompile-compare}.
 
 These axes are:
 
@@ -85,7 +86,7 @@ single-qubit compiling
 multi-qubit compiling. Some algorithms which work on single-qubit compiling
 can be generalized directly to the multi-qubit case. In fact, all known
 examples of these generalized algorithms can accept an arbitrary circuit
-basis $\mathcal{B}$ \cite{Amy2012,Solovay1995,Fowler2011,Booth2012}.
+basis $\mathcal{B}$ \cite{Amy2012,Dawson2005,Fowler2011,Booth2012}.
 That is, they do not exploit any special structure of
 a particular basis. The circuit basis is another input to the algorithm,
 possibly to an additional classical preprocessing step. Whether the algorithm
@@ -105,7 +106,7 @@ should return the sequence of gates which constitute the exact
 synthesis. Furthermore, exact synthesizers often have a goal of
 returning the \emph{optimal} sequence of compiled gates, that is,
 one with minimal length $\ell$. In the compilers that we review
-in Section \ref{sec:qcompile-revew}, $\ell$ stands for the optimal
+in Section \ref{sec:qcompile-review}, $\ell$ stands for the optimal
 depth of non-Clifford resources in a basis which also contains Clifford
 gates. Therefore, counting $\ell$ as non-Clifford resources is always
 within a constant factor of counting $\ell$ as all resources, and so we
@@ -138,7 +139,7 @@ Therefore, we have the following relationship.
 The third axis is whether a quantum compiling algorithm uses randomness
 or is completely deterministic. For known randomized algorithms, it is
 an open problem whether the algorithm can be derandomized or not
-\cite{Kliuchnikov2012}, and numerical verification is necessary to
+\cite{Kliuchnikov2012a}, and numerical verification is necessary to
 show the desired distribution of running times.
 
 The fourth axis is whether a quantum compiler has upper bounds
@@ -204,7 +205,7 @@ requires each gate to be approximated to a precision of
 $n = O(\log(S/\epsilon)$ \cite{Lloyd1995}. We denote this per-gate precision
 $n$, since it serves as an independent parameter for compiling. For
 single-qubit gates, $S = 1$, and this corresponds exactly with our previous
-definition for $n$ in Section \ref{subsec:qcompile-basis}.
+definition for $n$ in Section \ref{sec:qcompile-basis}.
 
 We do not measure classical space requirements, although these may be
 exponential. This would be a useful metric for comparison for future work.
@@ -262,7 +263,7 @@ $O(4^n)$ \cite{Shende2004}.
 \begin{tabular}{|c|c|}
 \hline
 BBC+ \cite{Barenco1995a} & \\
-Svore-Aho \cite{Svore2003} & $o(1.17\cdot 4^n - 3.51\cdot 4^n + 3.34)$ \\
+Svore-Aho \cite{Aho2003} & $o(1.17\cdot 4^n - 3.51\cdot 4^n + 3.34)$ \\
 Shende \cite{Shende2004a} & $o(0.48\cdot 4^n - 1.50\cdot 2^n + 1.34)$ \\
 Shende \cite{Shende2004} & $\omega(0.25\cdot 4^n - 3n - 1)$ \\
 \hline

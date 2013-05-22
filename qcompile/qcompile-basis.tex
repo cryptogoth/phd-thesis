@@ -33,7 +33,7 @@ general single-qubit gate and how it can be compiled into simpler classes
 of single-qubit gates, namely rotations about Bloch sphere axes.
 In Section \ref{subsec:distance} we will present distance metrics to
 measure the quality of our single-qubit (and later multi-qubit) approximations.
-In Section \ref{subsec:circuit-basis} we will finally
+In Section \ref{subsec:qcompile-bases} we will finally
 define what it means to be a universal gate set, or a circuit basis.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -268,7 +268,7 @@ R_Z(\phi) = \Lambda(e^{i\phi}) =
 =
 \left[
   \begin{array}{cc}
-    e^{-i\phi/2) & 0 \\
+    e^{-i\phi/2} & 0 \\
     0 & e^{i\phi/2} \\
   \end{array} \right]
 \end{equation}
@@ -350,7 +350,7 @@ $n$-qubit compiled circuit $\tilde{C}$
 is also a $2^n \times 2^n$ unitary matrix. This matrix can be formed
 by the product of $2^n \times 2^n$ simpler matrices $G_i$ with a certain
 tensor product structure. In fact, the $G_i$'s are the timesteps from
-our \textsf{2D CCNTCM} model defined in Section \ref{sec:fpl-arch}, and
+our \textsf{2D CCNTCM} model defined in Section \ref{subsec:models}, and
 are formed from the tensor product of all single-qubit and two-qubit gates
 which execute concurrently. Our desired target matrix $C$
 is itself
@@ -445,7 +445,7 @@ What gatesets are known to be fixed, finite, and universal, and therefore
 suitable bases for quantum compilation?
 
 We recall one such basis from our definition of \textsf{2D CCNTCM} in
-Section \ref{sec:fpl-arch}, with the exception of the non-unitary operation
+Section \ref{subsec:models}, with the exception of the non-unitary operation
 $MeasureZ$. However, $MeasureZ$ is implicitly assumed as part of any basis,
 and is the means by which we can offload postprocessing to a classical
 controller.
@@ -461,7 +461,7 @@ universal.
 This is unfortunate given that many quantum error-correcting codes have
 efficient implementations for Clifford gates. In fact, it is provable
 that \emph{any} universal gateset must possess at least one
-non-Clifford gate \cite{Zheng2011}.
+non-Clifford gate \cite{Zeng2011}.
 
 Two popular choices for the non-Clifford gate in a basis are the $T = R_Z(\pi/4)$
 gate and the $Toffoli = \Lambda^2(X)$ gate. Since these are not ``natively''
@@ -473,7 +473,7 @@ use the Clifford+$T$ basis or the Clifford+$Toffoli$ basis, and measure
 the non-Clifford gate as the most expensive resource. It is an area of
 active research
 whether $T$ or $Toffoli$ is more efficient to implement
-\cite{Jones2012a,Eastin2012}.
+\cite{Jones2013a,Eastin2012}.
 
 For single-qubit compilation, the $\{H,T\}$ gateset is universal and
 plays an important role in the literature. Other compilers may add

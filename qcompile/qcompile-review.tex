@@ -51,7 +51,7 @@ using ancillae to decrease depth. Therefore, it has non-trivial circuit space
 and circuit width, and it is the first compiler where architectural concerns
 matter.
 We will calculate its resources when mapped to
-\textsf{2D CCNTCM} in Section \ref{sec:qcompile-ksv-resources}.
+\textsf{2D CCNTCM} in Section \ref{sec:qcompile-ksv}.
 
 %Numerical comparisons between SK and KSV can be found in Section \ref{sec:ksv-results}.
 
@@ -116,11 +116,12 @@ set of Clifford group elements), which quickly encounters practical limits
 of modern digital computers.
 On a more positive note, the AMMR compiler gives the first new decomposition
 of the Toffoli gate in terms of $\mathcal{C}_1 \cup \{T, T^{\dagger}\}$
-since 1995 \cite{Barenco1995a}. Interestingly, the AMMR paper states without
-proof the
-exact equivalence of single-qubit circuits over the basis
-$\{H, T, T^{\dagger}\}$ and $U(2)$ matrices with elements from the ring $\mathbb{Z}\left[i,\frac{1}{\sqrt{2}}\right]$.
-However, this is not proven until a later paper \cite{Kliuchnikov2013}.
+since 1995 \cite{Barenco1995a}.
+%Interestingly, the AMMR paper states without
+%proof the
+%exact equivalence of single-qubit circuits over the basis
+%$\{H, T, T^{\dagger}\}$ and $U(2)$ matrices with elements from the ring $\mathbb{Z}\left[i,\frac{1}{\sqrt{2}}\right]$.
+%However, this is not proven until a later paper \cite{Kliuchnikov2013}.
 
 The Bocharov-Svore (BS) compiler combines the idea of normalizing circuits
 and enumerative search to compile \emph{canonical circuits} on single-qubits.
@@ -168,7 +169,7 @@ It reduces the problem of approximating a
 $R_Z(\phi)$ single-qubit rotation with expressing a large integer $M$ as the
 sum of four squares. There is a known probabilistic algorithm to
 solve this Diophantine equation
-by Rabin-Shallit \cite{Rabin} that takes $O(\log^2(M)\log\log M)$. Therefore,
+by Rabin-Shallit \cite{Rabin1985} that takes $O(\log^2(M)\log\log M)$. Therefore,
 the KMMa compiler runs in classical time $O(\log^2(1/\epsilon)\log\log(1/\epsilon))$
 and returns sequences of length $O(\log(1/\epsilon)$, which is optimal up to
 a constant factor.
@@ -203,8 +204,8 @@ distillation results
 in an asymptotic improvement in the number of non-Clifford (Toffoli) gates
 required versus PK-KSV ($O(n\log n)$ versus $O(n^2\log n)$ for an
 $n$-qubit Fourier state), while maintaining the same asymptotic depth overhead
-($O(\log n)$). The resources of PK-Jones are compared with PK-KSV in
-Section \ref{sec:qcompile-ksv-resources}.
+($O(\log n)$). The resources of PK-Jones are compared with an optimized version of PK-KSV in
+Section \ref{sec:qcompile-ksv}.
 
 All of these approaches, which admit direct comparison more-or-less, are
 displayed in Table \ref{tab:qcompile-compare} in Section
@@ -278,7 +279,7 @@ compiles to subsets of the Clifford group augmented with the non-Clifford
 $V$-basis, first discovered by Lubotsky-Phillips-Sarnak \cite{Lubotsky1987},
 which was proven to permit the lower-bound of compiled sequence length
 $O(\log^1(1/\epsilon)$
-\cite{Harrow2003}.
+\cite{Harrow2002}.
 
 \begin{equation}
 V_1 = \frac{1}{\sqrt{5}}
@@ -327,7 +328,7 @@ call these ``reduced instruction set computing'' (RISC) bases, in analogy to
 digital processor architectures.
 In contrast, Landahl and
 Cesare consider a ``complex instruction set computing'' (CISC) basis
-\cite{Landahl2012}
+\cite{Landahl2013b}
 which
 can include certain non-Clifford states of the form
 $\ket{0} + e^{i\pi / 2^k} \ket{1} = R_Z(\pi/{2^k})\ket{+}$. These

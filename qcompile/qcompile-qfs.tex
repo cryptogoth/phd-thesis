@@ -1,11 +1,11 @@
 \section{Phase Kickback and Quantum Fourier States}
-\label{sec:qfs}
+\label{sec:qcompile-qfs}
 
 In this section, we discuss the \emph{phase kickback} procedure for
 producing a qubit with arbitrary phase: $\ket{0} + e^{i\phi}\ket{1}$.
 From the PAR procedure, a qubit could be prepared in such a state
 ``offline' and then teleported later into a \textsf{2D CCNTCM} module to
-probabilistically enact rotations $R_Z(\phi)$ \cite{Jones2011}.
+probabilistically enact rotations $R_Z(\phi)$ \cite{Jones2012}.
 
 Phase kickback requires controlled addition on a target state in 
 the quantum Fourier basis. This will provide us the foundation
@@ -14,11 +14,11 @@ states in the next section.
 
 In Section \ref{subsec:qfs-basis}, we discuss the properties of the
 basis of quantum Fourier states, including their relationship with
-addition modulo $2^n$. In Section \ref{subsec:qfs-resources},
+addition modulo $2^n$. In Section \ref{subsec:qfs-adder},
 we calculate circuit resources for performing these adders
 on \textsf{2D CCNTCM}. Although the adders are generic, they will be
 used in the resource calculations of KSV phase estimation in
-Section \ref{sec:ksv-pe}, which operates on quantum Fourier states.
+Section \ref{subsec:ppe}, which operates on quantum Fourier states.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Properties of the Quantum Fourier Basis}
@@ -146,7 +146,7 @@ presented in \cite{Kitaev2002}.
 
 Ideally, we would obviate the need for the expensive circuit above
 by ensuring that $k=1$, in which case
-$p = l$. We will see how to do this in Section \ref{sec:ksv-pe}.
+$p = l$. We will see how to do this in Section \ref{subsec:ppe}.
 
 Finally, to copy the state $\ket{\psi_{n,k}}$ it suffices to apply the following
 operator which only uses subtraction (addition with one addend and the
@@ -255,6 +255,9 @@ $A$: CSE Addition of $3\times n$-bit Numbers Modulo $2^n$ & $66$ & $56n$ & $5n$ 
 $Q$: QCLA Adder from CSE & $4\log_2 n + 6$ & $10n - 48\log_2 n - 78$ & $8n \log_2 n + 12n$ & $D$ & $W'$ & $D$  \\
 $W$: Multiple CSE Addition of $t\times n$-bit Numbers Modulo $2^n$ & $57\log_2 t$ & $100nt - 200n$ & $5nt - 10n$ & $1.71\log_2 t$ & $2nt + 3t - 4n - 6$ & $t-2$
 \end{tabular}
+\caption{Circuit resources for adders used in QFS generation on \textsf{2D CCNTCM}.}
+\label{tab:qfs-adder}
 \end{table}
+
 Armed with these properties, we're now ready to describe our version of the
 KSV phase estimation procedure to product quantum Fourier states.

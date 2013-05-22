@@ -91,7 +91,7 @@ On an AC architecture, even when approximating the (inverse) QFT by truncating t
 $\pi/2^k$ rotations beyond $k = O(\log n)$, 
 the depth is $O(n \log n)$ to factor an $n$-bit number.
 To be implemented fault-tolerantly on a quantum device, rotations in the QFT must then be compiled into a discrete gate basis.
-This requires at least a $O(\log(1/\epsilon))$ overhead in depth to approximate a rotation with precision $\epsilon$ \cite{Harrow02, Kitaev2002}.
+This requires at least a $O(\log(1/\epsilon))$ overhead in depth to approximate a rotation with precision $\epsilon$ \cite{Harrow2002, Kitaev2002}.
 We would like to avoid the use of a QFT due to its compilation overhead.
 
 There is an alternative, parallel version of phase estimation 

@@ -1,5 +1,5 @@
 \section{The Solovay-Kitaev Algorithm}
-\label{sec:sk}
+\label{sec:qcompile-sk}
 
 As one of the central results of quantum computation, it is worth
 reviewing here the venerable Solovay-Kitaev (SK) algorithm for the
@@ -19,7 +19,7 @@ successively finer precision. At any given level of recursion, the input
 gate is divided up into two halves which are further from identity [is this
 really true] and can be
 approximated with less precision. Our pseudo-code and explanation
-follows the exposition in \cite{Dawson2005} and \cite{harrow01}
+follows the exposition in \cite{Dawson2005} and \cite{Harrow2001}
 
 \begin{algorithmic}[1]
 \STATE \textsc{function} $\tilde{U}_i \leftarrow$ SK$(U,n)$
@@ -60,7 +60,7 @@ $\epsilon$) are symmetric and cancel out in such a way that the resulting
 product $U$ has errors which go like $\epsilon^2$. In this manner, we can
 eventually sharpen our desired error down to any value. We use the
 geometric decomposition in \cite{Dawson2005} rather than the decomposition
-based on a BCH-like approximation as in \cite{harrow01}, although it is not
+based on a BCH-like approximation as in \cite{Harrow2001}, although it is not
 known which method converges more quickly to a desired gate in general.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

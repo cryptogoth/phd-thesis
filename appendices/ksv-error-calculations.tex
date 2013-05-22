@@ -9,8 +9,8 @@ error probability, which follows exactly the development in Problem 12.2
 of Ref \cite{Kitaev2002}, assumes that we measure \emph{coherently}, meaning
 that at no point do we projectively measure, and we are able to perfectly
 uncompute all garbage. This is the ideal case, which we calculate in
-\ref{subsec:error-noproj}. The second error probability, which we use in
-\cite{Pham2012a}, involves projectively measuring as part of the operator $W$,
+\ref{subsec:error-noproj}. The second error probability
+involves projectively measuring as part of the operator $W$,
 which involves some purely classical reversible operations that can be
 offloaded to a classical controller. Afterwards, we execute $V$ as before,
 but it is now impossible to run $W^{-1}$ because of the projective measurement.
@@ -327,11 +327,28 @@ case by a factor $\sqrt{2}$.
 Now what happens if we perform the operator $\hat{Y} = VW$? That is, we
 perform $W$ to measure some function $f$ and then we extract the useful
 information using $V$, but we don't wish to uncompute the results by
-performing $W^{-1}$? There are two main reasons we may wish to do this:
-(1) because $W$ may be practically difficult to perform, and we don't wish
-to essentially do it twice or (2) because we have projectively measured
+performing $W^{-1}$? There are three related reasons we may wish to do this:
+
+\begin{enumerate}
+\item
+because $W$ may be practically difficult to perform, and we don't wish
+to essentially do it twice
+\item
+because we have projectively measured
 in the register $\mathcal{K}$ so that we can offload some postprocessing to
 a classical computer, and there is no way to uncompute $W$ at that point.
+\item
+the states in $\mathcal{K}$, after having been projected by $\hat{Y}$,
+are close to classical, and we wish to avoid maintaining them as coherent
+quantum states
+\item
+the states in $\mathcal{N}$, after having been entangled with $\mathcal{K}$ and
+projected by $\hat{Y}$, are still ``mostly'' within their subspaces
+$\mathcal{L}_j$, and we wish to use states in these subspaces as a resource.
+\end{enumerate}
+
+All of these reasons are true for the problem of quantum Fourier state
+generation, as described in Section \ref{sec:qcompile-qfs}.
 
 These are both practical reasons in that they don't affect the
 asymptotic resources required by our algorithm. However, they do affect
@@ -341,60 +358,46 @@ contribution of this work beyond the exposition in \cite{Kitaev2002}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{theorem}
-\label{thm:projective}
 Given the setting in Theorem \ref{thm:coherent}
 where $W$ approximately measures a function $f : \Omega \rightarrow \Delta$
-with error $\epsilon$, then the operator $\hat{Y} = VW$ approximates
-the operator $Y = W^{-1}vW$ with error $\sqrt{2}\sqrt[4]{\epsilon}$.
+with error $\epsilon$: If the operator $\hat{Y} = VW$ followed by projective
+measurement on $\mathcal{K}$ yields classical outcome $y \in \Delta$,
+then the
+overlap of the state $\ket{\tilde{psi}}$ in $\mathcal{N}$ with $\mathcal{L}_j$ such
+that $f(j) = y$ is upper-bounded by the number of subspaces $|\Omega|$ times the
+$\epsilon$.
+
+\begin{equation}
+\sum_{j \in \Omega: f(j) \ne y} \bra{\tilde{\psi}}\Pi_{\mathcal{L}_j}\ket{\tilde{\psi}} \le |\Omega|\epsilon
+\end{equation}
+\label{thm:projective}
 \end{theorem}
 
 \begin{proof}
-We will take an almost identical approach to the proof for Theorem \ref{thm:coherent}
-by measuring the difference between vectors which are the results of applying
-$Y$ and $\hat{Y}$. However, now our definition of $P_j$ lacks the
-uncomputation step $R_j^{\dagger}$.
+Consider the probability distribution of states over $\mathcal{N} \otimes \mathcal{J} \otimes \mathcal{K}$.
+Decomposing the entire system over the subspaces of $\mathcal{N} \bigoplus_{j \in \Omega} \mathcal{L}_j$,
+within each $\mathcal{L}_j$ there is a probability of $\epsilon$ associated with error states $y \in \Delta$
+such that $y \ne f(j)$.
 
 \begin{equation}
-\hat{Y} = \sum_{j \in \Omega} \Pi_{\mathcal{L}_j} \otimes P_j \qquad
-P_j = \sum_{y \in \Delta} Q_y \otimes \Pi_{\mathcal{M}_y}R_j)
+\sum_{y \ne f(j)} \Pr(y | j) \le \epsilon
 \end{equation}
 
-Now we can jump ahead to equation \ref{eqn:sym-real}, which is the first
-place in the proof of Theorem \ref{thm:coherent} where this asymmetry matters.
-
-\begin{eqnarray}
-\braket{\psi}{\psi} & = & 2 - 2\Re\left[ \sum_{y \in \Delta} \bra{\xi}Q_{f(j)}^{\dagger}Q_y \ket{\xi}
-                                                             \bra{0^N}\Pi_{\mathcal{M}_y}R_j\ket{0^N} \right]
-\end{eqnarray}
-
-As in the proof of Theorem \ref{thm:coherent}, we can label the projected
-ancillae state like so:
+We can define a total error probability by summing over all values of $j \in Omega$, or
+$\mathcal{L_j} \in \mathcal{N}$.
 
 \begin{equation}
-\ket{\phi_{(y,j)}} = \Pi_{\mathcal{M}_y}R_j \ket{0^N}
+\sum_{j \in \Omega} \sum_{y \ne f(j)} \Pr(y | j) \le |\Omega|\epsilon
 \end{equation}
 
-and substitute it into our calculation:
-
-\begin{eqnarray}
-\braket{\psi}{\psi} & = & 2 - 2\Re\left[ \sum_{y \in \Delta} \bra{\xi}Q_{f(j)}^{\dagger}Q_y \ket{\xi}
-                                                             \braket{0^N}{\phi_{(y,j)}} \right]
-\end{eqnarray}
-
-Here, the braket $\braket{0^N}{\phi_{(y,j)}}$ cannot be
-directly factored out of the real operator since it is no longer the overlap of
-a vector with itself, and therefore it is not guaranteed to be a
-real number. Therefore, we must upper bound the real part of this complex
-number with its magnitude, as in the inequality below with any two vectors
-$\ket{\phi}$ and $\ket{\sigma}$.
+However, if we projectively measure $y$ in register $\mathcal{K}$, what is the probability
+mass associated with ``impurities'' in register $\mathcal{N}$? That is, we want to
+find $\sum_{j: f(j) \ne y} \Pr(j | y)$. The maximum contribution to this error for
+any $y$ is the total error probability above. Therefore, we have:
 
 \begin{equation}
-\Re(\braket{\phi}{\sigma}) \quad \le \lvert \braket{\phi}{\sigma} \rvert
+\sum_{j: f(j) \ne y} \Pr(j | y) \le |\Omega|\epsilon
 \end{equation}
 
-\begin{eqnarray}
-\braket{\psi}{\psi} & = & 2 - 2\Re\left[ \sum_{y \in \Delta} \bra{\xi}Q_{f(j)}^{\dagger}Q_y \ket{\xi}
-                                                             \braket{0^N}{\phi_{(y,j)}} \right]
-\end{eqnarray}
-
+This argument is independent of any ancillae.
 \end{proof}
