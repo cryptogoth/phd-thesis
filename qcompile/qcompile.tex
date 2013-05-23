@@ -1,16 +1,13 @@
 \chapter{Quantum Compiling}
 \label{chap:qcompile}
 
-Quantum compiling can be described in two equivalent ways.
-Like 
-is the process of approximating arbitrary,
-$n$-qubit unitary operations using a universal set which
-is usually fixed, finite, and contains only single-qubit
-and two-qubit gates. Like quantum architecture, quantum
-compiling plays an intermediate role in between quantum
-algorithms, which determine which gates to apply in a circuit,
-and quantum error correction, which determines the
-fault-tolerant gate set.
+Quantum compiling is the approximation of an $n$-qubit
+unitary operation using a fixed, finite, universal set
+of simpler gates. Like quantum architecture, quantum
+compiling plays an intermediate role between quantum
+algorithms (which determine the high-level gates in a circuit),
+and quantum error correction (which determines the
+fault-tolerant gate set).
 Quantum compiling helps mitigate one source of error,
 the difference $\epsilon$ between a desired gate and its
 finite approximation,
@@ -27,44 +24,48 @@ for quantum compiling by reviewing important quantum gates,
 how circuits correspond to unitary matrices, distance metrics,
 and universal gate sets.
 
-In Section \ref{sec:qcompile-bg}, we define the problem of
-quantum compiling more rigorously and provide useful definitions
-and notation for the rest of this chapter. We also discuss
-variations of quantum compiling that are common in the
-literature: exact synthesis versus approximation, and
-single-qubit gates versus multi-qubit gates.
+In Section \ref{sec:qcompile-bg}, we rigoursly define the problem of
+quantum compiling and define useful notation and circuit resources.
+We also discuss
+variations and subtasks of quantum compiling that are common themes
+in the literature, as well as their inter-relationships.
+These themes include exact synthesis versus approximation,
+single-qubit gates versus multi-qubit gates, and deterministic
+versus randomized compiling procedures.
 
-In Section \ref{sec:qcompile-sk}, we discuss the foundational
+In Section \ref{sec:qcompile-sk}, we review the foundational
 result in this field, the Solovay-Kitaev algorithm, and how it
 continues to shape quantum compiler research. We also discuss
-lower bounds on any SK-style appraoch to quantum compiling.
+lower bounds on any SK-style approach to quantum compiling.
 Building upon this,
-In Section \ref{sec:qcompile-review}, we review the large
+in Section \ref{sec:qcompile-review}, we review the large
 amount of recent literature on single-qubit quantum compiling with
-constant width, representing
-a startling amount of progress with the last year. We present
+constant width. We present
 the cross-cutting themes of this research and provide an
 at-a-glance comparison of all known single-qubit quantum compiling methods
 to date in Section \ref{sec:qcompile-compare}.
 
 As an alternative method of single-qubit quantum compiling,
-in Section \ref{sec:qcompile-qfs} we
+in Section \ref{sec:qcompile-qfs}, we
 discuss a popular method of trading low depth for increased
 width: combining phase kickback with a quantum Fourier state.
-In Section \ref{sec:qcompile-ksv}, we provide a pedagogical review
-of the KSV algorithm for generating quantum Fourier states
-useful for phase kickback. We also provide the calculation of
+
+In Section \ref{sec:qcompile-ksv}, we contribute an improved
+algorithm for generating quantum Fourier states based on
+Kitaev-Shen-Vyalyi \cite{Kitaev2002}. We also provide the calculation of
 parameters necessary for any practical implementation as well as
 the particular circuit resources consumed on \textsf{2D CCNTCM}.
 We then compare the KSV approach to a recent alternative
 by Jones which distills quantum Fourier states recursively \cite{Jones2013}.
-
-In Section \ref{sec:qcompile-maj}, we contribute a method for
+Finally, in Section \ref{sec:qcompile-maj}, we contribute a method for
 quantum compiling the single-qubit rotations needed for a
 sublogarithmic depth quantum majority gate from Chapter \ref{chap:factor-sublog}.
-Finally, in Section \ref{sec:qcompile-conclude}, we conclude by summarizing
-the overall themes of quantum compiling and presenting interesting
-directions for future research.
+
+The last two sections represent the main contributions of this chapter.
+
+%Finally, in Section \ref{sec:qcompile-conclude}, we conclude by summarizing
+%the overall themes of quantum compiling and presenting interesting
+%directions for future research.
 
 \input{qcompile/qcompile-basis.tex}
 
@@ -82,4 +83,4 @@ directions for future research.
 
 \input{qcompile/qcompile-maj.tex}
 
-\input{qcompile/qcompile-conclude.tex}
+%\input{qcompile/qcompile-conclude.tex}

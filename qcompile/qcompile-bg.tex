@@ -1,9 +1,7 @@
-\section{Quantum Compiling Background}
+\section{Quantum Compiling Themes}
 \label{sec:qcompile-bg}
 
-Quantum compiling as a general task of approximating $SU(2^n)$ matrices
-using 
-
+Quantum compiling is a classical procedure for transforming quantum circuits.
 The image to keep in mind throughout this entire section is shown in
 Figure \ref{fig:qcompile}.
 
@@ -60,16 +58,15 @@ S' = 15 \\
 \end{array}
 \end{displaymath}
 
-\caption{Quantum circuit synthesis into single-qubit gates and $CNOT$.}
+\caption{An arbitrary quantum circuit being compiled into single-qubit gates and $CNOT$.}
 \label{fig:qcompile}
 \end{center}
 \end{figure}
 
-can be subdivided into more special-purpose tasks along several axes,
+General quantum compiling can be subdivided into more special-purpose tasks along several axes,
 which are cross-cutting themes in any literature review of quantum compilers.
 These themes also provide a context for understanding the resource consumption
-for a wide variety of quantum compilers. We provide such a resource
-comparison in Section \ref{sec:qcompile-compare}.
+for a wide variety of quantum compilers.
 
 These axes are:
 
@@ -108,9 +105,10 @@ returning the \emph{optimal} sequence of compiled gates, that is,
 one with minimal length $\ell$. In the compilers that we review
 in Section \ref{sec:qcompile-review}, $\ell$ stands for the optimal
 depth of non-Clifford resources in a basis which also contains Clifford
-gates. Therefore, counting $\ell$ as non-Clifford resources is always
-within a constant factor of counting $\ell$ as all resources, and so we
-will not distinguish between the two,.
+gates. Non-Clifford resources are always more expensive than
+Clifford gates in most error-correcting codes. There is evidence
+that the Clifford resources needed to synthesis the non-Clifford gates $T$ and $Toffoli$
+are within a small constant factor of each other \cite{Eastin2012,Jones2012}
 
 Exact synthesizers often enumerate over all circuits of
 a certain length from a certain basis $\mathcal{B}$. Therefore, their
@@ -148,7 +146,9 @@ based on a conjecture. Both deterministic and randomized
 algorithms can have provable upper bounds, although
 in the latter case, one calculates the average-case and upper bounds the
 variance. Likewise, both deterministic and randomized algorithms can
-be based on a conjecture.
+be based on a conjecture. One example is a deterministic algorithm
+whose resources are too difficult to compute in any other way than
+numerical simulation and fitting a curve to the data.
 
 These four axes can be used to classify quantum compilers, although some
 algorithms can be placed in multiple categories. For example, many
@@ -175,6 +175,12 @@ description of an input quantum circuit into an output circuit from
 a basis $\mathcal{B}$. The compiled output circuit then runs on a
 quantum computer. In general, the compiled output circuit $\tilde{C}$ consumes
 resources which are greater than those of the input circuit $C$.
+
+Not all quantum compilers are ``total functions.'' Some of them, notably
+single-qubit compilers, are ``promise functions'' in that they can
+only compile gates of a certain form (usually $R_Z(\phi)$) and require
+prior decomposition of a multi-qubit gate down to the set of
+$Q \cup \{R_Z(\phi)\}$.
 
 \begin{description}
 \item[classical runtime $R$:] the classical time it takes to return a 
@@ -211,7 +217,7 @@ We do not measure classical space requirements, although these may be
 exponential. This would be a useful metric for comparison for future work.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Decomposition to Single-Qubit and $CNOT$}
+\subsection{Decomposition to Bounded-Qubit Gates}
 \label{subsec:qcompile-multi}
 
 Restricting ourselves to the simplest case of
@@ -231,16 +237,14 @@ polynomial in $d = 2^n$.
 \ell_d / \ell_1 = \Omega \left( \frac{d^2 - 1}{ \log |\mathcal{B}| } \right )
 \end{equation}
 
-efficient. This is an example of task modularity which allows us
+This is an example of task modularity which allows us
 to divide the effort of quantum compiling between the
 single-qubit case and then decomposition to single-qubit gates and
 $CNOT$. It is a heuristic which often results
 in simple decompositions to implement in (classical) software.
 It may not be asymptotically optimal compared to generic 
-multi-qubit protocols. However, for small input sizes, it beats the
-
-
-
+multi-qubit protocols. However, for small input sizes, it is often
+tractable to run on modern digital computers.
 
 Now that we have handled the single-qubit case, how can we leverage this
 to compile general $n$-qubit gates? We need a reduction to the basis
@@ -248,26 +252,40 @@ $\mathcal{Q} = U(2) \cup \{ CNOT \}$, as originally depicted in
 Figure \ref{fig:qcompile}.
 It turns out that almost any two-qubit gate plus arbitrary single-qubit
 rotations are universal \cite{Bremner2002}. However, we will stick with CNOT
-due to its other useful properties.
-an $SU(2^n)$ matrix to 
-The usual reduction uses
-a two-level decomposition, as shown in several places.
-We need to fact-check this.
-\cite{Kitaev2002}
+due to its other useful properties. A table of known
+upper and lower bounds for this task are given in Table \ref{tab:multi}.
+A standard two-level decomposition, such as provided on page 70 of \cite{Kitaev2002},
+decomposes a general $U(d=2^n)$ matrix down to $O(d^2)$ ``two-level'' matrices which can
+be implemented with multiply-controlled single qubit gates $\Lambda^{n-1}(U)$
+for $U \in U(2)$. These gates are implementable with $O(n)$ $CNOT$ gates each.
+
+The recent Giles-Selinger proves a conjecture by Kliuchnikov-Mosca-Maslov \cite{Kliuchnikov2012e}
+that $n$-qubit circuits implementable by the basis $\mathcal{C}_2 \cup \{ T \}$ is
+equivalent to all $U(2^n)$ matrices with elements from the ring $\mathbb{Z}\left[i,\frac{1}{\sqrt{2}}\right]$.
+Their construction to find this exact synthesis of an $n$-qubit gate is meant to
+prove this equivalent, and is not optimal.
 
 The optimal bound needed for this in terms of $CNOT$ gates in
 the compiled output (the dominant cost) is still exponential
 $O(4^n)$ \cite{Shende2004}.
 
 \begin{table}[hbt!]
+\centerline{
 \begin{tabular}{|c|c|}
 \hline
-BBC+ \cite{Barenco1995a} & \\
-Svore-Aho \cite{Aho2003} & $o(1.17\cdot 4^n - 3.51\cdot 4^n + 3.34)$ \\
-Shende \cite{Shende2004a} & $o(0.48\cdot 4^n - 1.50\cdot 2^n + 1.34)$ \\
-Shende \cite{Shende2004} & $\omega(0.25\cdot 4^n - 3n - 1)$ \\
+Decomposition Method & $CNOT$ Cost 
+\hline
+Giles-Selinger \cite{Giles2012} & $O(9^n nk)$\\
+Two-level \cite{Kitaev2002} & $O(4^n n)$ \\
+Vartiainen-M\"{o}tt\"{o}nen-Salomaa \cite{Vartainen2003} & $o(11\cdot 4^n)$ \\
+Aho-Svore \cite{Aho2003} & $o(1.17\cdot 4^n - 3.51\cdot 4^n + 3.34)$ \\
+Shende-Bullock-Markov \cite{Shende2004a} & $o(0.48\cdot 4^n - 1.50\cdot 2^n + 1.34)$ \\
+Shende-Bullock-Markov \cite{Shende2004} & $\omega(0.25\cdot 4^n - 3n - 1)$ \\
+BBC+ \cite{Barenco1995a} & $\omega(0.10\cdot 4^n - 0.34n - 0.12)$ \\
 \hline
 \end{tabular}
+}
 \label{tab:multi}
-\caption{}
+\caption{Comparison of multi-qubit circuit synthesizers in $CNOT$ cost, both upper and lower bounds.
+The $o(\cdot)$ and $\omega(\cdot)$ notation are used to indicate when multiplicative constants are known.}
 \end{table}

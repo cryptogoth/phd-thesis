@@ -16,14 +16,13 @@ our time to review it here.
 The essential structure of SK is to recursively generate nets of unitary
 operators with
 successively finer precision. At any given level of recursion, the input 
-gate is divided up into two halves which are further from identity [is this
-really true] and can be
+gate is divided up into two halves which can be
 approximated with less precision. Our pseudo-code and explanation
 follows the exposition in \cite{Dawson2005} and \cite{Harrow2001}
 
 \begin{algorithmic}[1]
 \STATE \textsc{function} $\tilde{U}_i \leftarrow$ SK$(U,n)$
-\IF{$i == 0$}
+\IF{$i = 0$}
 \STATE $\tilde{U}_i \leftarrow $ BASIC-APPROX$(U)$
 \ELSE
 \STATE $\tilde{U}_{i-1} \leftarrow$ SK$(U, i-1)$
@@ -36,7 +35,7 @@ follows the exposition in \cite{Dawson2005} and \cite{Harrow2001}
 \end{algorithmic}
 
 Since the recursion must eventually bottom out, we must precompute some sequences
-of gates from $\mathcal{G}$ up to length $l_0$. This is the classical
+of gates from $\mathcal{B}$ up to length $l_0$. This is the classical
 preprocessing step which requires upfront storage space for this
 coarsest-grained net, where
 each sequence is no more than $\epsilon_0$ from its nearest neighbor. According
@@ -44,7 +43,7 @@ to \cite{Dawson2005} the values of $l_0=16$ and $\epsilon_0 = 0.14$ using
 operator norm distance is sufficient for most applications.
 This step can be
 done offline and reused across multiple runs of the compiler, assuming
-$\mathcal{G}$ for your quantum computer doesn't change.
+$\mathcal{B}$ for your quantum computer doesn't change.
 
 The BASIC-APPROX function above does a lookup (e.g. using some kd-tree search
 maneuvers through higher-dimensional vector spaces) using this $\epsilon_0$-net,
@@ -54,13 +53,15 @@ finer $\epsilon$-nets on the fly as needed.
 The FACTOR function performs a balanced group commutator decomposition,
 $U = ABA^\dagger B^\dagger$, and then recursively approximates the $A$ and $B$
 operators, again using SK. We denote by $\tilde{U}_i$ as the approximation
-of $U$ using $i$ levels of SK recursion. Intuitively, when they are multiplied
+of $U$ using $i$ levels of SK recursion. When they are multiplied
 together again, along with their inverses, their errors (which go like
 $\epsilon$) are symmetric and cancel out in such a way that the resulting
-product $U$ has errors which go like $\epsilon^2$. In this manner, we can
-eventually sharpen our desired error down to any value. We use the
-geometric decomposition in \cite{Dawson2005} rather than the decomposition
-based on a BCH-like approximation as in \cite{Harrow2001}, although it is not
+product $U$ has errors which go like $\epsilon^2$, using the properties of
+the balanced group commutator. In this manner, we can
+eventually sharpen our desired error down to any value. A
+geometric decomposition is used in the Dawson-Nielsen implementation \cite{Dawson2005},
+while one based on a Baker-Campbell-Hausdorf approximation is used in the
+Harrow implementation \cite{Harrow2001}. It is not
 known which method converges more quickly to a desired gate in general.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -73,7 +74,7 @@ $U_i$ by combining five gates compiled at the lower $i-1$ level.
 Therefore, the compiled circuit size at the top-level is upper-bounded by $5^n$,
 and
 this is in general the same as the circuit depth (since not all gates in
-$\mathcal{G}$ commute).
+$\mathcal{B}$ commute).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
