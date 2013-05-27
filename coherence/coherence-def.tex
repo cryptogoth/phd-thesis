@@ -1,0 +1,317 @@
+\section{Definition of Circuit Coherence}
+\label{sec:cohere-def}
+
+Usually quantum circuits neglect to draw identity gates. When a bare
+quantum wire appears, what is meant is that the qubit maintains its
+coherent state until the next non-identity gate comes along to transform it.
+However, most quantum circuits are drawn at a logical qubit level,
+assuming no errors occur and a coherent state is maintained. While
+we continue to maintain that abstraction in this thesis by studying
+quantum compiling and quantum architecture abstracted away from
+quantum error correction, we acknowledge it as an important area for
+optimization and future study. Our one concession here will be to study
+the effort to maintain a coherent state in between non-identity.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Entangling Gates}
+
+An entangled quantum state is one which cannot be expressed as the
+tensor product of two smaller states. This does not depend on what basis
+we consider for the smaller states. Using the density operator formalism,
+we can say that a quantum state over two subsystems $A$ and $B$ is
+entangled if tracing over one of the subsystem \emph{does not} yield the other subsystem
+as a reduced density matrix.
+
+\begin{equation}
+\rho^{AB} \text{ entangled } \iff \left(\tr_{A}(\rho^{AB}) \ne \rho^{B} \right) \land
+\left(\tr_{B}(\rho^{AB}) \ne \rho^{A}
+\end{equation}
+
+A general density matrix for a state across two subsystems $A$ and $B$ can be
+written as
+\begin{equation}
+\rho^{AB} = \sum_{i,i',j,j'} p_{ii'jj'} \ket{a_i}\bra{a_{i'}} \otimes \ket{b_j}\bra{b_{j'}}
+\end{equation}
+where $\ket{a_i},\ket{a_{i'}}$ are any two states on $A$ and
+$\ket{b_j},\ket{b_{j'}}$ are any two states on $B$.
+
+We review here that the trace is a linear operator which distributes across
+a general density matrix.
+
+\begin{equation}
+\tr(\rho^{AB}) = \sum_{i,i',j,j'} p_{ii'jj'} \tr (\ket{a_i}\bra{a_{i'}} \otimes \ket{b_j}\bra{b_{j'}})
+\end{equation}
+
+A reduced density matrix for a particular term.
+is obtained by tracing out
+one subsystem.
+
+\begin{equation}
+tr_A(\ket{a_i}\bra{a_{i'} \otimes \ket{b_j}\bra{b_{j'}}) = \tr(\ket{a_i}\bra{a_{i'}}) \ket{b_j}\bra{b_{j'}}
+\end{equation}
+
+Consider a two-qubit gate $E_{uv}$ on single qubits $u$ and $v$ which exist
+in a larger system.
+Without loss of generality, we assume that $u$ is a single-qubit
+that is not entangled with some other, possibly multi-qubit,
+state on another set of vertices $L$ where $v \in L$.
+The total state on $u \cup L$ is called $\rho^{u}\otimes \rho^{L}$.
+
+We call the action of $E_{uv}$ on this combined state a new state $\sigma^{uL}$:
+
+\begin{equation}
+\sigma^{uL} = E^{\dagger}_{uv} (\rho^{u}\otimes \rho^{L}) E^{\dagger}_{uv}
+\end{equation}
+
+We call the gate $E_{uv}$ \emph{entangling} between $u$ and $v$
+(and between $u$ and $L$) given the states $\rho^{u}$ and $\rho^{L}$ if
+the new state after applying $E_uv}$ is entangled, which corresponds to
+the condition below.
+
+\begin{equation}
+\tr_{u}( \sigma^{uL} ) \ne \rho^{L}
+\end{equation}
+
+More generally, we can define $E_{uv}$ as entangling for any multi-qubit
+states that $u$ and $v$ are a part of before the application of $E_{uv}$.
+
+Now consider a slightly different setting, where $L$ contains both $u$ and $v$
+which are entangled in a larger state $\rho^{L}$. We denote by $\sigma^{L}$ the resulting
+state after applying $E_{uv}$ to $\rho^{L}$.
+
+\begin{equation}
+\sigma^{L} = E^{\dagger}_{uv} (\rho^{L}) E^{\dagger}_{uv}
+\end{equation}
+
+We call the $E_{uv}$ \emph{disentangling} between $u$ and $L$ (without loss
+of generality) if after its action on the state $\rho^{L}$ it is
+separable into the product state $\sigma^{L} = \sigma^{u} \otimes \sigma^{L \\ \{u\}}$,
+which corresponds to the following condition:
+
+\begin{equation}
+tr_{u}(\sigma^{L}) = \sigma_^{L \\ \{u\}
+\end{equation}
+
+More generally, we can stay the $E_{uv}$ is disentangling for any two
+larger subsystems that $u$ and $v$ are a part of, if it is disentangling
+for for one of the qubit.
+
+Given these definition, a gate $E_{uv}$
+that is entangling in the forward direction on input state $\rho$
+is disentangling in the backward direction $E^{\dagger}_{uv}$ on output
+state $\sigma = E_{uv}\rho E^{\dagger}_{uv}$.
+
+Note that this definition for entangling or disentangling quantum gates
+depends on knowing the actual states before these gates are applied.
+Therefore, they may not be apparent just by examining a circuit locally,
+but may require simulation of the entire circuit. This gives an operational
+definition for entangling/disentangling quantum gates, but it does not give
+a compact, theoretical description that can be applied generically. This is
+currently a drawback of our definition, especially for characterizing the
+behavior of new quantum algorithms that are not yet well-studied.
+
+However, an quantum algorithm designer able to specify a circuit in terms of single-qubit and
+two-qubit gates often knows when gates are entangling or disentangling. This is
+the case for well-known quantum algorithms such as the QFT or factoring,
+and in fact, we will rely on this ``insider knowledge'' when performing
+calculations later in this section.
+As an overestimate, we can also consider all two-qubit gates entangling, and
+only single-qubit projective measurement as disentangling.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Computational Subsets}
+
+In this section, we define subsets of qubits in each timestep
+called \emph{computational subsets}.
+
+We refer back to our definition of a quantum circuit on
+\textsf{CCNTC}, which is represented by a graph $G = (V,E)$ and a
+classical controller. We will later extend our definition to cover
+the notion of modules for \textsc{CCNTCM}.
+
+The computational subset in timestep $i$ (abbreviated $L_i$) is the subset of the qubits
+in a coherent quantum state which persists from
+the initial preparation of the input qubits $I \subset V$ in timestep $1$
+until the output qubits $O \subset V$ are
+projectively measured in timestep $D$.
+It is measured in qubits, and potentially grows or shrinks in size
+in every timestep, depending on whether entangling/disentangling gates
+(as defined in the previous section) or measurements
+are performed. We define the computational subset formally by
+induction on timesteps, starting backwards from timestep $D$ where we
+note the following relationships:
+
+\begin{equation}
+L_1 \subseteq I \qquad L_D = O \qquad L_i \subseteq V
+\end{equation}
+
+In each timestep $i$, there may be several entangled states on other
+subsets of qubits
+(call them $\{\tilde{L}^{(j)}_i\}$) in addition to the current
+computational subset $L_i$. These are all
+disconnected from each other (do not share a common qubit in timesteps $i \le i' \le D$),
+since if they did, they would be the same computational subset by definition.
+We call these \emph{interesting subsets}, of which the computational subset is
+a special case. While the computational subset is allowed to be a single qubit,
+all other interesting subsets must consists of two or more qubits.
+
+Due to the definition of \textsf{2D CCNTCM}, each interesting subset is a
+contiguous subgraphs of the main graph $G$, and all interesting subsets are
+disjoint subgraphs from each other.
+
+Interesting subsets may potentially share common qubits and become entangled by an entangling gate
+in a past timestep $i < D$, so we keep track of them as states of interest.
+We keep track of this set of sets of qubits $M$ whose state at any
+timestep $i$ is given by $M_i = \{\tilde{L}^{(j)}_i\} \cup \{ L_i \}$,
+with the understanding that there is only one interesting subset at either the
+end or beginning of a circuit.
+
+\begin{equation}
+M_D = \{ L_D \} \qquad M_1 = \{ L_1 \}
+\end{equation}
+
+\begin{enumerate}
+\item
+Initialize $L_D = \{ O \}$ and $M_D = \{ L_D \}$.
+\item
+In timestep $i$, starting from $D-1$ and counting backwards to $1$:
+\begin{enumerate}
+\item
+\item
+Initialize $M_i \leftarrow \{\}$.
+\item
+Create two sets: =$T_e$ which contains every two-qubit
+gate $E_{uv}$ that is entangling, and $T_d$ which contains every two-qubit
+gate $E_{uv}$ that is disentangling, given the definition
+in the previous section and the current of state of the qubits $\ket{u}$
+and $\ket{v}$. The gates are
+chosen
+from $G_i$, the set of gates applied during timestep $i$
+from the definition of \textsf{2D CCNTCM}.
+
+\item
+For every interesting subset $\tilde{L}^{(j)}_{i+1} \in M_{i+1}$:
+
+\begin{enumerate}
+\item Check whether $\tilde{L}^{(j)}_{i+1}$ contains a qubit acted upon by a
+$E_{uv} \in T_d$, where we assume without loss of generality that
+$u \in \tilde{L}^{(j)}_{i+1}$. If it does:
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{enumerate}
+\item Check whether $v$ is in any other interesting subset
+(call it $\tilde{L}^{(j')}_{i+1}$).
+
+\begin{enumerate}
+\item
+If it is, create a new interesting subset
+$\tilde{L}^{(j)}_{i}$ equal to the union of the two interesting subsets from
+step $i+1$:
+
+\begin{equation}
+\tilde{L}^{(j)}_{i} = \tilde{L}^{(j)}_{i+1} \cup \tilde{L}^{(j')}_{i+1}
+\end{equation}
+
+\item
+If $v$ is \emph{not} in any other interesting subset for timestep $i+1$,
+then simply add it to the current interesting subset for timestep $i$.
+
+\begin{equation}
+\tilde{L}^{(j)}_{i} = \{v\}
+\end{equation}
+
+\item
+Add the current interesting subset to the current timestep's set of interesting subsets $M_i$.
+
+\begin{equation}
+M_i \leftarrow M_i \cup \{ \tilde{L}^{(j)}_{i} \}
+\end{equation}
+
+\end{enumerate}
+
+\item Check whether $\tilde{L}^{(j)}_{i+1}$ contains a qubit acted upon by a
+$E_{uv} \in T_e$, where we assume without loss of generality that
+$u \in \tilde{L}^{(j)}_{i+1}$. If it does:
+
+\begin{enumerate}
+\item Check whether $v$ is in any other interesting subset
+(call it $\tilde{L}^{(j')}_{i+1}$). If it is, create a new interesting subset
+$\tilde{L}^{(j)}_{i}$ equal to the union of the two interesting subsets from
+step $i+1$:
+
+\begin{equation}
+\tilde{L}^{(j)}_{i} = \tilde{L}^{(j)}_{i+1} \cup \tilde{L}^{(j')}_{i+1}
+\end{equation}
+
+\item If $v$ is not in any other interesting subset for timestep $i+1$,
+then simply add it to the current interesting subset for timestep $i$.
+
+\begin{equation}
+\tilde{L}^{(j)}_{i} = \{v\}
+\end{equation}
+\end{enumerate}
+
+\item
+\end{enumerate}
+\end{enumerate}
+
+Finally 
+\begin{description}
+\item[$E_{i}$:] the set of qubits which are involved in two-qubit entangling
+gates in timestep $i$.
+\item[$M_{i}$:] the set of qubits which are projectively measured in timestep $i$,
+and go into a product state with respect to the rest of $V$ afterwards.
+\end{description}
+
+We now give an operational definiton by working backwards from the final timestep.
+In timestep $i < D$,
+
+\begin{equation}
+L_i = (L_{i+1} \cup (L_{i+1} \cap E_{i})) \\ M_{i}
+\end{equation}
+
+That is, the computation state $L_i$ in timestep $i$ is the
+computation state in the preceding timestep
+
+where $E_{i}$ are the qubits that a
+the computation state consists of the computation
+state in timestep $i+1$ with the follow changes:
+\begin{itemize}
+\item
+If the two-qubit entangling gate $g_{u,v}$ occurs on qubits $u,v \in V$
+occurs in timestep $i$, where either $u$ or $v$ are in $L_{$
+\item
+\end{itemize}
+\end{itemize}
+
+The coherent computation history is the union of the computation state size
+(in qubits) over
+all $D$ timesteps of a quantum circuit's execution.
+
+Circuit coherence is the sum of the computation state size (in qubits)
+over all $D$ timesteps of a quantum circuit's execution. It is measured
+in qubit-timesteps.
+
+\begin{definition}{\textbf{Circuit coherence}.}
+Circuit coherence is the amount of error-correction required on the logical
+qubits of a quantum circuit in standard coherent form
+in order to achieve a correct result.
+\end{definition}
+
+The standard coherent form for a quantum circuit imposes some
+additional restrictions to make sure the circuit coherence is
+well-defined. First, it delays initialization
+of qubits (both ancillae and input qubits) until the timestep before
+they are first entangled with the computation state. Second, if
+an input qubit $v \in I$ is not in the computation state in timestep 1,
+as defined above, it is removed from $I$.
+
+\begin{definition}{\textbf{Computation state}.}
+The computation state is the coherent history 
+\end{definition}
+
+\begin{definition}{\textbf{Qubit-timestep}.}
+A qubit-timestep is a unit of coherent quantum computation through time,
+or the unit for measuring quantum time-space tradeoffs. It is equivalent
+to one qubit in a coherent state for a unit of depth.
+In \textsf{2D CCNTCM} 

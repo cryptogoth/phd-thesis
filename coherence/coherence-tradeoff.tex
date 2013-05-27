@@ -1,0 +1,125 @@
+\section{Circuit Coherence as a Time-Space Tradeoff}
+\label{sec:cohere-tradeoff}
+
+Although circuit coherence's motivation was to capture another resource
+of interest that may not be 
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Measurement-based Quantum Computing Time-Space Tradeoffs}
+\label{subsec:cohere-mbqc}
+
+Our model \textsf{2D CCNTCM} bears some resemblance to the
+cluster state used to prove universality of the one-way quantum computer
+model by Briegel=Raussendorf \cite{Briegel}. Therefore, a natural question
+is to study the relationship between these two models and characterize
+how the resources for an algorithm on these two models compare to each other.
+
+First, we must make some simplifications to normalize these two models.
+\textsf{2D CCNTCM} as defined in Chapter $\ref{chap:factor-polylog}$ allowed
+an irregular planar graph, with constant but bounded degree (no more than
+6 for factoring). We will constrain ourself to the regular
+2D lattice, as in the cluster state graph. We state without proof that
+every \textsf{2D CCNTCM} lattice with $n$ qubits can be embedded in
+a regular 2D lattice with at most a constant factor increase in qubits
+($O(n)$).
+
+Both models contain a classical controller
+
+\subsection{Other Time-space Tradeoffs}
+\label{subsec:cohere-ts-other}
+
+Another study of quantum time-space tradeoffs related to our notion of
+circuit width is the bounded space regime by Klauck \cite{Klauck2003}.
+In that model, the input is read-only and accessed through an oracle.
+Time is counted as the number of 
+
+Klauck discovered time-space tradeoff upper bounds for the specific
+problem of sorting $n$ numbers.
+
+In comparison to the classical time-space tradeoff for sorting
+discovered by Borodin-Cook \cite{Borodin1982} of $\Omega(TS)$.	
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{The Pebble Game and Reversible Time-Space Tradeoffs}
+\label{subsec:cohere-pebble}
+
+An important time-space tradeoff for classical reversible Turing machines
+originates from the pebble game as studied by Bennett \cite{Bennett1973}.
+This is relevant to quantum time-space tradeoffs when simulating
+completely classical circuits on quantum inputs, such as many arithmetic
+functions and a large part of Shor's factoring algorithm. Moreover, this
+pebble game models how a reversible machine can compute an irreversible
+function. It has a direct connection to circuit coherence as we shall see
+below, since quantum computations, especially low-depth ones, can leave
+garbage behind which must be uncomputed.
+
+The pebble game is a stylized setting for studying time-space tradeoffs.
+Although it may take place on general graphs, we study a line graph
+in analogy to the mechanism of an MBQC pattern and our factoring architectures
+from Chapters \ref{chap:factor-polylog} and \ref{chap:factor-sublog}.
+In short, imagine a row of $n$ tiles in sequence, each of which may
+contain at most one pebble. One pebble is placed
+on tile $1$ in the first timestep, and the goal is to place a pebble
+on tile $n$. The only allowable move is that at every timestep,
+you may add or remove a pebble from tile $i+1$ if there is a pebble on
+tile $i$. Therefore, you cannot remove the pebble from tile $1$.
+
+The number of timesteps it takes to place a pebble on tile $n$ is known
+as the time $T$. The number of pebbles present on all tiles is known
+as the space $S$. The obvious strategy for winning the pebble game is
+to place a pebble on tile $i$ in timestep $i$, without removing any of them.
+This completes in time $T=n$ and space $S = n$. In the case of unbounded
+space (unlimited pebbles), this is the optimal depth. However, by
+bounding space, we can introduce a time-space product $TS$ and attempt to
+upper-bound and lower-bound it.
+
+Knill gave a lower bound for the minimum pebble-game time-space tradeoff
+\cite{Knill1995} which is bounded above by $n^3$.
+
+\begin{equation}
+TS(n) = 2^{2\sqrt{\log(n)}(1 + o(1))}n = o(n^3), \omega(n^2)
+\end{equation}
+
+As a consequence, he obtains a minimum time-space tradeoff for
+Shor's factoring algorithm on \textsf{AC}.
+
+\begin{equation}
+TS(n) = 2^{2\sqrt{n}(1 + o(1))}n^3 = o(n^4), \omega(n^3)
+\end{equation}
+
+The minimum time-space tradeoff for factoring is indeed consistent with the depth-width product of all known
+factoring implementations from Table \ref{tab:fpl-results}, including
+the current work. The one exception is the approximate 1D NTC factoring
+implementation by Kutin \cite{Kutin2006}, which beats the above lower bound.
+This suggests that the earlier 1D NTC work by Fowler-Devitt-Hollenberg
+\cite{Fowler2004} may achieve the optimal depth-width product.
+
+TODO We need to define a standard form for coherent circuits
+
+Note that in applying
+pebble-game time-space tradeoffs to a quantum algorithm, each layer
+in a parallel quantum circuit now takes the place of a tile in our
+scenario above. Therefore, the space (circuit width) taken by placing a ``pebble'' on
+each layer is no longer a constant. We will define the \emph{layer width}
+$W_l$
+of a layer $l$ in a quantum circuit as the number of new qubits which are operated on in
+a given timestep. The maximum layer width $W_l^{max}$
+is then well-defined over all the
+layers, and the overall circuit width is upper-bounded by the sum of the
+layer widths.
+
+\begin{equation}
+W \le \sum_{l} W_l
+\end{equation}
+
+In fact, $LW$ 
+
+Finally, we conclude by describing the connection between the pebble game
+and circuit coherence as defined in Section \ref{sec:cohere-def}.
+Let us call the number of pebbles present at any timestep of the pebble game
+the instantaneous space, and we will scale each pebble by the 
+width of that layer in the quantum circuit (not the width of the entire circuit).
+This scaled instantaneous space is equal to the computational subset, and
+sum of these scaled instantaneous spaces (the scaled pebble-game space) is
+an upper-bound, within a factor of the maximum layer width in a quantum
+circuit

@@ -1,0 +1,275 @@
+\section{Measurement-Based Quantum Computing Background}
+\label{sec:cohere-mbqc}
+
+We will now discuss a model of quantum computing that is very different
+from the circuit model, but has already provided us with tools for
+parallelism in our nearest-neighbor architectures 
+in Chapters \ref{chap:factor-polylog} and \ref{chap:factor-sublog}.
+Measurement-based quantum computing (MBQC) is a general model which creates
+a large entangled-state on a graph of qubits and performs a pattern of
+measurements \cite{Briegel?}. Citation needed!
+Later measurements may depend on previous outcomes, and so
+a classical controller is required to make each measurement adaptive in this
+way. Each measurement reduces the size of our entangled state, and the
+measurement operation proceeds
+physically across our lattice of qubits, from inputs to outputs.
+We will discuss here a restricted form of MBQC called one-way computing
+that was proved universal by Raussendorf-Brown-Briegel \cite{Raussendorf2003}
+by translation from an arbitrary $n$-qubit circuit.
+This model uses only single-qubit measurements on a
+regular 2D lattice. We will exclusively consider this model and refer to it
+at MBQC for the rest of this section, since it is sufficient for discussing
+depth optimization of quantum circuits.
+
+MBQC is very different from the circuit model, which describes unitary
+evolution by the application of quantum gates to stationary qubits.
+Quantum circuits start out with a product state and then slowly build up
+more and more entanglement until it is finally projectively measured at the
+end. Surprisingly, both the circuit model and MBQC are equivalent, but
+have a tight depth separation for quantum algorithms.
+
+In Section \ref{subsec:mbqc-bg}, we will review the MBQC model.
+In Section \ref{subsec:mbqc-par}, we will discuss the work of
+Broadbent-Kashefi in automated circuit parallelization, which is a
+compilation-like process for reducing circuit depth at the expense of
+size and width, another quantum time-space tradeoff. These represent
+upper bounds on time-space tradeoffs for mapping certain circuit classes
+to a nearest-neighbor circuit with classical controller. We will compare this
+to our achievable time-space tradeoffs for low-depth factoring.
+Finally, in Section \ref{subsec:mbqc-cohere}, we will discuss how
+circuit coherence and our model of \textsf{2D CCNTCM} relate to MBQC.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{MBQC Background}
+\label{subsec:mbqc-bg}
+
+We follow the exposition of Ref.'s \cite{Broadbent2007,DaSilva2013}
+In the MBQC model, quantum computation is represented by three components:
+a pattern, an entanglement graph of qubits and interactions, and a
+classical controller.
+
+A \emph{pattern} is a sequence of commands which come in five types:
+
+\begin{description}
+\item[$N_i$:]
+preparation of a qubit $i$ into the state $\ket{+}$.
+
+\item[$E_{ij}$:]
+entanglement of qubits $i$ and $j$ with the two-qubit gate
+$\Lambda(Z)$ defined below. Note that this gate is bidirectional, so it
+does not matter which qubit is the control or the target.
+
+\item[$M^{\alpha}_i$:] single qubit measurement on qubit $i$ which
+projects onto the states
+$\{ \ket{\pm_{\alpha}} \}$ where
+
+\begin{equation}
+\ket{\pm_{\alpha}} = \normtwo(\ket{0} \pm e^{i\alpha}\ket{1})\}
+\end{equation}
+
+Associated with every measurement is a signal $s_i \in \mathbb{Z}_2$
+which is $0$ for outcome $\ket{+_{\alpha}}$ and $1$ for outcome
+$\ket{-_{\alpha}}$.
+
+\item[$X^{s}_i$:] a dependent Pauli $X$ correction, which applies $X$ to
+qubit $i$ if the signal $s$ is $1$.
+
+\item[$Z^{t}_j$:] a dependent Pauli $Z$ correction, which applies $Z$ to
+qubit $i$ if the signal $t$ is $1$.
+
+\end{itemize}
+
+A pattern is a valid executable sequence which corresponds to well-defined
+quantum and classical operations if no command depends on outcomes that
+are not yet measured. Pattern and executed right to left, much like
+composing the matrices that make up a sequence of gates to be applied to
+a quantum state (column vector). Certain operations can be parallelized
+if they occur on disjoint qubits. Furthermore, the operations in the
+pattern describe the quantum operations above only. Implicitly inserted
+in between them are classical layers which compute the dependent signals
+$s$, which may be the parity
+(sum modulo 2) of multiple signals: $s = \oplus_i s_i$.
+
+We illustrate this via a simple pattern on two qubits below.
+
+\begin{equation}
+X^{s_1}_2 M^{-\alpha}_1 E_{12} N^{0}_2 N^{0}_1
+\end{equation}
+
+In this pattern, both qubits 1 and 2 are initially prepared in the
+state $\ket{+}$ and then entangled with a $\Lambda(Z)$ gate.
+Qubit 1 is measured in the basis $\ket{\pm_{\alpha}}$ and its
+classical outcome is stored in the signal $s_1$. Finally,
+qubit 2 is corrected with a Pauli $X$ based on the outcome of
+the measurement.
+
+The entanglement graph $G = (V,E)$ defines all the two-qubit entanglement
+operations (edges in $E$) between qubits (vertices in $V$). Furthermore,
+there are special vertices which represent the input
+qubits $I \subset V$ and the output qubits $O \subset V$. In the one-way
+MBQC model that we are exclusively considering,
+the geometry of the entanglement graph always has the following form
+corresponding to an $n$-qubit circuit: it is a
+rectangular, regular 2D lattice of $n \times D(n)$ qubits where the
+leftmost column of $n$ qubits are the inputs and the rightmost
+column of $n$ qubits are the outputs. We state without proof that an
+MBQC pattern can be standardized so that measurements and corrections
+always proceed from left-to-right across this graph.
+
+The preparation commands are often omitted since it is implied that they
+are always done for all qubits except the input.
+Measurements can also be done in a basis which depends on previous
+measurement outcomes. These are written as measurements which are
+preceded by some $X$ and $Z$ correction, which themselves are dependent.
+
+\begin{equation}
+_t\left[M^{\alpha}_i\right]^s \equiv M^{\alpha}_i X^s_i Z^t_i =
+M_i^{(-1)^s \alpha + t\pi}
+\end{equation}
+
+An MBQC pattern, since it has circuit-like properties, also consumes
+circuit depth, width, and size. The depth is divided up into
+preparation depth (which involves applying the quantum operations
+$N_i$ and $E_{ij}$) and computation depth (which involves applying
+the operations $M^{\alpha}_i$, $X^{s}_i$, $Z^{t}_i$).
+
+A pattern can be optimized in polynomial classical time so that
+all preparation and entanglement occurs first in the preparation depth,
+all measurements and $X$ corrections come next in interleaved layers of
+quantum and classical processing (the computation depth),
+and finally all the $Z$ corrections come
+last. The preparation depth is equal to the maximum degree of the
+underlying graph $G$, which is always $4$. The $Z$ corrections can
+always be performed last.
+Therefore our depth bottleneck
+comes from our measurement commands and their dependencies.
+
+Translations between MBQC patterns and quantum circuits are most easily
+done using the following (universal) basis of $\{J(\alpha), \Lambda(Z)\}$:
+
+\begin{equation}
+J(\alpha) = \normtwo \left[
+\begin{array}{cc}
+1 & e^{i\alpha} \\
+1 & -e^{i\alpha)
+\end{array}
+\right]
+\qquad
+\Lambda(Z) = \left[
+\begin{array}{cccc}
+1 & 0 & 0 & 0 \\
+0 & 1 & 0 & 0 \\
+0 & 0 & 1 & 0 \\
+0 & 0 & 0 & -1
+\end{array}
+\right]
+\end{equation}
+
+Note that for the special angle of $0$,
+$J(0) = H$, our usual Hadamard gate.
+This is universal because it contains at least one entangling two-qubit
+gate, and arbitrary single qubit rotations can be implemented using
+the $\{J(\alpha)\}$ basis as shown below for angles $\phi$, $\beta$, $\gamma$,
+and $\delta$.
+
+\begin{equation}
+U = e^{i\phi}J(0)J(\beta}J(\gamma)J(\delta)
+\end{equation}
+
+However, note that this basis is not
+fixed and finite. Further restrictions must be placed on MBQC patterns
+in order to meet fault-tolerance requirements. Namely, the angles
+$\alpha$ should be drawn from a finite that that can be compiled from
+a fault-tolerant basis such as Clifford+$T$ or Clifford+$Toffoli$, as
+done by the quantum compilers in Chapter \ref{chap:qcompile}.
+
+In fact, we conjecture that because of this fundamental quantum
+compiling limitation, no MBQC pattern can ever have depth smaller than
+the corresponding quantum circuit over a fixed, finite basis. This does,
+however, open up the question of efficient quantum compiling over
+the $\{\Lambda(Z), J(\alpha)\}$ basis.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Automating Circuit Parallelism with MBQC}
+\label{subsec:mbqc-par}
+
+The work by Broadbent-Kashefi introduced the application of a
+\emph{measurement calculus} to transform MBQC patterns and provide a
+pattern for automated parallelization of quantum circuits. This is a
+classical, compilation-like procedure which takes as input a quantum
+circuit and returns as output a new quantum circuit with at least the
+same depth and in some cases improved depth, with a corresponding
+increase in circuit size and width.
+
+The basic
+technique involves translating a unitary circuit $C$ from a certain basis
+into an MBQC pattern $P$. Two optimizations are used from the measurement
+calculus: standardization and signal-shifting. Standardization applies
+the rules below to make sure all patterns are well-formed: all
+preparation commands precede all entanglement operations, which themselves
+precede all measurements and corrections. This is useful for
+standardizing two patterns $P^(1)$ and $P^(2)$, which themselves may be
+standardized and which are concatenated together. Such a concatenation
+may occur when we are translating two concatenated unitary circuits
+which may individually be easy to translate to patterns but together may
+be difficult. This example is illustrated below, where $C^{(x)}$,
+$M^{(x)}$, and $E^{(x)}$ correspond to correction operations, measurement
+operations, and entanglement operations for pattern $P^{(x)}$.
+The symbol $\rightarrow^{*}$ indicates the transformation of standardization.
+
+\begin{eqnarray}
+P^{(1)} & = & C^{(1)}M^{(1)}E^{(1)} \\
+P^{(2)} & = & C^{(2)}M^{(2)}E^{(2)} \\
+P^{(1)}P^{(2)} & = & C^{(1)}M^{(1)}E^{(1)}C^{(2)}M^{(2)}E^{(2)} \\
+P^{(1)}P^{(2)} & \rightarrow^{*} & C^{(1)}C^{(2)}M^{(1)}M^{(2)}E^{(1)}E^{(2)} \\
+\end{eqnarray}
+
+Signal-shifting further optimizes a pattern by moving all $Z$ corrections to
+the end of the pattern, where they can all be performed in parallel. On a
+cluster-state graph, the preparation depth and $Z$-correction depth are then
+constant. The computation depth of the pattern is dominated by the
+depth of dependent measurements and $X$ corrections.
+
+Because the cluster state graph is a 2D CCNTC lattice, it is natural to
+wonder whether the circuit translation techniques of Broadbent-Kasheffi
+can be used to automatically map any quantum circuit to a 2D CCNTC
+architecture. Indeed, the discovery of a constant-depth teleportation
+circuit on \textsf{2D CCNTC} proceeds directly from an MBQC pattern
+for long-range teleportation. This is illustrated in the next equation,
+which is a pattern for teleporting qubit $i$ to qubit $k$.
+
+\begin{equation}
+X^{s_j}_k X^{s_i}_k M^0_j M^0_i E_{jk} E_{ij}
+\end{equation}
+
+Lemma 7.5 from \cite{Broadbent2007} answers affirmatively that any
+non-nearest-neighbor circuit can be mapped to a nearest-neighbor
+circuit with constant-depth overhead and the following time-space tradeoff.
+
+\begin{lemma}{\textbf{Time-space Tradeoff for Mapping Circuits to Nearest-Neighbor} \cite{Broadbent2007}}
+Let $C$ be a quantum circuit with depth $D$, size $S$, and width $W$, with $J_c$ the number
+of $J(\alpha)$ gates, and $m$ the number of places where two $\Lambda(Z)$ operate
+consecutively on the same qubit. Then the corresponding MBQC pattern $P$
+on a cluster-state graph, with the teleportation pattern above, has depth
+$O(D)$ and width $W + J_c + m = O(W+S)$.
+\end{lemma}
+
+How does this compare with our technique of hand-optimized, nearest-neighbor
+mapping in Chapters \ref{chap:factor-polylog} and \ref{chap:factor-sublog}?
+We repeat the relevant rows from 
+Table \ref{tab:fpl-results} and Table \ref{tab:sublog-resources}, namely
+those that correspond to \textsf{AC} and \textsf{2D CCNTCM} implementations.
+
+\begin{table}[hbt!]
+\begin{table}{|c|c|c|}
+\hline
+Implementation & Architecture & $D$ & $S$ & $W$ \\
+\hline
+Browne-Kashefi-Perdrix \cite{Browne2009} & \textsf{CCAC} & $O((\log\log n)^2)$ & $$ & $$ \\
+Cleve-Watrous \cite{Cleve2000} & \textsf{AC} & $O((\log\log n)^2)$ & $$ & $$ \\
+\hline
+\end{table}
+\caption{A comparison of hand-optimized and automated nearest-neighbor mappings
+for \textsf{AC} factoring architectures.}
+\label{tab:mbqc-mapping}
+\end{table}
