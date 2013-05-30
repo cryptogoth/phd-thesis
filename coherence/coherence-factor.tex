@@ -9,3 +9,97 @@ This last depth was limited only by the depth of quantum compiling a
 single-qubit rotation for the quantum majority gate. However, the improvement
 in depth came at the cost of increasing width and size.
 For the polylogarithmic depth, we calculated a size and width of $O(n^4)$.
+
+
+How does this compare with our technique of hand-optimized, nearest-neighbor
+mapping in Chapters \ref{chap:factor-polylog} and \ref{chap:factor-sublog}?
+We repeat the relevant rows from 
+Table \ref{tab:fpl-results} and Table \ref{tab:sublog-resources}, namely
+those that correspond to \textsf{AC} and \textsf{2D CCNTCM} implementations
+over the circuit basis of the PK-KSV quantum compiler, which is
+Clifford+$Toffoli$.
+
+\begin{table}[hbt!]
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+Implementation                           & Architecture  & $D$           & $S$                                             & $W$ \\
+\hline
+Shor \cite{Shor1995}                     & \textsf{AC}   & [$O(n)$]      & $O(n^2\log n \log\log n)$                       & $O(n\log n \log\log n)$ \\
+Browne-Kashefi-Perdrix \cite{Browne2009} & \textsf{CCAC} & $O(1)$        & $O(\frac{1}{\epsilon}n^{6+2\epsilon}\log^{4}n)$ & $$ \\
+Cleve-Watrous \cite{Cleve2000}           & \textsf{AC}   & $O(\log^3 n)$ & $O(n^3)$                                        & $O(n^3)$ \\
+\hline
+Polylog Depth, Chapter \ref{chap:factor-polylog} & \textsf{2D CCNTCM} & $O((\log\log n)^2)$ & $$ & $$ \\
+\hline
+
+\end{tabular}
+\caption{A comparison for \textsf{AC} factoring architectures.}
+\label{tab:cohere-ac-factor}
+\end{table}
+
+
+
+\begin{table}[hbt!]
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+Implementation                           & Architecture  & $D$ & $S$ & $W$ \\
+\hline
+Shor \cite{Shor1995}                     & \textsf{AC}   & [$O(n)$] & $O(n^2\log n \log\log n)$ & $O(n\log n \log\log n)$ \\
+Browne-Kashefi-Perdrix \cite{Browne2009} & \textsf{CCAC} & $O((\log\log n)^2)$ & $$ & $$ \\
+Cleve-Watrous \cite{Cleve2000}           & \textsf{AC}   & $O((\log\log n)^2)$ & $$ & $$ \\
+\hline
+Polylog Depth, Chapter \ref{chap:factor-polylog} & \textsf{2D CCNTCM} & $O((\log\log n)^2)$ & $$ & $$ \\
+\hline
+
+\end{tabular}
+\caption{A comparison of hand-optimized and automated nearest-neighbor mappings
+for \textsf{AC} factoring architectures.}
+\label{tab:mbqc-mapping}
+\end{table}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Configurable-Depth Factoring}
+\label{subsec:cohere-config-factor}
+
+When we decrease our nearest-neighbor factoring depth from $O(\log^2 n)$
+in Chapter \ref{chap:factor-polylog} to $O((\log\log n)^2)$ in
+Chapter \ref{chap:factor-sublog}, we calculated a disproportionate
+increase in circuit size and width from
+$O(n^4)$ to $\Omega(n^6\log^2 n)$. This seems to be quite an
+unfavorable depth-width tradeoff, and it is natural to ask whether
+we could have some configurable depth in between
+polylogarithmic and sublogarithmic that would let a quantum
+systems architect choose the right tradeoff for a particular
+implementation.
+
+In this section, we provide such a configurable depth
+factoring architecture by generalizing our implementation in
+Chapter \ref{chap:factor-polylog}. In that chapter, we
+wanted to multiply $n\times n$-bit quantum integers in parallel.
+To do so, we divided them up into $\lceil n/2 \rceil$ groups of two.
+In each group of two quantum integers, call them $\ket{x}$ and
+$\ket{y}$, in order to get all the product bits
+$\ket{x_i\cdot y_j}$ we need to generate $n^2 \ n$-bit modular residues
+$2^i 2^j \bmod m$ controlled on two qubits. We then add these
+down with modular multiple addition back to an $n$-bit (CSE) number,
+and we are then left with $\lceil n/2 \rceil$ numbers to multiply in
+the second level. This takes place in depth $O(\log n)$ and takes
+width and size $O(n^3)$.
+Modular exponentiation has $\lceil \log_2 n \rceil + 1$ such
+levels and perform $n-1$ multiplications total, giving us the
+final depth of $O(\log n)$ and size and width $O(n^4)$.
+
+The configurable parameter is how we group quantum integers for
+expansion. If instead of groups of two, we used groups of
+$4$, then each multiplication would require expansion
+into $n^4 \times n$-bit numbers. These would still add down to
+a single $O(n)$-bit CSE number in $O(\log n)$ depth, but
+would now take size and width $O(n^5)$. Modular exponentiation
+would still take total depth $O(\log^2 n)$ but would now take
+size and width $O(n^6)$, with hidden constants dependent on
+the parameter.
+
+We now name the configurable parameter $d$, where in each level
+of modular exponentation we group quantum integers into groups of
+$2^d$.
+
+In the polylogarithmic

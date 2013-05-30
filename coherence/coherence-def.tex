@@ -33,8 +33,9 @@ entangled if tracing over one of the subsystem \emph{does not} yield the other s
 as a reduced density matrix.
 
 \begin{equation}
-\rho^{AB} \text{ entangled } \iff \left(\tr_{A}(\rho^{AB}) \ne \rho^{B} \right) \land
-\left(\tr_{B}(\rho^{AB}) \ne \rho^{A}
+\rho^{AB} \text{ entangled }
+%\iff \left(\tr_{A}(\rho^{AB}) \ne \rho^{B} \right) \land
+%\left(\tr_{B}(\rho^{AB}) \ne \rho^{A}
 \end{equation}
 
 A general density matrix for a state across two subsystems $A$ and $B$ can be
@@ -57,7 +58,7 @@ is obtained by tracing out
 one subsystem.
 
 \begin{equation}
-tr_A(\ket{a_i}\bra{a_{i'} \otimes \ket{b_j}\bra{b_{j'}}) = \tr(\ket{a_i}\bra{a_{i'}}) \ket{b_j}\bra{b_{j'}}
+tr_A(\ket{a_i}\bra{a_{i'}} \otimes \ket{b_j}\bra{b_{j'}}) = \tr(\ket{a_i}\bra{a_{i'}}) \ket{b_j}\bra{b_{j'}}
 \end{equation}
 
 Consider a two-qubit gate $E_{uv}$ on single qubits $u$ and $v$ which exist
@@ -75,7 +76,7 @@ We call the action of $E_{uv}$ on this combined state a new state $\sigma^{uL}$:
 
 We call the gate $E_{uv}$ \emph{entangling} between $u$ and $v$
 (and between $u$ and $L$) given the states $\rho^{u}$ and $\rho^{L}$ if
-the new state after applying $E_uv}$ is entangled, which corresponds to
+the new state after applying $E_{uv}$ is entangled, which corresponds to
 the condition below.
 
 \begin{equation}
@@ -99,7 +100,7 @@ separable into the product state $\sigma^{L} = \sigma^{u} \otimes \sigma^{L \\ \
 which corresponds to the following condition:
 
 \begin{equation}
-tr_{u}(\sigma^{L}) = \sigma_^{L \\ \{u\}
+\tr_{u}(\sigma^{L}) = \sigma^{L} \\ \{u\}
 \end{equation}
 
 More generally, we can stay the $E_{uv}$ is disentangling for any two
@@ -208,7 +209,7 @@ When we do not specify a timestep, the \emph{computational subset} simply
 refers to the union of all the computational subsets in any timestep:
 
 \begin{equation}
-L = \bigcup_{i=1^D L_i = \subseteq V
+L = \bigcup_{i=1}^D L_i = \subseteq V
 \end{equation}
 \end{definition}
 
@@ -260,15 +261,15 @@ timestep $i$ is given by $M_i = \{\tilde{L}^{(j)}_i\} \cup \{ L_i \}$.
 Initialize the following:
 \begin{itemize}
 \item
-$L_D = \{ O \}$
+$L_1 = \{ O \}$
 \item
-$\tilde{L}^{(j)}_D = v_j \in V \\ O$ for all non-output qubits $v_j$
+$\tilde{L}^{(j)}_1 = v_j \in V \\ I$ for all non-input qubits $v_j$
 \item
-$M_D = \{ L_D \} \cup \{ L^{(j)}_D \}$.
+$M_1 = \{ L_1 \} \cup \{ L^{(j)}_1 \}$.
 \end{itemize}
 
 \item
-In timestep $i$, starting from $D-1$ and counting backwards to $1$:
+In timestep $i \in \{2, \ldots, D \}$:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%% ENUMERATE 2
 \begin{enumerate}
@@ -289,42 +290,45 @@ along with all single-qubit measurements $\{ M_u \}$.
 \end{itemize}
 
 \item
-For every qubit subset $\tilde{L}^{(j)}_{i+1} \in M_{i+1}$:
+For every qubit subset $\tilde{L}^{(j)}_{i-1} \in M_{i-1}$:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% ENUMERATE 3
 \begin{enumerate}
-\item Check whether $\tilde{L}^{(j)}_{i+1}$ contains a qubit acted upon by a
-$E_{uv} \in T_d$, where we assume without loss of generality that
-$u \in \tilde{L}^{(j)}_{i+1}$. If it does:
+\item Check whether $\tilde{L}^{(j)}_{i-1}$ contains a qubit acted upon by a
+$E_{uv} \in T_e$, where we assume without loss of generality that
+$u \in \tilde{L}^{(j)}_{i-1}$. If it does:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% ENUMERATE 4
 \begin{enumerate}
 \item Check whether $v$ is in any other qubit subset
-(call it $\tilde{L}^{(j')}_{i+1}$).
+(call it $\tilde{L}^{(j')}_{i-1}$).
 
+% Too deeply nested
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% ENUMERATE 5
-\begin{enumerate}
+%\begin{enumerate}
 \item
 If it is, create a new qubit subset
 $\tilde{L}^{(j)}_{i}$ equal to the union of the two qubit subsets from
-step $i+1$:
+step $i+1$, which inherits the tag \textsc{Computational Subset} from
+either of its source subsets:
 
 \begin{equation*}
-\tilde{L}^{(j)}_{i} = \tilde{L}^{(j)}_{i+1} \cup \tilde{L}^{(j')}_{i+1}
+\tilde{L}^{(j)}_{i} \leftarrow \tilde{L}^{(j)}_{i-1} \cup \tilde{L}^{(j')}_{i-1}
 \end{equation*}
 
 \item
-If $v$ is \emph{not} in any other interesting subset for timestep $i+1$,
-then simply add it to a new qubit subset for timestep $i$.
+If $v$ is \emph{not} in any other interesting subset for timestep $i-1$,
+then simply add it to a new qubit subset for timestep $i$. Note that it will
+not have the tag \textsc{Computation Subset}.
 
 \begin{equation*}
 \tilde{L}^{(j)}_{i} = \{v\}
 \end{equation*}
-\end{enumerate}
+%\end{enumerate}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% ENUMERATE 5
 
 \item
-Add the current interesting subset to the current timestep's set of interesting subsets $M_i$.
+Add the current qubit subset to the current timestep's set of qubit subsets $M_i$.
 
 \begin{equation*}
 M_i \leftarrow M_i \cup \{ \tilde{L}^{(j)}_{i} \}
@@ -333,20 +337,21 @@ M_i \leftarrow M_i \cup \{ \tilde{L}^{(j)}_{i} \}
 \end{enumerate}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% ENUMERATE 4
 
-\item Check whether $\tilde{L}^{(j)}_{i+1}$ matches the following two cases
+\item Check whether $\tilde{L}^{(j)}_{i-1}$ matches the following two cases
 and take the corresponding actions.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% ENUMERATE 4
 \begin{enumerate}
-\item If $\tilde{L}^{(j)}_{i+1}$ contains two qubits $u$ and $v$
+\item If $\tilde{L}^{(j)}_{i-1}$ contains two qubits $u$ and $v$
 acted upon by some
-$E_{uv} \in T_e$, then check whether $E_{uv}$ is
-disentangling between any partitioning of $\tilde{L}^{(j)}_{i+1}$ into two
+$E_{uv} \in T_d$, then check whether $E_{uv}$ is
+disentangling between any partitioning of $\tilde{L}^{(j)}_{i-1}$ into two
 subsets $V_1 \ni u$ and $V_2 \ni v$ is in the other. (This takes time
-polynomial in the size of $\tilde{L}^{(j)}_{i+1}$).
+polynomial in the size of $\tilde{L}^{(j)}_{i-1}$).
 
+% Too deeply nested
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% ENUMERATE 5
-\begin{enumerate}
+%\begin{enumerate}
 \item
 If it does, add these two subsets to our collection $M_i$.
 
@@ -355,21 +360,30 @@ M_i \leftarrow M_i \cup \{ V_1, V_2 \}
 \end{equation*}
 
 \item
-Otherwise, just set the current subset $\tilde{L}^{(j)}_{i+1} = \tilde{L}^{(j_}_{i}$
+Otherwise, just set the current subset $\tilde{L}^{(j)}_{i} = \tilde{L}^{(j)}_{i-1}$
 
 \begin{equation*}
 M_i \leftarrow M_i \cup \{ \tilde{L}^{(j)}_{i} \}
 \end{equation*}
-\end{enumerate}
+%\end{enumerate}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% ENUMERATE 5
 
 \item
 If $\tilde{L}^{(j)}_{i+1}$ contains a qubit $u$ acted upon by some $M_u \in T_e$,
-then create a new qubit subset $\tilde{L}^{(j)}_{i} = \tilde{L}^{(j)}_{i+1} - \{u\}$
+then create two new qubit subsets. One just removes the qubit $u$
+from the current qubit subset, inheriting the tag \textsc{Computational Subset}
+if present. The other is a single-qubit subset consisting
+only of $u$.
+
+\begin{eqnarray*}
+\tilde{L}^{(j)}_{i} & \leftarrow & \tilde{L}^{(j)}_{i+1} - \{u\} \\
+\tilde{L}^{(j')}_{i} & \leftarrow & \{ u \}
+\end{eqnarray*}
+
 which just removes the qubit $u$. Add this to our collection.
 
 \begin{equation*}
-M_i \leftarrow M_i \cup \{ \tilde{L}^{(j)}_{i} \}
+M_i \leftarrow M_i \cup \{ \tilde{L}^{(j)}_{i}, \tilde{L}^{(j')}_{i} \}
 \end{equation*}
 
 \end{enumerate}
@@ -378,44 +392,44 @@ M_i \leftarrow M_i \cup \{ \tilde{L}^{(j)}_{i} \}
 \end{enumerate}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% ENUMERATE 3
 
-\item For every qubit subset $\tilde{L}^{(j)}_{i+1} \in M_{i+1}$ not
+\item For every qubit subset $\tilde{L}^{(j)}_{i+1} \in M_{i-1}$ not
 operated upon by any of the previous steps, copy it unmodified into
-$M_i$.
+$M_i$, inheriting the tag \textsc{Computational Subset}.
 
 \end{enumerate}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%% ENUMERATE 2
 
 \item
-
+Verify that the output qubits are in the computational subset $O \subseteq L_D$,
+where $L_D$ is the subset $\tilde{L}^{(j)}_D$ in the last timestep which has
+inherited the tag \textsc{Computational Subset}.
 
 \end{enumerate}
 %%%%%%%%%%%%%%% ENUMERATE 1
 
 
-Circuit coherence is the sum of the computation state size (in qubits)
-over all $D$ timesteps of a quantum circuit's execution. It is measured
-in qubit-timesteps.
-
 \begin{definition}{\textbf{Circuit coherence}.}
-Circuit coherence is the amount of error-correction required on the logical
-qubits of a quantum circuit in standard coherent form
-in order to achieve a correct result.
+Circuit coherence $Q$ is the sum of the computation subset size (in qubits)
+over all $D$ timesteps of a quantum circuit's execution. It is measured
+in qubit-timesteps, which is the amount of error-correcting effort to
+maintain the coherent state of one logical qubit for one timestep of a circuit.
+
+\begin{equation}
+Q = \sum_{i=1}^D |L_i|
+\end{equation}
 \end{definition}
 
-The standard coherent form for a quantum circuit imposes some
-additional restrictions to make sure the circuit coherence is
-well-defined. First, it delays initialization
-of qubits (both ancillae and input qubits) until the timestep before
-they are first entangled with the computation state. Second, if
-an input qubit $v \in I$ is not in the computation state in timestep 1,
-as defined above, it is removed from $I$.
 
-\begin{definition}{\textbf{Computation state}.}
-The computation state is the coherent history 
+\begin{definition}{\textbf{Instantaneous coherence}.}
+Instantaneous coherence $Q_i$ is the size of the computational subset
+(in qubits) in timestep $i$. From the algorithm above,
+\begin{equation}
+Q_i = |L_i|\text{.}
+\end{equation}
+
+We also have the relationship that the total circuit coherence is equal
+to the sum of all instantaneous coherences over each timestep.
+\begin{equation}
+Q = \sum_{i=1}^D Q_i
+\end{equation}
 \end{definition}
-
-\begin{definition}{\textbf{Qubit-timestep}.}
-A qubit-timestep is a unit of coherent quantum computation through time,
-or the unit for measuring quantum time-space tradeoffs. It is equivalent
-to one qubit in a coherent state for a unit of depth.
-In \textsf{2D CCNTCM} 

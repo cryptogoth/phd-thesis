@@ -22,7 +22,7 @@ captures the notion of parallelizability for a circuit.
 
 Since circuit coherence measures a time-space tradeoff in order to
 quantify circuit parallelism, it is natural to
-compare it to other resources that are measured in the literature.
+compare it to other time-space tradeoffs in the literature.
 This is done in Section \ref{sec:coherence-tradeoff}, where we
 especially review the model measurement-based quantum computing and
 how it relates to circuit coherence.
@@ -33,20 +33,22 @@ and multiplication. We use this to draw some conclusions about the
 usefulness of decreasing the depth, and making the circuit depth configurable
 so that an experimental architect can make the appropriate choice.
 
-Finally, having exhausted our fascination with factoring,
-we apply our low-depth techniques (compiling and circuit coherence)
-to a new quantum algorithm: hamiltonian
-simulation. In Section \ref{cohere-hs-bg}, we discuss the background of
-this problem, and in Section \ref{cohere-hs-calc} we parallelize one
-aspect of it, that of decreasing the depth of simulating
-a $1$-sparse Hamiltonian matrix.
+%Finally, having exhausted our fascination with factoring,
+%we apply our low-depth techniques (compiling and circuit coherence)
+%to a new quantum algorithm: hamiltonian
+%simulation. In Section \ref{cohere-hs-bg}, we discuss the background of
+%this problem, and in Section \ref{cohere-hs-calc} we parallelize one
+%aspect of it, that of decreasing the depth of simulating
+%a $1$-sparse Hamiltonian matrix.
 
 \input{coherence/coherence-def.tex}
+
+\input{coherence/coherence-mbqc.tex}
 
 \input{coherence/coherence-tradeoff.tex}
 
 \input{coherence/coherence-factor.tex}
 
-\input{coherence/coherence-hs-bg.tex}
+%\input{coherence/coherence-hs-bg.tex}
 
-\input{coherence/coherence-hs-calc.tex}
+%\input{coherence/coherence-hs-calc.tex}

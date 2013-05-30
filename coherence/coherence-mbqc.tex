@@ -7,7 +7,7 @@ parallelism in our nearest-neighbor architectures
 in Chapters \ref{chap:factor-polylog} and \ref{chap:factor-sublog}.
 Measurement-based quantum computing (MBQC) is a general model which creates
 a large entangled-state on a graph of qubits and performs a pattern of
-measurements \cite{Briegel?}. Citation needed!
+measurements \cite{Raussendorf2001}.
 Later measurements may depend on previous outcomes, and so
 a classical controller is required to make each measurement adaptive in this
 way. Each measurement reduces the size of our entangled state, and the
@@ -35,9 +35,11 @@ compilation-like process for reducing circuit depth at the expense of
 size and width, another quantum time-space tradeoff. These represent
 upper bounds on time-space tradeoffs for mapping certain circuit classes
 to a nearest-neighbor circuit with classical controller. We will compare this
-to our achievable time-space tradeoffs for low-depth factoring.
-Finally, in Section \ref{subsec:mbqc-cohere}, we will discuss how
-circuit coherence and our model of \textsf{2D CCNTCM} relate to MBQC.
+to the time-space tradeoff of
+other re-ordering networks for mapping circuits to a nearest-neighbor
+architecture.time-space tradeoffs for low-depth factoring.
+We conclude by comparing and contrasting the
+circuit coherence of an MBQC pattern with its other circuit resources.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{MBQC Background}
@@ -77,7 +79,7 @@ qubit $i$ if the signal $s$ is $1$.
 \item[$Z^{t}_j$:] a dependent Pauli $Z$ correction, which applies $Z$ to
 qubit $i$ if the signal $t$ is $1$.
 
-\end{itemize}
+\end{description}
 
 A pattern is a valid executable sequence which corresponds to well-defined
 quantum and classical operations if no command depends on outcomes that
@@ -151,7 +153,7 @@ done using the following (universal) basis of $\{J(\alpha), \Lambda(Z)\}$:
 J(\alpha) = \normtwo \left[
 \begin{array}{cc}
 1 & e^{i\alpha} \\
-1 & -e^{i\alpha)
+1 & -e^{i\alpha}
 \end{array}
 \right]
 \qquad
@@ -173,7 +175,7 @@ the $\{J(\alpha)\}$ basis as shown below for angles $\phi$, $\beta$, $\gamma$,
 and $\delta$.
 
 \begin{equation}
-U = e^{i\phi}J(0)J(\beta}J(\gamma)J(\delta)
+U = e^{i\phi}J(0)J(\beta)J(\gamma)J(\delta)
 \end{equation}
 
 However, note that this basis is not
@@ -242,34 +244,57 @@ which is a pattern for teleporting qubit $i$ to qubit $k$.
 X^{s_j}_k X^{s_i}_k M^0_j M^0_i E_{jk} E_{ij}
 \end{equation}
 
+Furthermore, the quintessential example of a tight logarithmic separation
+between the MBQC and circuit model is the parity function.
+On a non-adaptive quantum circuit (one without a classical controller),
+the depth of computing parity is $\Omega(\log n)$ \cite{Fang2003}.
+However, as an MBQC pattern, it takes constant depth \cite{Broadbent2007}.
+Indeed the pattern for parity is very similar to our circuit for unbounded
+quantum fanout, which is not surprising given that the two functions are
+related by conjugation of Hadamards on every qubit \cite{Moore1999}.
+
 Lemma 7.5 from \cite{Broadbent2007} answers affirmatively that any
 non-nearest-neighbor circuit can be mapped to a nearest-neighbor
 circuit with constant-depth overhead and the following time-space tradeoff.
+We restate it here.
 
-\begin{lemma}{\textbf{Time-space Tradeoff for Mapping Circuits to Nearest-Neighbor} \cite{Broadbent2007}}
+\begin{proposition}{\textbf{Time-space Tradeoff for Mapping Circuits to Nearest-Neighbor} \cite{Broadbent2007}}
 Let $C$ be a quantum circuit with depth $D$, size $S$, and width $W$, with $J_c$ the number
 of $J(\alpha)$ gates, and $m$ the number of places where two $\Lambda(Z)$ operate
 consecutively on the same qubit. Then the corresponding MBQC pattern $P$
 on a cluster-state graph, with the teleportation pattern above, has depth
-$O(D)$ and width $W + J_c + m = O(W+S)$.
-\end{lemma}
+$D' = O(D)$ and width $W' = W + J_c + m = O(W+S)$.
+\label{prop:ts-mbqc}
+\end{proposition}
 
-How does this compare with our technique of hand-optimized, nearest-neighbor
-mapping in Chapters \ref{chap:factor-polylog} and \ref{chap:factor-sublog}?
-We repeat the relevant rows from 
-Table \ref{tab:fpl-results} and Table \ref{tab:sublog-resources}, namely
-those that correspond to \textsf{AC} and \textsf{2D CCNTCM} implementations.
+This gives a time-space (depth-width) tradeoff for compiled,
+nearest-neighbor circuits of $D'W' = O(D(W+S))$, where $D$, $S$, and $W$
+are the depth, size, and width of the original, non-nearest-neighbor circuit.
 
-\begin{table}[hbt!]
-\begin{table}{|c|c|c|}
-\hline
-Implementation & Architecture & $D$ & $S$ & $W$ \\
-\hline
-Browne-Kashefi-Perdrix \cite{Browne2009} & \textsf{CCAC} & $O((\log\log n)^2)$ & $$ & $$ \\
-Cleve-Watrous \cite{Cleve2000} & \textsf{AC} & $O((\log\log n)^2)$ & $$ & $$ \\
-\hline
-\end{table}
-\caption{A comparison of hand-optimized and automated nearest-neighbor mappings
-for \textsf{AC} factoring architectures.}
-\label{tab:mbqc-mapping}
-\end{table}
+Other than a nearest-neighbor mapping, however, automated techniques cannot
+provide an asymptotically lower depth for generic circuits.
+There are other special classes of circuits, namely those composed entirely of
+Clifford gates and an initial layer of $J(\alpha)$ gates, which can be
+parallelized to $O(1)$ depth.
+
+We now compare MBQC to two similar automated mappings, or qubit re-ordering networks,
+for any $n$-qubit circuit (on \textsf{AC}).
+The main application of such a re-ordering is to convert quantum circuits
+to a nearest-neighbor architecture. The re-ordering network of Rosenbaum
+\cite{Rosenbaum2012} has the same constant-depth overhead of $D' = O(D)$
+but a quadratic width overhead of $W' = O(W^2)$.
+The re-ordering network of Beals et al. \cite{Beals2013} allows
+a distributed quantum computer with nodes connected in a hypergraph
+topology
+(equivalent to \textsf{2D CCNTCM}) to execute the same circuit with
+$D' = O(D\log^2n\log\log n)$.
+
+An MBQC pattern, when executed on a cluster-state graph, has a well-defined
+circuit coherence based on Section \ref{sec:cohere-def}. For a cluster-state
+graph with $n \times D$ qubits, including the input and output qubits,
+corresponding to a unitary circuit on $n$-qubits
+and depth $D$, the circuit width is $W = nD$. The entire lattice starts out
+in an entangled state, and measurements proceed column-by-column
+left-to-right from the input qubits to the output qubits. Therefore,
+the circuit coherence is $Q = S = O(n^2)$, and in fact, there is no
+asymptotic separation between circuit coherence and circuit size.
