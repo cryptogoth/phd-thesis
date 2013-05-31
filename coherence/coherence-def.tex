@@ -18,8 +18,10 @@ First, we will define what we mean by an entangling (or disentangling) gate
 in Section \ref{subsec:cohere-entangle}. Then we will build upon this
 to define a layer width, or a computational subset of qubits in every
 timestep, in Section \ref{subsec:cohere-subset}. Finally,
-in Section \ref{subsec:cohere-def}, we will use
-the previous two definitions to define the resource circuit coherence and
+in Section \ref{subsec:cohere-algo}, we will use
+the previous two definitions to provide an algorithm for
+computing reachability and therefore the computational subset for acircuit.
+This in turn lets us define the resource circuit coherence and
 describe its relationship to the other circuit resources: depth, size, and
 width. 
 
@@ -36,8 +38,8 @@ as a reduced density matrix.
 
 \begin{equation}
 \rho^{AB} \text{ entangled }
-\iff \left(\tr_{A}(\rho^{AB}) \ne \rho^{B} \right) \land
-\left(\tr_{B}(\rho^{AB}) \ne \rho^{A}
+\iff \left( \tr_{A}(\rho^{AB}) \ne \rho^{B} \right) \land
+%\left(\tr_{B}(\rho^{AB}) \ne \rho^{A}
 \end{equation}
 
 A general density matrix for a state across two subsystems $A$ and $B$ can be
@@ -463,6 +465,7 @@ M \leftarrow M \cup \{L_{i-1}\}
 \item Verify that $L_1 = I$ are exactly the input qubits.
 
 \item Output $M = \{L_1, \ldots, L_D\}$. This is the computational (sub)set of qubits.
+\end{enumerate}
 
 \end{enumerate}
 %%%%%%%%%%%%%%% ENUMERATE 1

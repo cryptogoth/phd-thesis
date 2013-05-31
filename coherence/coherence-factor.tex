@@ -1,64 +1,110 @@
 \section{Circuit Coherence of Factoring Architectures}
 \label{sec:cohere-factor}
 
+In this section, we apply circuit coherence and pebble-game
+uncomputing techniques from the previous section to our
+factoring architectures. The techniques are generic for
+any layered circuit, and are not specific to factoring or
+even nearest-neighbor circuits, except that the layerered circuits
+are nearest-neighbor at the layer level.
 
-From the previously best-known architectural depth of
-$O(n^2)$, we improved the depth to $O(\log^2 n)$ in Chapter \ref{chap:factor-polylog},
-and then even beneath that to $O((\log\log n)^2)$ in Chapter \ref{chap:factor-sublog}.
-This last depth was limited only by the depth of quantum compiling a
-single-qubit rotation for the quantum majority gate. However, the improvement
-in depth came at the cost of increasing width and size.
-For the polylogarithmic depth, we calculated a size and width of $O(n^4)$.
+In Section \ref{subsec:cohere-conject}, we provide a conjecture
+for decreasing circuit coherence for modular multiplication while
+only marginally increasing our depth.
+
+In Section \ref{subsec:cohere-factor}, we provide a generalized,
+configurable-depth factoring architecture based on
+Chapter \ref{chap:factor-polylog}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Reducing Circuit Coherence with Intermediate Uncomputing}
+\label{subsec:cohere-conject}
+
+The naive strategy for computing modular multiplication has
+depth $D = O(\log n)$, size $O(n^2)$, and width $O(n^3)$. Therefore, the
+circuit coherence is upper-bounded by $O(n^3 \log n)$. However,
+Benett \cite{Bennett1989} with corrections from
+Sherman-Levine \cite{Levine1990} have shown that an irreversible
+pebble game with time $T$ and space $S$ can be simulated reversibly
+with overhead $T' = O(T^{1+\epsilon})$ and $S = O(\epsilon 2^{1/\epsilon} S \log T)$
+Therefore, we propose the following conjecture.
+
+\begin{conjecture}
+Define a layered circuit $C$ for modular multiplication
+with layer depth $\tilde{D} = O(\log n)$ and maximum layer width
+$w_{max} = O(n^3)$.
+Define $P$ as the pebble game corresponding to the optimal simulation of
+an irreversible pebble game on $\tilde{D}$ tiles on a reversible
+pebble game with the same number of tiles, as proved by
+Li \cite{Li1998} based on the authors above.
+Using the results of Theorem \ref{thm:pg-cc}, we can create a new
+layered circuit $C'$ with uncomputation that performs the
+same modular multiplication with depth $D' = O(D^{1+\epsilon})$,
+the same width $W' = W$
+and reduced circuit coherence $Q = O(\epsilon 2^{1/\epsilon} n^3 \log\log n)$.
+\end{conjecture}
+
+circuit
+coherence of
+
+% To improve: add this back in if time permits
+
+%From the previously best-known architectural depth of
+%$O(n^2)$, we improved the depth to $O(\log^2 n)$ in Chapter \ref{chap:factor-polylog},
+%and then even beneath that to $O((\log\log n)^2)$ in Chapter \ref{chap:factor-sublog}.
+%This last depth was limited only by the depth of quantum compiling a
+%single-qubit rotation for the quantum majority gate. However, the improvement
+%in depth came at the cost of increasing width and size.
+%For the polylogarithmic depth, we calculated a size and width of $O(n^4)$.
+
+%How does this compare with our technique of hand-optimized, nearest-neighbor
+%mapping in Chapters \ref{chap:factor-polylog} and \ref{chap:factor-sublog}?
+%We repeat the relevant rows from 
+%Table \ref{tab:fpl-results} and Table \ref{tab:sublog-resources}, namely
+%those that correspond to \textsf{AC} and \textsf{2D CCNTCM} implementations
+%over the circuit basis of the PK-KSV quantum compiler, which is
+%Clifford+$Toffoli$.
+
+%\begin{table}[hbt!]
+%\begin{tabular}{|c|c|c|c|c|}
+%\hline
+%Implementation                           & Architecture  & $D$           & $S$                                             & $W$ \\
+%\hline
+%Shor \cite{Shor1995}                     & \textsf{AC}   & [$O(n)$]      & $O(n^2\log n \log\log n)$                       & $O(n\log n \log\log n)$ \\
+%Browne-Kashefi-Perdrix \cite{Browne2009} & \textsf{CCAC} & $O(1)$        & $O(\frac{1}{\epsilon}n^{6+2\epsilon}\log^{4}n)$ & $$ \\
+%Cleve-Watrous \cite{Cleve2000}           & \textsf{AC}   & $O(\log^3 n)$ & $O(n^3)$                                        & $O(n^3)$ \\
+%\hline
+%Polylog Depth, Chapter \ref{chap:factor-polylog} & \textsf{2D CCNTCM} & $O((\log\log n)^2)$ & $$ & $$ \\
+%\hline
+
+%\end{tabular}
+%\caption{A comparison for \textsf{AC} factoring architectures.}
+%\label{tab:cohere-ac-factor}
+%\end{table}
 
 
-How does this compare with our technique of hand-optimized, nearest-neighbor
-mapping in Chapters \ref{chap:factor-polylog} and \ref{chap:factor-sublog}?
-We repeat the relevant rows from 
-Table \ref{tab:fpl-results} and Table \ref{tab:sublog-resources}, namely
-those that correspond to \textsf{AC} and \textsf{2D CCNTCM} implementations
-over the circuit basis of the PK-KSV quantum compiler, which is
-Clifford+$Toffoli$.
 
-\begin{table}[hbt!]
-\begin{tabular}{|c|c|c|c|c|}
-\hline
-Implementation                           & Architecture  & $D$           & $S$                                             & $W$ \\
-\hline
-Shor \cite{Shor1995}                     & \textsf{AC}   & [$O(n)$]      & $O(n^2\log n \log\log n)$                       & $O(n\log n \log\log n)$ \\
-Browne-Kashefi-Perdrix \cite{Browne2009} & \textsf{CCAC} & $O(1)$        & $O(\frac{1}{\epsilon}n^{6+2\epsilon}\log^{4}n)$ & $$ \\
-Cleve-Watrous \cite{Cleve2000}           & \textsf{AC}   & $O(\log^3 n)$ & $O(n^3)$                                        & $O(n^3)$ \\
-\hline
-Polylog Depth, Chapter \ref{chap:factor-polylog} & \textsf{2D CCNTCM} & $O((\log\log n)^2)$ & $$ & $$ \\
-\hline
+%\begin{table}[hbt!]
+%\begin{tabular}{|c|c|c|c|c|}
+%\hline
+%Implementation                           & Architecture  & $D$ & $S$ & $W$ \\
+%\hline
+%Shor \cite{Shor1995}                     & \textsf{AC}   & [$O(n)$] & $O(n^2\log n \log\log n)$ & $O(n\log n \log\log n)$ \\
+%Browne-Kashefi-Perdrix \cite{Browne2009} & \textsf{CCAC} & $O((\log\log n)^2)$ & $$ & $$ \\
+%Cleve-Watrous \cite{Cleve2000}           & \textsf{AC}   & $O((\log\log n)^2)$ & $$ & $$ \\
+%\hline
+%Polylog Depth, Chapter \ref{chap:factor-polylog} & \textsf{2D CCNTCM} & $O((\log\log n)^2)$ & $$ & $$ \\
+%\hline
 
-\end{tabular}
-\caption{A comparison for \textsf{AC} factoring architectures.}
-\label{tab:cohere-ac-factor}
-\end{table}
-
-
-
-\begin{table}[hbt!]
-\begin{tabular}{|c|c|c|c|c|}
-\hline
-Implementation                           & Architecture  & $D$ & $S$ & $W$ \\
-\hline
-Shor \cite{Shor1995}                     & \textsf{AC}   & [$O(n)$] & $O(n^2\log n \log\log n)$ & $O(n\log n \log\log n)$ \\
-Browne-Kashefi-Perdrix \cite{Browne2009} & \textsf{CCAC} & $O((\log\log n)^2)$ & $$ & $$ \\
-Cleve-Watrous \cite{Cleve2000}           & \textsf{AC}   & $O((\log\log n)^2)$ & $$ & $$ \\
-\hline
-Polylog Depth, Chapter \ref{chap:factor-polylog} & \textsf{2D CCNTCM} & $O((\log\log n)^2)$ & $$ & $$ \\
-\hline
-
-\end{tabular}
-\caption{A comparison of hand-optimized and automated nearest-neighbor mappings
-for \textsf{AC} factoring architectures.}
-\label{tab:mbqc-mapping}
-\end{table}
+%\end{tabular}
+%\caption{A comparison of hand-optimized and automated nearest-neighbor mappings
+%for \textsf{AC} factoring architectures.}
+%\label{tab:mbqc-mapping}
+%\end{table}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Configurable-Depth Factoring}
-\label{subsec:cohere-config-factor}
+\label{subsec:cohere-factor}
 
 When we decrease our nearest-neighbor factoring depth from $O(\log^2 n)$
 in Chapter \ref{chap:factor-polylog} to $O((\log\log n)^2)$ in
@@ -100,6 +146,35 @@ the parameter.
 
 We now name the configurable parameter $d$, where in each level
 of modular exponentation we group quantum integers into groups of
-$2^d$.
+$2^d$, and we also expand into $n^{2^d}\times n$ product bits.
+We compare this new depth-width tradeoff in Table \ref{tab:config-tradeoff}.
 
-In the polylogarithmic
+\begin{table}[hbt!]
+\centerline{
+\begin{tabular}{|c|c|c|c|}
+\hline
+Implementation                           & $D$ & $W$ \\
+\hline
+Polylog Depth ($d=1$), Chapter \ref{chap:factor-polylog} & $O(\log^2 n)$ & $O(n^4)$ \\
+Config Log Depth ($d$) & $O(\frac{1}{d}\log n)$ & $O(\frac{1}{2^d}n^{{2^d}+2})$ \\
+Log Depth ($d = \lceil \log_2 n \rceil$)  & $O(\log^{1} n)$ & $O(n^{n+2})$ \\
+Sublog Depth, Chapter \ref{chap:factor-polylog} & $O((\log\log n)^2)$ & $O(\frac{1}{\epsilon}n^{6 + 2\epsilon}\log^2 n)$ \\
+\hline
+\end{tabular}
+}
+\caption{A comparison of configurable-depth factoring architectures and their depth-width tradeoffs.}
+\label{tab:config-tradeoff}
+\end{table}
+
+%Finally, we suggest a construction for low-coherence factoring circuits.
+%In the original quantum period-finding (QPF) procedure of
+%Nielsen-Chuang \cite{Nielsen2000}, $n$ quantum integers are multiplied in
+%series, giving a depth in multiplications of $O(n)$.
+%In the parallelized construction of Kitaev-Shen-Vyalyi \cite{Kitaev2002},
+%all $n$ quantum integers are multiplied in parallel with a multiplication
+%depth of $O(\log n)$. Instead, one can consider a configurable-depth
+%QPF where $n/2^{d-1}$ integers are multiplied in parallel in depth $O(d)$,
+%and there are $2^{d-1}$ such groups multiplied in serial, giving a total depth of $O(2^d \log n)$,
+%where $d = \lceil \log_2 n \rceil$ for the serial QPF above,
+%and $d=1$ for the parallel QPF above.
+%The best choice of $d$ for either these configurable-coh

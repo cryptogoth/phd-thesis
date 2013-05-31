@@ -14,7 +14,7 @@ factoring architecture, combining Theorems \ref{thm:mult-prod}, \ref{thm:mod-red
 \begin{table}[htb!]
 \begin{tabular}{c|c|}
 \hline
-$\langle D \rangle$ & $O(\frac{1}{\epsilon})$ \\
+$\langle D \rangle$ & $O(\frac{1}{\epsilon}(\log\log n)^2)$ \\
 \hline
 $\langle S \rangle$ & $O(\frac{1}{\epsilon}n^{6 + 2\epsilon}\log^4 n\log\log n)$ \\
 \hline
@@ -41,7 +41,7 @@ nearest-neighbor architectures.
 Another open question is: is our factoring architectures now optimal?
 What is the lower-bound for factoring on \textsf{CCNTC}, versus the $\Theta(1)$ bound for factoring on \textsf{CCAC}?
 Can we determine the optimality of our factoring architectures using some other time-space product?
-Perhaps we will this in Chapter \ref{chap:qcoherence}, when we discuss quantum circuit coherence. 
+Perhaps we will this in Chapter \ref{chap:coherence}, when we discuss quantum circuit coherence. 
 
 %We've also discussed an alternative
 %approach to sub-logarithmic factor called iterated carry-save, which could

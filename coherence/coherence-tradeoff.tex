@@ -7,7 +7,7 @@ existing resources. In this case, decreasing circuit coherence
 may increase size and indirectly depth.
 
 First, we will describe a special form for quantum circuits called
-layered form in Section \ref{subsec:cohere-layer}. This will make
+layered form in Section \ref{subsec:cohere-lqc}. This will make
 it easier to use time-space tradeoff results from Bennett's
 reversible pebble game, described in Section \ref{subsec:cohere-pebble}.
 Then in Section \ref{subsec:cohere-factor}, we describe a conjectured asymptotic separation
@@ -18,7 +18,7 @@ and circuit coherence.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Circuits in Layered Form}
-\label{subsec:cohere-layer}
+\label{subsec:cohere-lqc}
 
 We now present a special form for quantum circuits which will be useful
 later in proving facts about circuit coherence, called \emph{layered form}.
@@ -93,7 +93,6 @@ and each cohort executes in order from $C_1$ to $C_{\tilde{D}}$.
 
 We call the \emph{layer depth} of our layered circuit $\tilde{D}$, the number
 of physical layers and also the number of cohorts.
-\end{definition}
 It is at least the total circuit depth $D$, with saturation when each cohort
 only contains gates which execute in a single timestep.
 %cohort circuit depth $D''$, which itself
@@ -285,7 +284,20 @@ Therefore, $S = n$.
 
 \begin{definition}{\textbf{Pebble-instances.}}
 We now define a new quantity \emph{pebble-instances} denoted by
-$\mathcal{S}$ which is the total number 
+$\mathcal{S}$ which is the total number of pebbles which appear in
+any history of the pebble game. This is just the sum of all the
+instantaneous spaces $S_i$ defined above.
+\begin{equation}
+\mathcal{S} = \sum{i=1}^D S_i
+\end{equation}
+
+We also define the indicator random variable $t_{i,j}$ which is $1$
+if a pebble is on tile $t_i$ at timestep $j$ and zero otherwise.
+We can define the instantanous space in terms of these indicators.
+\begin{equation}
+S_i = \sum_{j=1}^D t_{i,j}
+\end{equation}
+\end{definition}
 
 We can now provide parallel constructions for an irreversible pebble game
 and a layered quantum circuit, where the parameters in the pebble game
@@ -302,8 +314,13 @@ layer coherence $\tilde{Q}_i$.
 
 \begin{proof}
 For the given layered quantum circuit $C$, construct a pebble game $P$
-with $\tilde{D}$ tiles. For every cohort execution of $C_i$, $i \in [\tilde{D}]$,
-place a pebble on tile $t_i$. Then if there is a pebble on tile $t_j$,
+with $\tilde{D}$ tiles. For every cohort execution of $C_{i-1}$, $i \in [\tilde{D}]$,
+place a pebble on tile $t_i$, for $i = 1, \ldots, D$.
+In the first timestep $i=1$, note that setting the quantum inputs for $C$
+is the same as executing cohort $C_0$ in layer $l_0$ and 
+placing a pebble on tile $t_0$.
+
+Then if there is a pebble on tile $t_j$,
 the layer $l_j$ is part of the computation state. In every timestep $i$ then, the layer coherence
 $\tilde{Q}_i = i$ and the number of pebbles on the tiles is $i$.
 Both $C$ and $P$ complete in timestep $\tilde{D}$.
@@ -312,7 +329,7 @@ Both $C$ and $P$ complete in timestep $\tilde{D}$.
 During Bennett's reversible
 simulation with time $T'$ and $S'$, there is some overhead. That is,
 $T' \ge T$ and $S' \ge S$. Bennett's upper bounds for these figures
-as well as Sherman-Levine's improvements \cite{Levin1990} are shown
+as well as Sherman-Levine's improvements \cite{Levine1990} are shown
 in Table \ref{tab:pebble-ts}. We will make use of these constructions in
 the next section.
 
@@ -321,9 +338,9 @@ the next section.
 \hline
 Tradeoff Construction           & $T'$                             & $S'$ \\
 \hline
-Naive                           & $T$                              & $ST$
+Naive                           & $T$                              & $ST$\\
 Bennett \cite{Bennett1989}      & $O(T^{1+\epsilon})$              & $O(\epsilon 2^{1/\epsilon} S \log T)$ \\
-Levine-Sherman \cite{Levin1990} & $O(T^{1+\epsilon}/S^{\epsilon})$ & $O(\epsilon 2^{1/\epsilon} S (1 + \log\frac{T}{S}))$ \\
+Levine-Sherman \cite{Levine1990} & $O(T^{1+\epsilon}/S^{\epsilon})$ & $O(\epsilon 2^{1/\epsilon} S (1 + \log\frac{T}{S}))$ \\
 \hline
 \hline
 
@@ -386,46 +403,46 @@ back to all $\ket{0}$ if that layer was already in the computation state.
 Now, we will show that reversible pebble games can upper-bound the
 layer coherence of a layered quantum circuit with uncomputation.
 
-\begin{theorem}{\texbf{Instantaneous coherence and pebble game space.}}
+\begin{theorem}{\textbf{Circuit coherence and pebble game space.}}
 Given a layered quantum circuit $C'$ with layer depth $D$ and width $W$, we
 can construct a one-dimensional
 reversible pebble game $P'$ that has time $T$
 and space $S$, which executes in parallel timesteps.
-Then the layer coherence $\tilde{Q}$ is upper-bounded by
-the sum of all the instantaneous pebble game spaces, and the total
-coherence $Q$ is upper-bounded by the total pebble game space
-\end{theorem}
-
-
-This construction mirrors the one in Theorem \ref[thm:ipg-lqc},
-except now in timestep $i$, when the cohort $C_i$ in $C'$ uncomputes a layer $l_j$
-from the layer $l_{j-1}$, in $P'$ we remove the pebble from tile $t_j$
-and there is a pebble on tile $t_{j-1}$. Therefore, we maintain the
-invariants:
-
+Then the layer coherence $\tilde{Q}$ is upper-bounded by the
+total pebble-timesteps $\mathcal{S}$, and the total circuit coherence
+is upper-bounded by the following weighted sum:
 \begin{equation}
-S_i = \tilde{Q}_i
+Q \le \sum{i=1}^D \sum{j=1}^D t_{i,j} |l_j|
 \end{equation}
-
-Then the instantaneous circuit coherence $Q_i$ at any
-timestep is upper-bounded by the pebble game space $S_i$ in that timestep.
+\label{thm:pg-cc}
 \end{theorem}
 
 \begin{proof}
-Our proof proceeds by showing analogous moves on both the quantum circuit
-$C$ and the pebble game $P$. At every timestep $1 \le i \le D$, we prove
-the invariant 
+This construction mirrors the one in Theorem \ref{thm:ipg-lqc},
+except now in timestep $i$, when the cohort $C_i$ in $C'$ uncomputes a layer $l_j$
+from the layer $l_{j-1}$, in $P'$ we remove the pebble from tile $t_j$
+and there is a pebble on tile $t_{j-1}$. Therefore, we maintain the
+following invariants at every timestep, starting with $i=1$.
+
+\begin{eqnarray}
+        S_i & = & \tilde{Q}_i \\
+\mathcal{S} & = & \tilde{Q}
+\end{eqnarray}
+
+Now, unlike in the pebble game, where all pebbles on any tile $t_i$
+represent unit space, the corresponding circuit layer $l_i$ to that tile
+represents $|l_i|$ qubits as part of the computation state. Therefore,
+the instantaneous coherence $Q_i$ at timestep $i$ is equal to the
+weighted sum of the pebbles which are present in the same timestep.
+
 \begin{equation}
-Q_i \le S
+Q_i = \sum{j=1}^{D} t_{i,j} |l_j|
 \end{equation}
 
-Given the layered quantum circuit $C$ in the theorem state, construct
-a one-dimensional, parallel reversible pebble game $P$ with $D$ tiles.
+Since the total circuit coherence is the sum of the instantaneous coherences,
+we have the desired result.
 
-In the first timestep, set the quantum inputs for $C$ in circuit layer
-$l_1$ and place a pebble on tile $t_1$.
-
-In every timestep $i$, the classical controller of $C$ can operate on a
-subset of the total layers $M_i \subseteq \{l_1, \ldots, l_D\}$.
-layer $l_i$
+\begin{equation}
+Q = \sum{i=1}^D Q_i = \sum{i,j=1}^D t_{i,j} |l_j| 
+\end{equation}
 \end{proof}
