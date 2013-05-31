@@ -177,12 +177,12 @@ Furthermore, the eigenvalues of $A$ are rational with a fixed
 denominator, $\phi_k = k / 2^n$.
 To avoid the inverse QFT, which often has small rotations of the form 
 $R_Z(\phi)$, 
-we can do a classical postprocessing step as described in Section \ref{subsec:ksv-classical}.
+we can do a classical post-processing step as described in Section \ref{subsec:ksv-classical}.
 
 The main steps in parallelized phase estimation as applied to PK-KSV
 are as follows. As our most important input parameter, we calculate $t$, the number
 of measurements that we need (and the number of control qubits that we have).
-For QFS generation, it sufficies to determine the phase with resolution $\frac{1}{2^{n+2}}$,
+For QFS generation, it suffices to determine the phase with resolution $\frac{1}{2^{n+2}}$,
 where each bit of the phase is determined with a series of Bernoulli (biased coin flips)
 of $s$ trials each. As in the original PK-KSV, we have two sets of measurements,
 one to measure $\phi$ as a bias projected on the real axis of the unit circle (called
@@ -302,7 +302,7 @@ The number of trials $s$ comes from the Chernoff bound:
 \le 2e^{-2\delta'^2 s}
 \end{displaymath}
 
-Setting this equal to the desired error probabiliy $\epsilon$ we get
+Setting this equal to the desired error probability $\epsilon$ we get
 
 \begin{displaymath}
 s = \frac{1}{2\delta''^2}\ln \frac{1}{\epsilon}
@@ -394,7 +394,7 @@ Furthermore, they extend this approach to multiple rounds. Given
 that the number of measurements in the final round is
 $s = O(\log n)$ and that each round requires logarithmically
 fewer measurements than the previous round, they
-achieve the iterated-logarthmic depth above.
+achieve the iterated-logarithmic depth above.
 These techniques could be used to improve PK-KSV, but we
 remain conservative for now until numerical upper bounds can be
 calculated.
@@ -443,7 +443,7 @@ author calculates expected resources, since the distillation method is
 probabilistic and involves post-selection. Our resources are worst-case,
 with still a small probability of failure calculated to match the
 case of PK-Jones with all successful post-selection. We also compare our
-improvements with those of the original PK-KSV algorith, for the QFS generation stage.
+improvements with those of the original PK-KSV algorithm, for the QFS generation stage.
 These are given in Table \ref{tab:ksv-resources}.
 
 \begin{table}[hbt!]

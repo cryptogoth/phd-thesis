@@ -5,7 +5,7 @@ In this section, we apply circuit coherence and pebble-game
 uncomputing techniques from the previous section to our
 factoring architectures. The techniques are generic for
 any layered circuit, and are not specific to factoring or
-even nearest-neighbor circuits, except that the layerered circuits
+even nearest-neighbor circuits, except that the layered circuits
 are nearest-neighbor at the layer level.
 
 In Section \ref{subsec:cohere-conject}, we provide a conjecture
@@ -23,7 +23,7 @@ Chapter \ref{chap:factor-polylog}.
 The naive strategy for computing modular multiplication has
 depth $D = O(\log n)$, size $O(n^2)$, and width $O(n^3)$. Therefore, the
 circuit coherence is upper-bounded by $O(n^3 \log n)$. However,
-Benett \cite{Bennett1989} with corrections from
+Bennett \cite{Bennett1989} with corrections from
 Sherman-Levine \cite{Levine1990} have shown that an irreversible
 pebble game with time $T$ and space $S$ can be simulated reversibly
 with overhead $T' = O(T^{1+\epsilon})$ and $S = O(\epsilon 2^{1/\epsilon} S \log T)$
@@ -143,7 +143,7 @@ size and width $O(n^6)$, with hidden constants dependent on
 the parameter.
 
 We now name the configurable parameter $d$, where in each level
-of modular exponentation we group quantum integers into groups of
+of modular exponentiation we group quantum integers into groups of
 $2^d$, and we also expand into $n^{2^d}\times n$ product bits.
 We compare this new depth-width tradeoff in Table \ref{tab:config-tradeoff}.
 

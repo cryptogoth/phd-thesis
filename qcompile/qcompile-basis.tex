@@ -437,7 +437,7 @@ suitable bases for quantum compilation?
 We recall one such basis from our definition of \textsf{2D CCNTCM} in
 Section \ref{subsec:models}, with the exception of the non-unitary operation
 $MeasureZ$. However, $MeasureZ$ is implicitly assumed as part of any basis,
-and is the means by which we can offload postprocessing to a classical
+and is the means by which we can offload post-processing to a classical
 controller.
 
 \begin{equation}
@@ -455,7 +455,7 @@ non-Clifford gate \cite{Zeng2011}.
 
 Two popular choices for the non-Clifford gate in a basis are the $T = R_Z(\pi/4)$
 gate and the $Toffoli = \Lambda^2(X)$ gate. Since these are not ``natively''
-supported (non-transveral) in many codes, they must often be implemented
+supported (non-transversal) in many codes, they must often be implemented
 probabilistically using only Clifford operations and $MeasureZ$, usually
 by way of a so-called ``magic'' state.
 Therefore, many quantum compilers
