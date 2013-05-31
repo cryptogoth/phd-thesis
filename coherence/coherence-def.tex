@@ -6,17 +6,19 @@ quantum wire appears, what is meant is that the qubit maintains its
 coherent state until the next non-identity gate comes along to transform it.
 However, most quantum circuits are drawn at a logical qubit level,
 assuming no errors occur and a coherent state is maintained. While
-we continue to maintain that abstraction in this thesis by studying
+so far we have maintained that abstraction in this thesis by studying
 quantum compiling and quantum architecture independently from
 quantum error correction, we acknowledge it as an important area for
-optimization and future study. Our one concession here will be to study
+optimization and future study. In this chapter, we peek beneath
+this abstraction barrier to study
 the effort to maintain a coherent quantum state throughout a circuit
 by defining a new circuit resource called \emph{circuit coherence}.
 
 First, we will define what we mean by an entangling (or disentangling) gate
 in Section \ref{subsec:cohere-entangle}. Then we will build upon this
-to define a layer width, or an subset of interesting qubits in every
-timestep, in Section \ref{subsec:cohere-subset}. Finally, we will use
+to define a layer width, or a computational subset of qubits in every
+timestep, in Section \ref{subsec:cohere-subset}. Finally,
+in Section \ref{subsec:cohere-def}, we will use
 the previous two definitions to define the resource circuit coherence and
 describe its relationship to the other circuit resources: depth, size, and
 width. 
@@ -34,8 +36,8 @@ as a reduced density matrix.
 
 \begin{equation}
 \rho^{AB} \text{ entangled }
-%\iff \left(\tr_{A}(\rho^{AB}) \ne \rho^{B} \right) \land
-%\left(\tr_{B}(\rho^{AB}) \ne \rho^{A}
+\iff \left(\tr_{A}(\rho^{AB}) \ne \rho^{B} \right) \land
+\left(\tr_{B}(\rho^{AB}) \ne \rho^{A}
 \end{equation}
 
 A general density matrix for a state across two subsystems $A$ and $B$ can be
@@ -53,8 +55,7 @@ a general density matrix.
 \tr(\rho^{AB}) = \sum_{i,i',j,j'} p_{ii'jj'} \tr (\ket{a_i}\bra{a_{i'}} \otimes \ket{b_j}\bra{b_{j'}})
 \end{equation}
 
-A reduced density matrix for a particular term.
-is obtained by tracing out
+A reduced density matrix for a particular term is obtained by tracing out
 one subsystem.
 
 \begin{equation}
@@ -63,15 +64,15 @@ tr_A(\ket{a_i}\bra{a_{i'}} \otimes \ket{b_j}\bra{b_{j'}}) = \tr(\ket{a_i}\bra{a_
 
 Consider a two-qubit gate $E_{uv}$ on single qubits $u$ and $v$ which exist
 in a larger system.
-Without loss of generality, we assume that $u$ is a single-qubit
-that is not entangled with some other, possibly multi-qubit,
-state on another set of vertices $L$ where $v \in L$.
+Without loss of generality, we assume that $u$ is
+not entangled with some other, possibly multi-qubit,
+state on another set of vertices $L \ni v$.
 The total state on $u \cup L$ is called $\rho^{u}\otimes \rho^{L}$.
 
 We call the action of $E_{uv}$ on this combined state a new state $\sigma^{uL}$:
 
 \begin{equation}
-\sigma^{uL} = E^{\dagger}_{uv} (\rho^{u}\otimes \rho^{L}) E^{\dagger}_{uv}
+\sigma^{uL} = E_{uv} (\rho^{u}\otimes \rho^{L}) E^{\dagger}_{uv}
 \end{equation}
 
 We call the gate $E_{uv}$ \emph{entangling} between $u$ and $v$
@@ -83,15 +84,16 @@ the condition below.
 \tr_{u}( \sigma^{uL} ) \ne \rho^{L}
 \end{equation}
 
-More generally, we can define $E_{uv}$ as entangling for any multi-qubit
-states that $u$ and $v$ are a part of before the application of $E_{uv}$.
+More generally, if the above condition is true,
+we call $E_{uv}$ entangling for any multi-qubit
+states that $V_1 \ni u$ and $V_2 \ni v$ before the application of $E_{uv}$.
 
 Now consider a slightly different setting, where $L$ contains both $u$ and $v$
 which are entangled in a larger state $\rho^{L}$. We denote by $\sigma^{L}$ the resulting
 state after applying $E_{uv}$ to $\rho^{L}$.
 
 \begin{equation}
-\sigma^{L} = E^{\dagger}_{uv} (\rho^{L}) E^{\dagger}_{uv}
+\sigma^{L} = E_{uv} (\rho^{L}) E^{\dagger}_{uv}
 \end{equation}
 
 We call the $E_{uv}$ \emph{disentangling} between $u$ and $L$ (without loss
@@ -100,39 +102,48 @@ separable into the product state $\sigma^{L} = \sigma^{u} \otimes \sigma^{L \\ \
 which corresponds to the following condition:
 
 \begin{equation}
-\tr_{u}(\sigma^{L}) = \sigma^{L} \\ \{u\}
+\tr_{u}(\sigma^{L}) = \sigma^{L - \{u\}}
 \end{equation}
 
-More generally, we can stay the $E_{uv}$ is disentangling for any two
+More generally, we can say the $E_{uv}$ is disentangling for any two
 larger subsystems $V_1 \ni u$ and $V_2 \ni v$, if it is disentangling
-for any pairs of qubits $(u',v')$ such that $u' \in V_1, v' \in V_2$. For this
-reason, it is
-usually more difficult to show that a gate is disentangling in a particular
-direction in time.
+for any pairs of qubits $(u',v')$ such that $u' \in V_1$ and $v' \in V_2$
+for a particular state $\rho^{V_1 V_2}$.
+Operationally, it is
+usually more difficult to show that a gate is disentangling.
 
 Given these definition, a gate $E_{uv}$
-that is entangling in the forward direction on input state $\rho$
-is disentangling in the backward direction $E^{\dagger}_{uv}$ on output
-state $\sigma = E_{uv}\rho E^{\dagger}_{uv}$. When we do not specify a
+that is entangling in the forward time direction on input state $\rho$
+is disentangling in the backward time direction ($E^{\dagger}_{uv}$) on output
+state $\sigma = E^{\dagger}_{uv}\rho E_{uv}$. When we do not specify a
 time direction, an entangling gate $E_{uv}$ is entangling in the forward
-direction and disentangling in the backward direction.
+direction and disentangling in the backward direction, and vice versa
+for a disentangling gate.
 
-Note that this definition for entangling or disentangling quantum gates
+This definition for entangling or disentangling quantum gates
 depends on knowing the actual states before these gates are applied.
-Therefore, they may not be apparent just by examining a circuit locally,
+Therefore, the entangling or disentangling nature of a gate
+may not be apparent just by examining a circuit locally,
 but may require simulation of the entire circuit. This gives an operational
-definition for entangling/disentangling quantum gates, but it does not give
+definition for identifying entangling/disentangling quantum gates, but it does not give
 a compact, theoretical description that can be applied generically. This is
 currently a drawback of our definition, especially for characterizing the
 behavior of new quantum algorithms that are not yet well-studied.
 
-However, an quantum algorithm designer able to specify a circuit in terms of single-qubit and
-two-qubit gates often knows when gates are entangling or disentangling. This is
-the case for well-known quantum algorithms such as the QFT or factoring,
-and in fact, we will rely on this ``insider knowledge'' when performing
+However, a quantum algorithm designer able to specify a circuit in terms of single-qubit and
+two-qubit gates often knows when gates are entangling or disentangling.
+Moreover, the algorithm designer knows which qubits are garbage and that reversing
+part of a quantum circuit will uncompute these garbage ancillae back to $\ket{0}$.
+This is
+the case for well-known quantum algorithms such as the QFT or factoring, or
+for quantum circuits in a certain layered form which we describe in Section \ref{sec:cohere-tradeoff}.
+In fact, we will rely on this layered form when performing
 calculations later in this section.
-As an overestimate, we can also consider all two-qubit gates entangling, and
+As an overestimate, we can also consider all two-qubit gates entangling in the worst case, and
 only single-qubit projective measurement as disentangling.
+We only consider two-qubit gates that are either potentially entangling or disentangling
+for some input states; all other two-qubit gates are a tensor product of
+single-qubit gates and will be treated as such.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Reachability and Computational Subsets}
@@ -143,12 +154,12 @@ We refer back to our definition of a quantum circuit on
 classical controller. In particular, the set of all qubits is $V$,
 and its size is $|V|=W$, the circuit width.
 Our notion of circuit coherence will not depend
-on the modules from \textsc{CCNTCM}.
+on the modules defined in \textsc{CCNTCM}.
 
 %%%%%%%%%%%%%%%%%% DEFINITION
 \begin{definition}{\textbf{Entangling Paths}}
-We denote by $E^{(i)}$ an entangling two-qubit gate which acts in
-timestep $i$.
+We denote by $E^{(i)}_{uv}$ a two-qubit gate which acts in
+timestep $i$ which is either entangling or disentangling for its current states on $\ket{u}$ and $\ket{v}$.
 An \emph{entangling path} of gates from qubit $u$ in timestep $i_1$ to
 qubit $v$ in timestep $i_n$ is
 any sequence of entangling gates $(E^{(i_1)}, E^{(i_2)}, \ldots, E^{(i_n)})$
@@ -181,9 +192,9 @@ the path exits it in the forward direction ($i_{j+1} = i_j + 1$)
 \end{definition}
 %%%%%%%%%%%%%%%%
 
-\begin{definition}{\textbf{Reachability}}
+\begin{definition}{\textbf{Reachability.}}
 A qubit $u$ at timestep $i$ is \emph{reachable} from another qubit $v$ in
-another timestep $i' > i$ if there is some path of entangling gates that
+another (possibly the same) timestep $i'$ if there is some path of entangling gates that
 connects them.
 \end{definition}
 
@@ -197,8 +208,8 @@ projectively measured. They may, for example, be the control for a
 later coherent measurement when cascaded with another quantum circuit.
 \item[input qubits $I \subseteq V$:] These qubits are prepared in a 
 classical product state (the computational basis)
-and are all reachable from the
-output qubits.
+and are all reachable in timestep $1$ from the
+output qubits in timestep $D$.
 \item[ancillae qubits:] these are prepared in the product state of all $\ket{0}$'s.
 \end{description}
 
@@ -213,36 +224,36 @@ L = \bigcup_{i=1}^D L_i = \subseteq V
 \end{equation}
 \end{definition}
 
-Intuitively, the notion of a computational subset is
-in a coherent quantum state which evolves over time from
+The computational subset are those qubits on which an entangled, coherent
+quantum state evolves over time from
 the initial preparation of the input qubits $I \subset V$ in timestep $1$
 until the output qubits $O \subset V$ are
 measured in timestep $D$.
-It is measured in qubits, and potentially grows or shrinks in size
-in every timestep, depending on whether entangling/disentangling gates
-(as defined in the previous section) or measurements
-are performed. We now give a procedure for determining the computational subset formally,
-starting backwards from timestep $D$ where we
-note the following relationships:
+It is measured in qubits, and potentially grows (if entangling gates are applied), shrinks
+(if disentangling gates including measurements are applied) or stays the same in size
+in every timestep. We now give a procedure for determining the computational subset formally,
+starting from timestep $i$ and working forwards to timestep $D$. We note the following
+relationships for well-formed circuits.
 
 \begin{equation}
-L_1 \subseteq I \qquad L_D = O \qquad L_i \subseteq V
+L_1 = I \qquad L_D = O \qquad L_i \subseteq V
 \end{equation}
 
-The computational subset can be computed from one backwards pass through
-the quantum circuit, from the output qubits.
+The computational subset can be computed in two passes through
+the quantum circuit, one forward to determine reachability and one backward
+to determine the computational subset. This in general requires classical simulation of a
+quantum circuit, but we can perform this algorithm efficiently on a
+layered quantum circuit as defined in Section \ref{subsec:cohere-lqc}.
 
-In each timestep $i$, we partition all $W$ qubits into disjoint, but completely
+In each timestep $i$, we partition all $W$ qubits in $V$ into disjoint, but completely
 covering, subsets which each contain an entangled state. We denote these other
 qubit subsets as $\{\tilde{L}^{(j)}_i\}$, of which one is the same as the current
-computational subset $L_i$. The title of ``computational subset'' in any timestep
-$i+1$ is inherited by any subset in timestep $i$ according to the rules below.
+computational subset $L_i$.
+
 This partitioning, like $L_i$, is updated in
-every timestep. No pair of subsets share a common qubit in timesteps $i < i' \le D$,
-since if they did, they would be the same subset in timestep $i$ by definition.
+every timestep.
 We call these \emph{layer widths}, of which the computational subset is
-a subset. While the computational subset in any particular timestep is allowed to be a single qubit,
-all other interesting subsets must consists of two or more qubits.
+a subset.
 
 Following the definition of \textsf{2D CCNTCM}, each qubit subset is a
 contiguous subgraphs of the main graph $G$. All qubit subsets are
@@ -255,15 +266,34 @@ in a past timestep $i' < i$ from the current timestep $i$.
 We keep track of all qubit subsets in $M$ (a set of qubit subsets) whose state at any
 timestep $i$ is given by $M_i = \{\tilde{L}^{(j)}_i\} \cup \{ L_i \}$.
 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{The Coherence Calculation Algorithm}
+\label{subsec:cohere-algo}
+
+The following algorithm takes as input a well-formed quantum circuit
+with graph $G = (V,E)$ over the basis of single-qubit and two-qubit gates
+$U(2) \cup U(4)$ including single-qubit measurements in the $Z$-basis.
+It returns as output the computational subset at each timestep $\{ L_i \}$.
+
+The data type of qubit subset $\tilde{L}^{(j)}_i$ is the tuple
+$(\tilde{V}, P)$ where:
+
+\begin{itemize}
+\item $\tilde{V} \subseteq V$ are the qubits in the subset
+\item $P$ is a pointer to the parent qubit subset in timestep ${i-1}$, initially \textsc{NULL}.
+\end{itemize}
+
+When we assign one qubit subset to another, we assume we are only assigning the qubits part of the tuple, $\tilde{V}$.
+
 %%%%%%%%%%%%%%%%% ENUMERATE 1
 \begin{enumerate}
 \item
 Initialize the following:
 \begin{itemize}
 \item
-$L_1 = \{ O \}$
+$L_1 \leftarrow^{\star} \{ I \}$.
 \item
-$\tilde{L}^{(j)}_1 = v_j \in V \\ I$ for all non-input qubits $v_j$
+$\tilde{L}^{(j)}_1 = v_j \in V \setminus I$ for all non-input qubits $v_j$
 \item
 $M_1 = \{ L_1 \} \cup \{ L^{(j)}_1 \}$.
 \end{itemize}
@@ -275,17 +305,21 @@ In timestep $i \in \{2, \ldots, D \}$:
 \begin{enumerate}
 
 \item
+Compute the classical description of the state on all the qubits $\rho^{V}_i$ from the state $\rho^{V}_{i-1}$
+given $M_{i-1}$.
+This is assumed to efficient (e.g. for layered quantum circuits). 
+\item
 Initialize $M_i \leftarrow \{\}$.
 \item
 Create two sets:
 \begin{itemize}
 \item $T_e$ which contains every two-qubit
 gate $E_{uv}$ that is entangling in the forward direction based on
-its state $\ket{u}$ and $\ket{v}$ in timestep $i$
+their state $\rho^{uv}$ in timestep $i$
 \item $T_d$ which contains every two-qubit
 gate $E_{uv}$ that is disentangling in the forward direction
  based on
-its state $\ket{u}$ and $\ket{v}$ in timestep $i$,
+their state $\rho^{uv}$ in timestep $i$,
 along with all single-qubit measurements $\{ M_u \}$.
 \end{itemize}
 
@@ -294,7 +328,7 @@ For every qubit subset $\tilde{L}^{(j)}_{i-1} \in M_{i-1}$:
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% ENUMERATE 3
 \begin{enumerate}
-\item Check whether $\tilde{L}^{(j)}_{i-1}$ contains a qubit acted upon by a
+\item \textbf{Entangling Case.} Check whether $\tilde{L}^{(j)}_{i-1}$ contains a qubit acted upon by a
 $E_{uv} \in T_e$, where we assume without loss of generality that
 $u \in \tilde{L}^{(j)}_{i-1}$. If it does:
 
@@ -309,21 +343,22 @@ $u \in \tilde{L}^{(j)}_{i-1}$. If it does:
 \item
 If it is, create a new qubit subset
 $\tilde{L}^{(j)}_{i}$ equal to the union of the two qubit subsets from
-step $i+1$, which inherits the tag \textsc{Computational Subset} from
-either of its source subsets:
+step $i-1$:
 
 \begin{equation*}
 \tilde{L}^{(j)}_{i} \leftarrow \tilde{L}^{(j)}_{i-1} \cup \tilde{L}^{(j')}_{i-1}
 \end{equation*}
 
-\item
-If $v$ is \emph{not} in any other interesting subset for timestep $i-1$,
-then simply add it to a new qubit subset for timestep $i$. Note that it will
-not have the tag \textsc{Computation Subset}.
+Update the parent pointers of $\tilde{L}^{(j)}_{i}$ accordingly.
 
-\begin{equation*}
-\tilde{L}^{(j)}_{i} = \{v\}
-\end{equation*}
+%\item
+%If $v$ is \emph{not} in any other qubit subset for timestep $i-1$,
+%then simply add it to a new qubit subset for timestep $i$. Note that it will
+%not have the tag \textsc{Computation Subset}.
+
+%\begin{equation*}
+%\tilde{L}^{(j)}_{i} = \{v\}
+%\end{equation*}
 %\end{enumerate}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% ENUMERATE 5
 
@@ -337,7 +372,7 @@ M_i \leftarrow M_i \cup \{ \tilde{L}^{(j)}_{i} \}
 \end{enumerate}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% ENUMERATE 4
 
-\item Check whether $\tilde{L}^{(j)}_{i-1}$ matches the following two cases
+\item \textbf{Disentangling Case.} Check whether $\tilde{L}^{(j)}_{i-1}$ matches the following two cases
 and take the corresponding actions.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% ENUMERATE 4
@@ -346,7 +381,7 @@ and take the corresponding actions.
 acted upon by some
 $E_{uv} \in T_d$, then check whether $E_{uv}$ is
 disentangling between any partitioning of $\tilde{L}^{(j)}_{i-1}$ into two
-subsets $V_1 \ni u$ and $V_2 \ni v$ is in the other. (This takes time
+subsets $V_1 \ni u$ and $V_2 \ni v$. (This takes time
 polynomial in the size of $\tilde{L}^{(j)}_{i-1}$).
 
 % Too deeply nested
@@ -354,6 +389,7 @@ polynomial in the size of $\tilde{L}^{(j)}_{i-1}$).
 %\begin{enumerate}
 \item
 If it does, add these two subsets to our collection $M_i$.
+Set their parent pointers to point to $\tilde{L}^{(j)}_{i-1}$.
 
 \begin{equation*}
 M_i \leftarrow M_i \cup \{ V_1, V_2 \}
@@ -361,18 +397,22 @@ M_i \leftarrow M_i \cup \{ V_1, V_2 \}
 
 \item
 Otherwise, just set the current subset $\tilde{L}^{(j)}_{i} = \tilde{L}^{(j)}_{i-1}$
+with the appropriate parent pointer.
 
 \begin{equation*}
 M_i \leftarrow M_i \cup \{ \tilde{L}^{(j)}_{i} \}
 \end{equation*}
+
 %\end{enumerate}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% ENUMERATE 5
 
 \item
 If $\tilde{L}^{(j)}_{i+1}$ contains a qubit $u$ acted upon by some $M_u \in T_e$,
 then create two new qubit subsets. One just removes the qubit $u$
-from the current qubit subset, inheriting the tag \textsc{Computational Subset}
-if present. The other is a single-qubit subset consisting
+from the current qubit subset.
+%, inheriting the tag \textsc{Computational Subset}
+%if present.
+The other is a single-qubit subset consisting
 only of $u$.
 
 \begin{eqnarray*}
@@ -380,7 +420,8 @@ only of $u$.
 \tilde{L}^{(j')}_{i} & \leftarrow & \{ u \}
 \end{eqnarray*}
 
-which just removes the qubit $u$. Add this to our collection.
+Set the parent pointer of $\tilde{L}^{(j)}_{i}$ accordingly.
+Add these to our collection.
 
 \begin{equation*}
 M_i \leftarrow M_i \cup \{ \tilde{L}^{(j)}_{i}, \tilde{L}^{(j')}_{i} \}
@@ -394,15 +435,34 @@ M_i \leftarrow M_i \cup \{ \tilde{L}^{(j)}_{i}, \tilde{L}^{(j')}_{i} \}
 
 \item For every qubit subset $\tilde{L}^{(j)}_{i+1} \in M_{i-1}$ not
 operated upon by any of the previous steps, copy it unmodified into
-$M_i$, inheriting the tag \textsc{Computational Subset}.
+$M_i$ with the appropriate parent pointer.
 
 \end{enumerate}
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%% ENUMERATE 2
 
 \item
-Verify that the output qubits are in the computational subset $O \subseteq L_D$,
-where $L_D$ is the subset $\tilde{L}^{(j)}_D$ in the last timestep which has
-inherited the tag \textsc{Computational Subset}.
+Do a backward pass to discover the computational subset $L_i$ in each timstep.
+
+\begin{enumerate}
+\item
+Verify that the output qubits exactly correspond to one of the qubit subsets
+in $M_D$. Call this $L_D$.
+\item
+Initialize the computational set $M \leftarrow \{ L_D \}$.
+\item
+Working backwards for timestep $i$ in $(D, D-1, \ldots, 1)$:
+\begin{enumerate}
+\item
+Find the parent(s) of $L_i$. Create a new set that is the union of them called $L_{i-1}$
+and add them to $M$.
+\begin{equation}
+M \leftarrow M \cup \{L_{i-1}\}
+\end{equation}
+\end{enumerate}
+
+\item Verify that $L_1 = I$ are exactly the input qubits.
+
+\item Output $M = \{L_1, \ldots, L_D\}$. This is the computational (sub)set of qubits.
 
 \end{enumerate}
 %%%%%%%%%%%%%%% ENUMERATE 1
@@ -433,3 +493,20 @@ to the sum of all instantaneous coherences over each timestep.
 Q = \sum_{i=1}^D Q_i
 \end{equation}
 \end{definition}
+
+The following relationships hold with other circuit resources.
+
+\begin{equation}
+D \le S \le Q \le D\cdot W
+\end{equation}
+
+The first inequality holds, because in the least parallel case, each of $S$ gates is executed in sequence
+and $S=D$. The second inequality holds, because in the least coherent case, each of $S$ gates
+either entangles or disentangles another qubit from the computational subset in every timestep, and
+there are no identity wires within the circuit. The third inequality holds because in the
+most coherent case, all of $W$ qubits are part of the computational (sub)set for each of $D$ timesteps.
+
+As an example, we can bound the circuit coherence of modular multiplication of $2\times n$-bit
+CSE numbers, as described in Section \ref{subsec:mma}. The overall width is $W = O(n^3)$ and
+depth is $D=O(\log n)$, so the coherence is upper-bounded by $O(n^3\log n)$. We will possible
+ways to reduce this using intermediate uncomputation in Section \ref{sec:cohere-tradeoff}.

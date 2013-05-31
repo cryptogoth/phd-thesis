@@ -7,10 +7,10 @@ be sublinear and then sublogarithmic, but at a polynomial increase in size
 and width. This represents a time-space tradeoff which can be upper-bounded
 by the product of the circuit depth and circuit width. Although the title of
 this dissertation indicates that it is beneficial to decrease depth, in
-experimental implementations, other practical considerations may constrain
-our depth reduction.
+experimental implementations, we may be constrained by other real-world
+resources.
 
-Toward this end, we introduce a new circuit resource call \emph{coherence}
+Toward this end, we introduce a new circuit resource called \emph{coherence}
 which quantifies the amount of error-correction that must be performed
 to maintain a coherent quantum computing state. This can be analogous to
 the amount of classical controller time or electrical power that a
@@ -20,18 +20,20 @@ relationship to other circuit resources on \textsf{2D CCNTCM}, and
 calculate coherence for some simple examples to illustrate how it
 captures the notion of parallelizability for a circuit.
 
-Since circuit coherence measures a time-space tradeoff in order to
-quantify circuit parallelism, it is natural to
-compare it to other time-space tradeoffs in the literature.
-This is done in Section \ref{sec:coherence-tradeoff}, where we
-especially review the model measurement-based quantum computing and
-how it relates to circuit coherence.
+Decreasing circuit coherence can increase circuit depth or size, which introduces
+a new tradeoff for quantifying circuit parallelism.
+Therefore, we compare it to other (time-space) tradeoffs that are common in
+the literature, including measurement-based quantum computer (MBQC) in
+Section \ref{sec:cohere-mbqc} and the reversible pebble game in
+Section \ref{sec:cohere-tradeoff}. In both cases, we relate these
+other tradeoffs to circuit coherence.
 
-In Section \ref{sec:cohere-factor}, we calculate the circuit coherence
-for two arithmetic building blocks useful in factoring: addition
-and multiplication. We use this to draw some conclusions about the
-usefulness of decreasing the depth, and making the circuit depth configurable
-so that an experimental architect can make the appropriate choice.
+Finally, in Section \ref{sec:cohere-factor}, we calculate the circuit coherence
+for an arithmetic building block useful in factoring: modular multiple addition.
+We present fascinating conjectures about ways to further decrease
+either depth or coherence for factoring architectures. Finally, we conclude
+by presenting configurable-depth factoring circuits
+that a future experimental architect can use to make the appropriate choice.
 
 %Finally, having exhausted our fascination with factoring,
 %we apply our low-depth techniques (compiling and circuit coherence)

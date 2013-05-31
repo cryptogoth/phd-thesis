@@ -181,7 +181,7 @@ U = e^{i\phi}J(0)J(\beta)J(\gamma)J(\delta)
 However, note that this basis is not
 fixed and finite. Further restrictions must be placed on MBQC patterns
 in order to meet fault-tolerance requirements. Namely, the angles
-$\alpha$ should be drawn from a finite that that can be compiled from
+$\alpha$ should be drawn from a finite set that that can be compiled from
 a fault-tolerant basis such as Clifford+$T$ or Clifford+$Toffoli$, as
 done by the quantum compilers in Chapter \ref{chap:qcompile}.
 
@@ -296,5 +296,5 @@ corresponding to a unitary circuit on $n$-qubits
 and depth $D$, the circuit width is $W = nD$. The entire lattice starts out
 in an entangled state, and measurements proceed column-by-column
 left-to-right from the input qubits to the output qubits. Therefore,
-the circuit coherence is $Q = S = O(n^2)$, and in fact, there is no
-asymptotic separation between circuit coherence and circuit size.
+the circuit coherence is $Q = D\cdot W = O(n^2D^2)$ whereas $S = O(nD)$, and in fact, there is no
+asymptotic separation between circuit coherence and the depth-width product.
