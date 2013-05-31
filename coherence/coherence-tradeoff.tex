@@ -36,15 +36,14 @@ results from reversible pebble games on a linear graph. It is also
 similar to the circuits which can be parallelized to
 constant-depth
 MBQC patterns given in Section \ref{subsec:mbqc-par}, except that
-each layer is allowed to introduce ancillae qubits, and multiple layers
-can be operated on in parallel.
-It is currently open whether
-all quantum circuits can be put into layered form.
+each layer is allowed to introduce ancillae qubits.
+%It is currently unknown whether
+%all quantum circuits can be put into layered form.
 
 \begin{definition}{\textbf{Classical layered form for quantum circuits.}}
 We say an $n$-qubit quantum circuit is in \emph{layered form} if the following
 properties apply. We assume that the circuit is part of an architecture
-with a classical controller (\textsf{AC}).
+with a classical controller (\textsf{CCAC}).
 
 \begin{enumerate}
 \item
@@ -56,16 +55,15 @@ such that all two-qubit gates only operate between consecutive layers or
 within a current layer. The size of a layer is the number of qubits within it,
 which is polynomial in $n$: $|l_i| \in poly(n)$.
 \item The $n$ input qubits are in $l_0$ and the $n$ output qubits are
-in $l_{\tilde{D}}$. All other layers $l_j$ have a number of qubits
-bounded by $poly(n)$.
+in $l_{\tilde{D}}$.
 \item All gates can be partitioned into $\tilde{D}$ cohorts $(C_1, \ldots, C_{\tilde{D}})$,
 such that all gates in a cohort $C_j$
 operate on the same consecutive layers $(l_{j}, l_{j+1})$
 or within those two layers.
-This is a unique partitioning, modulo the gates which operate entirely within each layer.
+This is not a unique partitioning.
 
 \item
-All gates in cohort $C_j$ execute before all gates in cohort $G_{j+1}$.
+All gates in cohort $C_j$ execute before all gates in cohort $C_{j+1}$.
 %That is, there are no two groups $G_{j}$ (operating on layers $(l_{j}, l_{j+1})$
 %and $G_{j+1}$ (operating on layers $(l_{j+1}, l_{j+2})$)
 %such that a gate in $G_{j}$ operates on any qubit in $l_{j+1}$ while or
@@ -75,10 +73,10 @@ All gates in cohort $C_j$ execute before all gates in cohort $G_{j+1}$.
 \label{def:lqc}
 \end{definition}
 
-The layers $(\l_1, \ldots, l_{\tilde{D}})$ can be considered layers in
+The layers $(\l_1, \ldots, l_{\tilde{D}})$ can be considered disjoint groupings in
 physical space.
 The gate groups $\{ G_j \}$ execute in disjoint cohorts which can be considered
-layers in time. At any one timestep, only gates from one cohort are executing,
+groupings in time. At any one timestep, only gates from one cohort are executing,
 and each cohort executes in order from $C_1$ to $C_{\tilde{D}}$.
 %Once all the gates groups from exactly one cohort
 %are executing. If the circuit has a classical controller, multiple gate groups
@@ -106,8 +104,7 @@ Layered quantum circuits as described above never uncompute
 a layer. In the worst case, garbage is left behind in every
 layer until all layers are potentially full of garbage,
 and we are left with our answer in the output qubits and
-our input qubits as before. We will allow uncomputation
-later.
+our input qubits as before.
 
 Most importantly for our proofs below, we can now define
 \emph{layer coherence} $\tilde{Q}_i$  for timestep $i$
@@ -117,7 +114,7 @@ The total layer coherence for a circuit is the sum of the
 layer coherences in any timestep.
 
 \begin{equation}
-\tilde{Q} = \sum{i=1}^{D} \tilde{Q}_i \le \tilde{D}^2
+\tilde{Q} = \sum_{i=1}^{D} \tilde{Q}_i \le \tilde{D}^2
 \end{equation}
 
 Without uncomputation, each $\tilde{Q}_i$ is equal to $i$ and upper-bounded by $\tilde{D}$,
@@ -126,39 +123,38 @@ so the total layer conherence $\tilde{Q}$ is upper-bounded by the layer depth sq
 We can define the maximum number of qubits in any layer as $w_{max}$.
 
 \begin{equation}
-w_{max} = \max{i \in [D]} |l_i|
+w_{max} = \max_{i \in [D]} |l_i|
 \end{equation}
 
 Then the total circuit coherence is upper-bounded by the layer coherence
-times $w_{max}$, although this will asymptotically be the same as the depth-width product $D\cdot W$.
+multiplied by $w_{max}$, although this will asymptotically be the same as the depth-width product $D\cdot W$.
 
 \begin{equation}
-Q \le \sum{i=1}^{D} \tilde{Q}_i \cdot w_{max} = O(D\cdot W)
+Q \le \sum_{i=1}^{D} \tilde{Q}_i \cdot w_{max} = O(D\cdot W)
 \end{equation}
 
 We can achieve tighter upper bounds by using the exact layer widths for every
 layer $l_j$ which intersects with $L_i$ in every timestep $i$.
+The inequality below is saturated for $D=1$.
 
 \begin{equation}
-Q \le \sum{i=1}^{D} \sum{j: l_j \cap L_i} |l_j| \le D\cdot W
+Q \le \sum_{i=1}^{D} \quad \sum_{j: l_j \cap L_i} \quad |l_j| \le D\cdot W
 \end{equation}
 
 %The second inequality is saturated when each cohort only contains gates which
 %execute within a single timestep. The first inequality is saturated when
 %in each timestep, cohort $C_i$ operates only on layers $(l_{i},l_{i+1}$.
 
-Then the depth of our circuit is $D$ as defined previously for \textsf{NTC} architectures,
-and we have circuit width $W = Dn$.
-
 %If each cohort executes in $O(1)$ depth, then $D'' = O(D)$.
 
 We can now verify that our factoring implementations presented in earlier
-chapters is in fact a layered circuit. For modular multiple addition,
+chapters are in fact layered circuits with the following layer and cohort
+partitionings. For modular multiple addition,
 each CSA layer is a cohort
 which operates in constant depth, therefore, $\tilde{D} = O(D)$.
 The results of
-each CSA layer are propagated to the next CSA layer, where in another cohort,
-those numbers are then added in constant-depth, and so on.
+each CSA layer are propagated to the next CSA layer, where in the next cohort,
+those numbers are also added in constant-depth, and so on.
 For the partial product creation stage of modular multiplication, we can
 define that entire stage as a layer for purposes of computing and uncomputing
 garbage bits, even though it has depth $O(\log n)$, size $O(n\log^2 n)$, and
@@ -167,11 +163,10 @@ width $O(n^3)$.
 So far, we have described a circuit which proceeds through CSA layers
 (or just layers, to use the more general layered circuit term) to compute
 a final answer, leaving behind garbage in each layer and never uncomputing
-them until it has reached the last layer (if ever).
-There is a single ``front'' of computation which
+them.
+There is a single ``front edge'' of computation which
 proceeds from input qubits to output qubits, both physically over the
-circuit in layers and temporally over cohorts, until finally at the end,
-the front reverses and uncomputes all the garbage left behind from before.
+circuit in layers and temporally over cohorts.
 
 However,
 it is natural to ask whether we
@@ -200,8 +195,8 @@ rest of this chapter.
 
 An important time-space tradeoff for classical reversible Turing machines
 originates from the pebble game as studied by Bennett \cite{Bennett1973}.
-This is relevant to quantum time-space tradeoffs when simulating
-completely classical circuits on quantum inputs, such as many arithmetic
+This is relevant to quantum time-space tradeoffs when executing
+completely classical circuits on quantum inputs, as in many arithmetic
 functions and a large part of Shor's factoring algorithm. Moreover, this
 pebble game models how a reversible machine can compute an irreversible
 function. It has a direct connection to circuit coherence as we shall see
@@ -212,35 +207,43 @@ The pebble game is a stylized setting for studying time-space tradeoffs.
 Although it may take place on general graphs, we study a line graph
 in analogy to the mechanism of an MBQC pattern and our factoring architectures
 from Chapters \ref{chap:factor-polylog} and \ref{chap:factor-sublog}.
-In short, imagine a row of $n$ tiles $(t_1, \ldots, t_n)$
+In short, imagine a row of $n+1$ tiles $(t_0, t_1, \ldots, t_n)$
 in sequence, each of which may
 contain at most one pebble. One pebble is placed
-on $t_1$ in the first timestep, and the goal is to place a pebble
+on $t_0$ in the first timestep, and the goal is to place a pebble
 on tile $t_n$. The only allowable move is that at every timestep,
 you may add or remove a pebble from tile $i+1$ if there is a pebble on
-$t_i$. Therefore, you can never remove the pebble from tile $t_1$.
+$t_i$. Therefore, you can never remove the pebble from tile $t_0$.
 (This is known as an input-saving pebble game.
 There are other versions of the pebble game, similar to other kinds of
 reversible computations, where the input can be removed).
 
-The number of timesteps it takes to place a pebble on tile $n$ is known
-as the time $T$. In fact, we can consider them synonymous.
+In what follows, we modify the standard computer science integer set notation
+to include $0$:
+\begin{equation}
+[T] = \{0, 1, 2, \ldots, T \}
+\end{equation}
+
+The number of timesteps it takes to place a pebble on tile $n$ is defined
+as the time $T$.
 The number of pebbles present on all tiles at any one move $i$
-is known as the space $S_i$. We call the space $S$ for the whole pebble
+is known as the instantaneous space $S_i$. We call the space $S$ for the whole pebble
 game as the maximum number of any pebbles on a game at any particular time:
 $S = \max_{i \in [T]} S_i$.
 The obvious strategy for winning the pebble game is
-to place a pebble on tile $i$ in timestep $i$, without removing any of them.
+to place a pebble on $t_i$ in timestep $i$, without removing any of them.
 This completes in time $T=n$ and space $S = n$. In the case of unbounded
 space (unlimited pebbles), this is the optimal depth. However, by
 bounding space, we can introduce a time-space product $TS$ and attempt to
-upper-bound and lower-bound it.
+upper-bound and lower-bound it. The product $TS$ of this naive strategy
+is $n^2$.
 
 Knill gave a lower bound for the minimum pebble-game time-space tradeoff
-\cite{Knill1995} which is bounded above by $n^3$.
+\cite{Knill1995} which is bounded above by $n^2$, thereby showing the
+non-optimality of the naive strategy.
 
 \begin{equation}
-TS(n) = 2^{2\sqrt{\log(n)}(1 + o(1))}n = o(n^3), \omega(n^2)
+TS(n) = 2^{2\sqrt{\log(n)}(1 + o(1))}n = o(n^2), \omega(n)
 \end{equation}
 
 As a consequence, he obtains a minimum time-space tradeoff for
@@ -253,9 +256,12 @@ TS(n) = 2^{2\sqrt{n}(1 + o(1))}n^3 = o(n^4), \omega(n^3)
 The minimum time-space tradeoff for factoring is indeed consistent with the depth-width product of all known
 factoring implementations from Table \ref{tab:fpl-results}, including
 the current work. The one exception is the approximate 1D NTC factoring
-implementation by Kutin \cite{Kutin2006}, which beats the above lower bound.
-This suggests that the earlier 1D NTC work by Fowler-Devitt-Hollenberg
-\cite{Fowler2004} may achieve the optimal depth-width product.
+implementation by Kutin \cite{Kutin2006}, which suggests that a different
+$TS$ tradeoff may apply for approximate modular exponentiation.
+This also indicates that the earlier 1D NTC work by Fowler-Devitt-Hollenberg
+\cite{Fowler2004} may come the closest to the optimal depth-width product
+(and therefore optimal circuit coherence) for
+exact modular exponentiation.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Pebble Games and Layered Quantum Circuits}
@@ -272,11 +278,11 @@ reversible simulation strategy possible?
 \begin{definition}{\textbf{Irreversible pebble game.}}
 An irreversible pebble game is one which never removes any pebbles.
 It corresponds to a computation on an irreversible Turing machine $M$.
-By definition, it has time $T \equiv n$ and some space $S$.
+By definition, it has time $T(n) = n$ and some space $S(n)$.
 There is only one irreversible pebble game on $n$ tiles, and it is also called
 the naive pebbling strategy.
 In each move $i$ one can only
-read or write the space in tile $t_i$.
+place a pebble in tile $t_i$.
 We can define the number of pebbles after any move $i$ as the \emph{instantaneous space}
 $S_i$, which in this case is just $i$, where $S = S_T$.
 Therefore, $S = n$.
@@ -284,39 +290,40 @@ Therefore, $S = n$.
 
 \begin{definition}{\textbf{Pebble-instances.}}
 We now define a new quantity \emph{pebble-instances} denoted by
-$\mathcal{S}$ which is the total number of pebbles which appear in
+$\hat{S}$ which is the total number of pebbles which appear in
 any history of the pebble game. This is just the sum of all the
 instantaneous spaces $S_i$ defined above.
 \begin{equation}
-\mathcal{S} = \sum{i=1}^D S_i
+\hat{S} = \sum{_i=1}^T S_i
 \end{equation}
 
 We also define the indicator random variable $t_{i,j}$ which is $1$
 if a pebble is on tile $t_i$ at timestep $j$ and zero otherwise.
 We can define the instantanous space in terms of these indicators.
 \begin{equation}
-S_i = \sum_{j=1}^D t_{i,j}
+S_i = \sum_{j=1}^T t_{i,j}
 \end{equation}
 \end{definition}
 
-We can now provide parallel constructions for an irreversible pebble game
+We can now provide analogous constructions for both an irreversible pebble game
 and a layered quantum circuit, where the parameters in the pebble game
 upper bound those in the layered quantum circuit.
 
-\begin{theorem}{\textbf{Irreversible pebble game for layered quantum circuit.}}
-Consider an irreversible pebble game $P$ for a layered quantum circuit $C$
+\begin{proposition}{\textbf{Irreversible pebble game for layered quantum circuit.}}
+Consider a layered quantum circuit $C$
 as defined in 
-Definition \ref{def:lqc}. Then pebble game time $T$ and space $S$ are equal to layer depth $\tilde{D}$,
+Definition \ref{def:lqc}. Then a pebble game $P$ can be constructed such that
+time $T$ and space $S$ are equal to layer depth $\tilde{D}$,
 and the number of pebbles at any timestep $i$, called $S_i$, equals the
 layer coherence $\tilde{Q}_i$.
 \label{thm:ipg-lqc}
-\end{theorem}
+\end{proposition}
 
 \begin{proof}
 For the given layered quantum circuit $C$, construct a pebble game $P$
 with $\tilde{D}$ tiles. For every cohort execution of $C_{i-1}$, $i \in [\tilde{D}]$,
-place a pebble on tile $t_i$, for $i = 1, \ldots, D$.
-In the first timestep $i=1$, note that setting the quantum inputs for $C$
+place a pebble on tile $t_i$.
+In the first timestep $i=0$, note that setting the quantum inputs for $C$
 is the same as executing cohort $C_0$ in layer $l_0$ and 
 placing a pebble on tile $t_0$.
 
@@ -334,6 +341,7 @@ in Table \ref{tab:pebble-ts}. We will make use of these constructions in
 the next section.
 
 \begin{table}[hbt!]
+\centerline{
 \begin{tabular}{|c|c|c|}
 \hline
 Tradeoff Construction           & $T'$                             & $S'$ \\
@@ -342,9 +350,8 @@ Naive                           & $T$                              & $ST$\\
 Bennett \cite{Bennett1989}      & $O(T^{1+\epsilon})$              & $O(\epsilon 2^{1/\epsilon} S \log T)$ \\
 Levine-Sherman \cite{Levine1990} & $O(T^{1+\epsilon}/S^{\epsilon})$ & $O(\epsilon 2^{1/\epsilon} S (1 + \log\frac{T}{S}))$ \\
 \hline
-\hline
-
 \end{tabular}
+}
 \caption{Pebble game time-space tradeoffs for reversible simulation of
 irreversible Turing machines.}
 \label{tab:pebble-ts}
@@ -356,8 +363,10 @@ simplifies our analysis in what follows, but one can also define
 a parallel pebble game as one where multiple moves (exactly as
 defined for the serial game above) can be made. The locations where these
 moves can be made are the boundaries between
-a pebble on $t_i$ and no pebble on $t_{i+1}$. For simplicity,
-we will not discuss this variation any further.
+a pebble on $t_i$ and no pebble on $t_{i+1}$.
+We will not discuss this variation any further, but it is a
+interesting direction for future research to decrease both depth and
+circuit coherence further.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Instantaneous Coherence and Pebble Game Space}
@@ -387,7 +396,7 @@ not just layers $(l_{i},l_{i+1})$.
 execute exactly the same gates in the same order, just shifted in time.
 Therefore, given a computation state in layer $l_{j}$, any such
 $C_i$ either extends the computation state into $l_{j+1}$ if it
-was previously all $\ket{0}$, or it uncompute $l_{j+1}$ completely
+was previously all $\ket{0}$, or it uncomputes $l_{j+1}$ completely
 back to all $\ket{0}$ if that layer was already in the computation state.
 \end{itemize}
 \end{definition}
@@ -400,11 +409,11 @@ back to all $\ket{0}$ if that layer was already in the computation state.
 %an upper-bound, within a factor of the maximum layer width in a quantum
 %circuit
 
-Now, we will show that reversible pebble games can upper-bound the
+Now, we will show that a reversible pebble game can upper-bound the
 layer coherence of a layered quantum circuit with uncomputation.
 
 \begin{theorem}{\textbf{Circuit coherence and pebble game space.}}
-Given a layered quantum circuit $C'$ with layer depth $D$ and width $W$, we
+Given a layered quantum circuit $C'$ with uncomputation with layer depth $D$ and width $W$, we
 can construct a one-dimensional
 reversible pebble game $P'$ that has time $T$
 and space $S$, which executes in parallel timesteps.
@@ -412,7 +421,7 @@ Then the layer coherence $\tilde{Q}$ is upper-bounded by the
 total pebble-timesteps $\mathcal{S}$, and the total circuit coherence
 is upper-bounded by the following weighted sum:
 \begin{equation}
-Q \le \sum{i=1}^D \sum{j=1}^D t_{i,j} |l_j|
+Q \le \sum_{i=1}^D \sum_{j=1}^D t_{i,j} |l_j|
 \end{equation}
 \label{thm:pg-cc}
 \end{theorem}
@@ -426,7 +435,7 @@ following invariants at every timestep, starting with $i=1$.
 
 \begin{eqnarray}
         S_i & = & \tilde{Q}_i \\
-\mathcal{S} & = & \tilde{Q}
+\hat{S} & = & \tilde{Q}
 \end{eqnarray}
 
 Now, unlike in the pebble game, where all pebbles on any tile $t_i$
@@ -436,13 +445,13 @@ the instantaneous coherence $Q_i$ at timestep $i$ is equal to the
 weighted sum of the pebbles which are present in the same timestep.
 
 \begin{equation}
-Q_i = \sum{j=1}^{D} t_{i,j} |l_j|
+Q_i = \sum_{j=1}^{D} t_{i,j} |l_j|
 \end{equation}
 
 Since the total circuit coherence is the sum of the instantaneous coherences,
 we have the desired result.
 
 \begin{equation}
-Q = \sum{i=1}^D Q_i = \sum{i,j=1}^D t_{i,j} |l_j| 
+Q = \sum_{i=1}^D Q_i = \sum_{i,j=1}^D t_{i,j} |l_j| 
 \end{equation}
 \end{proof}

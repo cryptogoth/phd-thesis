@@ -6,7 +6,7 @@ architectures for factoring an $n$-bit number. We improved the depth first to
 be sublinear and then sublogarithmic, but at a polynomial increase in size
 and width. This represents a time-space tradeoff which can be upper-bounded
 by the product of the circuit depth and circuit width. Although the title of
-this dissertation indicates that it is beneficial to decrease depth, in
+this dissertation indicates that it is always beneficial to decrease depth, in
 experimental implementations, we may be constrained by other real-world
 resources.
 
@@ -17,21 +17,22 @@ the amount of classical controller time or electrical power that a
 quantum computing experiment consumes while running an algorithm. We
 define our new resource in Section \ref{sec:cohere-def}, discuss its
 relationship to other circuit resources on \textsf{2D CCNTCM}, and
-calculate coherence for some simple examples to illustrate how it
-captures the notion of parallelizability for a circuit.
+calculate coherence for an example circuit.
 
 Decreasing circuit coherence can increase circuit depth or size, which introduces
 a new tradeoff for quantifying circuit parallelism.
 Therefore, we compare it to other (time-space) tradeoffs that are common in
 the literature, including measurement-based quantum computer (MBQC) in
 Section \ref{sec:cohere-mbqc} and the reversible pebble game in
-Section \ref{sec:cohere-tradeoff}. In both cases, we relate these
-other tradeoffs to circuit coherence.
+Section \ref{sec:cohere-tradeoff}. In the last case, we prove a
+direct relationship to factoring.
 
-Finally, in Section \ref{sec:cohere-factor}, we calculate the circuit coherence
-for an arithmetic building block useful in factoring: modular multiple addition.
-We present fascinating conjectures about ways to further decrease
-either depth or coherence for factoring architectures. Finally, we conclude
+Finally, in Section \ref{sec:cohere-factor}, we apply coherence to modular
+multiplication from Shor's factoring algorithm.
+We present a fascinating conjecture to use pebble game simulations to
+possible decrease coherence and create an asymptotic upper-bound
+separation from the depth-width product.
+Finally, we conclude
 by presenting configurable-depth factoring circuits
 that a future experimental architect can use to make the appropriate choice.
 
