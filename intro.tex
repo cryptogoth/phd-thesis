@@ -1,0 +1,38 @@
+\chapter{Introduction}
+\label{chap:intro}
+
+One of the most remarkable scientific developments of the last twenty years is limited not just to one field of human knowledge, but it is exists at the confluence of many. Quantum computation, and quantum information, is the study of the power and ultimate limits of human abilities in the realm of computation and information processing. In particular, it applies to any machine that humans can build, given that all machines are physical objects and are therefore governed by the laws of physics. One definition of physics is the study of reality, or how to explain and predict the behavior of phenomenona in our universe. One definition of computer science is the study of problem-solving, or how information can be manipulated. From a human perspective, we can narrow such definitions: physics studies the phenomena which are observable to humans, at least in principle, given a long enough time and enough resources; computer science studies those problems which are solvable by humans and those problem-solving machines which are buildable and runnable by humans, again, given enough time and resources. This perspective also makes the union of physics and computer science (as well as mathematics, engineering, and other related fields) natural, although such a connection was not made until 1994.
+
+The field of quantum computing effectively began that year when Peter Shor discovered that exploiting the mathematics of quantum physics, one could in theory build a quantum computer to determine the integer factors of a large number efficiently. This problem, known as factoring, resisted all attempts at solution from the time it was recognized by Karl Friedrich Gauss as the
+problem ``to which we should bend our every effort'', the greatest problem of number theory, the subfield which he considered the jewel of mathematics, itself the queen of all the sciences.
+
+Factoring, in addition to being a beautiful abstract problem, also has a very real implication for human affairs. Because of its difficulty on current digital computers, factoring has become the basis of the widely-used RSA cryptosystem, used to secure most of the worlds online transactions.
+
+So now we have discovered that quantum computing is theoretically interesting because it can solve an important human problem. But can quantum computers be actually built?
+
+Quantum architecture is the intermediate layer between algorithms and hardware.
+It is the design of how quantum bits and their allowed interactions in order to solve these algorithms efficiently on realistic models of quantum hardware.
+It aims to minimize circuit resources of interest, namely depth, size, and width. In analogy to classical circuits, the depth is the running time of an algorithm allowing parallelization, the size is the number of operations required over all parallel processors, and the width is the number of (quantum) bits required over all parallel processors.
+
+In this dissertation, we study quantum architecture in the context of optimizing Shor's factoring algorithm on nearest-neighbor architectures with realistic constraints. It is hoped that lessons learned in this special-case can contribute to the general community general principles which can be used to generalize other quantum algorithms. We posit that the larger overall goal of quantum architecture should be the design of a general-purpose quantum processor, one which can execute any quantum algorithm with emphasis on being able to perform a core group of operations efficiently. This core group of operations is defined by the instruction set. Once quantum architecture has progressed to this point, we can leverage the remarkable strides in normal digital architecture over the past 80 years.
+
+As well, we may be able to use the insights of quantum architecture to build quantum processors which can surpass digital architectures in the solution of large-scale problems over exponentially-sized solution spaces.
+
+In Chapter \ref{chap:factor-polylog}, we present our first main result, a
+nearest-neighbor architecture for factoring in polylogarithmic depth. This is an exponential improvement of the previous best-known result, which required quadratic depth.
+
+In Chapter \ref{chap:factor-sublog}, we further improve our result with a
+factoring architecture which executes in sublogarithmic depth, which represents another exponential improvement over our first result. Therefore, this achievement represents a remarkable doubly-exponential improvement over previous factoring architectures.
+
+In Chapter \ref{chap:qcompile}, we study the relationship between quantum architecture and compiling. In digital computing, the boundary between architecture and compilers is quite porous and is determined by a processor's instruction set. Architecture studies processor resources to solve an algorithm given a particular instruction set which is fixed in hardware. This instruction set is produced by a compiler, a piece of (low-level) software which transforms over pieces of (high-level) software. This instruction set can change based on which algorithms it allows to solve efficiently as well as which processors it allows to manufacture efficiently as well as which operations it allows humans to understand easily. All of these factors combine to make architecture an art and an engineering discipline rather than merely a science.
+
+Quantum computers make this problem even more difficult due to the nature of a quantum bit. Because transformations between quantum states vary continuously over the space of unitary matrices with complex coefficients, we can only approximate desired quantum logic gates using a fixed set, given to us by fault-tolerance.
+
+This difficulty of approximation, which we call quantum compiling, represents the fundamental limit to the depth of factoring architectures. All known constant-depth factoring implementations, as well as sorting networks for those implementations which are not nearest-neighbor, assume arbitrary single-qubit rotations. That is, they assume the model where quantum compiling can be done in constant-depth, in polynomial size, for free. However, this is not the case when we combine these abstract circuit models with our model of fault-tolerant quantum computing. Under FTQC, quantum compiling depth represents a sufficient, but not known to be necessary, condition for constant-depth factoring. 
+
+We leave this ultimately as an open problem and change directions.
+Given that decreasing factoring depth with abandon increases size and width at relatively large polynomial growth rates (up to $n^8$). This is a rather undesirable time-space tradeoff.
+
+Here, we insert the estimate of electricity and square miles and centuries of run-time based on our estimates given in the final exam.
+
+In Chapter \ref{chap:coherence}, we introduce a novel quantum circuit resource called \emph{circuit coherence}.
