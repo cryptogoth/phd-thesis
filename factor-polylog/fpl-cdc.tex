@@ -147,15 +147,25 @@ consisting of all $\ket{0}$'s except for a single target qubit $\alpha\ket{0} + 
 same state as the original source qubit of the fanout.
 
 In the model of \cite{Hoyer2002}, the fanout and unfanout were identical, elementary
-operations. In CCNTC, the operations are not identical due to
-the one-way nature of the measurement and the
-constraints of NTC. In Figure \ref{fig:cdu}, we contribute a novel quantum circuit for unbounded quantum
-unfanout for $n=7$ in constant depth on 2D CCNTC.
+operations. In Figure \ref{fig:cdf}, the given CCNTC fanout circuit is not its own self-inverse
+due to
+the one-way nature of the measurement and the assumption that ancillary qubits begin in the
+$\ket{0}$ state. Therefore, one major contribution of this current work is
+a \textsc{CCNTC} circuit which performs unfanout, or the inverse of the fanout circuit in
+Figure \ref{fig:cdf}. The relationship of our fanout and unfanout constructions and their
+effect on intermediate quantum states is shown below.
+\begin{equation}
+(\alpha\ket{0} + \beta\ket{1})\otimes\ket{0}^{\otimes n} \rightarrow^{fanout}
+\alpha\ket{0}^{\otimes n} + \beta\ket{1}^{\otimes n} \rightarrow^{unfanout}
+(\alpha\ket{0} + \beta\ket{1})\otimes\ket{0}^{\otimes n}
+\end{equation}
+We give a concrete example of our unfanout circuit in Figure \ref{fig:cdu}
+for $n=7$ which executes in constant depth on \textsf{2D CCNTC}.
 Note that the state in Equation \ref{eqn:fanned-out}
 is completely symmetric in that all qubits are
 equivalent entangled copies of each other. Therefore, the asymmetry 
 of the final target qubit is entirely determined by the unfanout circuit,
-which in this case selects the bottom qubit in the figure.
+which in this case selects the bottom qubit in the figure to be the target.
 
 The initial fanned out state lives in a $2$-dimensional subspace. The
 round of Hadamard gates increases its dimension to $2^n$, and the two
@@ -169,16 +179,16 @@ into a subspace with half the dimension, so $n-1$ measurements project
 the target qubit into a final $2$-dimensional subspace, which is the
 qubit $\alpha\ket{0} + \beta\ket{1}$.
 
-Although the circuit show works for odd $n$, we can easily take into
+Although the circuit shown works for odd $n$, we can easily take into
 account even $n$ with an initial CNOT to ``uncopy'' one qubit from its
 neighbors. The unfanout circuit in Figure \ref{fig:cdu} is the
-functional inverse of the
-fanout circuit in 
-Figure \ref{fig:cdf}, but it relies on the fanned-out qubits
+functional inverse of the fanout circuit in 
+Figure \ref{fig:cdf}, which by itself only requires a 1D layout. However,
+it relies on the fanned-out qubits
 being teleported back into adjacent positions,
-which is only possible in a 2D layout.
-The target qubit of unfanout is usually chosen to be in the same location
-as the source qubit of the corresponding fanout. 
+which is only possible in an overall 2D layout. This layout is not shown but can easily be constructed.
+The target qubit of an unfanout is usually chosen to be in the same location
+as the source qubit of the previous, corresponding fanout. 
 The resources for unfanout are given in
 Table \ref{tab:cd-resources}.
 
@@ -190,18 +200,16 @@ Table \ref{tab:cd-resources}.
 \hline
 \text{Circuit Name} & \text{Depth} & \text{Size} & \text{Width}\\
 \hline
-\text{Teleportation from Figure \ref{fig:cdt}} & 7 & 3n + 4 & n+1\\
+\text{Teleportation from Figure \ref{fig:cdt}} & $7$ & $3n + 4$ & $n+1$\\
 \hline
-\text{Fanout from Figure \ref{fig:cdf}} & 9 & 10n - 9 & 3n-1 \\
+\text{Fanout from Figure \ref{fig:cdf}} & $9$ & $10n - 9$ & $3n-1$ \\
 \hline
-\text{Unfanout} & $ 6 $ & $ 3n+2 $ & $ n$ \\
+\text{Unfanout from Figure \ref{fig:cdu}} & $ 6 $ & $ 3n+2 $ & $ n$ \\
 \hline
 \end{tabular}
 \end{displaymath}
 \centerline{}
-\caption{Circuit resources for teleportation, fanout, and unfanout
-(consisting of
-alternating rounds of constant-depth teleportation and CNOT).}
+\caption{Circuit resources for teleportation, fanout, and unfanout.}
 \label{tab:cd-resources}
 \end{table}
 
