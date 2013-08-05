@@ -168,18 +168,63 @@ The third extension to our model, and the most significant, is to consider
 multiple disconnected planar graphs, each of which is a 2D CCNTC
 architecture. This is described in more detail in the next section.
 
+\subsection{Random Notes on 2D Architectures}
+
+The main point should be shifted, in the intro, and maybe elucidated here,
+that low-depth for factoring can be achieved by moving into 2D, but
+moreover that the width and size blowups can also be reduced with a
+hybrid 2D module.
+
+The model is hybrid, because instead of a single, contiguous 2D lattice,
+say with $W$ qubits and $S$ interactions between qubits (counting the
+general case of all single- and two-qubit gates as interactions),
+the computation is split among many communicating 2D lattices
+(say $\overline{W}$ of them), each containing $W/\overline{W}$ qubits
+each. In this new model, we argue that there are now a total number of
+qubit interactions $S'$ across all modules, where $S' \le S$, and at
+the same time we have introduced $\overline{S}$
+new, \emph{long-range} interactions between modules. Based on experimental
+data of create shared entanglement between separate ion traps (citation needed here),
+these long-range interactions are more expensive than short-range interactions
+within a module, and so we count them separately.
+
+Currently, we impose no constraints on the connectivity of the modules, which exist
+on a higher-level graph of modules. This is supported by current proposals
+(cite MUSIQC here). However, it is interesting to see what effect such constraints
+would have on a factoring architecture. We will return to this later.
+
+With no such constraints (arbitrary connectivity of modules), we can now see the
+effect of setting the size of each module. If we set modules
+to be a single qubit in size ($\overline{W} = W$), we would get the architectural
+model \textsf{AC}. If we were to set module size to include the entire lattice
+($\overline{W} = 1$), then we would get the model described in the previous
+section, \textsf{2D CCNTC}. This new model then, \textsf{2D CCNTCM}, is a hybrid
+between \textsf{AC} and \textsf{2D CCNTC} with module size as a parameter.
+\textsf{AC} and \textsf{2D CCNTC} represent the two extremes of long-range
+interactions, where \textsf{AC} permits all long-range interactions and
+\textsf{2D CCNTC} permits none.
+
+There are now two more things to study and discuss. One is the optimal setting
+of the module size $W/\overline{W}$, which in this paper we have set to
+be $O(n)$. The second is the connectivity constraints of the modules.
+
+For the first parameter, we have not rigorously shown that the optimal setting
+of $W / \overline{W}$ is 
+
+Now then, what is the effect of imposing constraints on module connectivity?
+
 \subsection{\textsf{2D CCNTCM}: Two-Dimensional Nearest-Neighbor Two-Qubit Concurrent Gates with Classical Controller and Modules}
 \label{subsec:2dccntcm}
 
 A single, contiguous
-2D lattice that contains an entire quantum architecture which may be prohibitively large to manufacture. In practice,
+2D lattice that contains an entire quantum architecture may be prohibitively large to manufacture. In practice,
 scalable experiments will probably use many
-smaller quantum computers which communicate by means of shared
+smaller quantum computers that communicate by means of shared
 entanglement \cite{Monroe2012}.
 We call these individual machines \emph{modules}, each of
 which is a self-contained \textsf{2D CCNTC} lattice. This should not be
 confused with the word ``modular'' as in ``modular arithmetic'' or as
-referring to the modulus $m$ which we are trying to factor.
+referring to the modulus $m$ that we are trying to factor.
 
 We treat these modules
 and teleportations between them as nodes and edges, respectively,
@@ -197,7 +242,7 @@ quantum computers
 in parallel. We call this new model \textsf{2D CCNTCM},
 and we argue that is captures the essential aspects of 2D architectures
 without being overly sensitive to the exact geometry of the lattices involved.
-An graphic depiction of three modules in \textsf{2D CCNTCM} is shown in
+A graphic depiction of three modules in \textsf{2D CCNTCM} is shown in
 Figure \ref{fig:modules}. Each module contains within it a
 \textsf{2D CCNTC} lattice. We can equivalently consider the omnipresent,
 single
