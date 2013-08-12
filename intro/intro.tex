@@ -36,3 +36,64 @@ Given that decreasing factoring depth with abandon increases size and width at r
 Here, we insert the estimate of electricity and square miles and centuries of run-time based on our estimates given in the final exam.
 
 In Chapter \ref{chap:coherence}, we introduce a novel quantum circuit resource called \emph{circuit coherence}.
+
+We are now ready to state the thesis that we investigate in this dissertation.
+
+\begin{quote}
+Studying the depth of quantum architectures can help us design quantum computers that can solve
+human problems with a human lifetime.
+\end{quote}
+
+Here, or somewhere else, we must distinguish between quantum architecture as a field and quantum architecture as a
+circuit with hardware constraints. Actually, the two definitions are pretty close.
+
+We also need to provide preliminary definitions of a quantum bit.
+
+This deserves some unpacking. A quantum architecture is a circuit designed to implement a particular algorithm given certain
+hardware constraints. The depth of a quantum architecture is the amount of time it takes for the circuit to complete.
+Given a particular input $x$, how long (in human clock time) does it take to return the output of some function $f(x)$?
+Quantum computers are interesting because for some algorithms, namely factoring, the depth of a quantum circuit is
+less than the depth of any known classical circuit. However, this depth may correspond to a running time which is
+still much longer than a single human lifetime. In particular this author, who is 32 years old at the time of this
+writing, is interested in techniques to optimize the successful completion of a problem within his own lifetime.
+
+Therefore, one meaning of ``studying the depth'' means to \emph{decrease} depth. The main technique for decreasing
+depth is to parallelize a quantum circuit, that is, to divide and duplicate information to allow them to be processed
+in a parallel way, using multiple classical controllers. However, parallelizing can increase other circuit resources,
+usually due to this information duplication. This introduces a time-space tradeoff. In practical reality, we cannot
+decrease depth at the expense of other circuit resources, such as the amount of information in a form suitable for
+operation over time.
+
+Decreasing depth can increase circuit size (the total number of operations to be performed) and circuit width
+(the total amount of quantum information that can exist at any one time). This increase may again far
+outstrip human resources, and delay completion of a quantum computer's construction, let alone its
+successful execution, until well after that author's death. Therefore, the useful study of depth to help
+quantum computers solve human problems must also limit this time-space tradeoff overhead. It should also
+involve defining the exact tradeoff that is useful to minimize.
+
+We have outlined the problems of designing such a low-depth quantum architecture so far in a very general,
+abstract form. In this thesis, we will make these concepts more concrete by describing a formalism for
+quantum circuits and quantum computation that is well-known to the research community.
+Building on this formalism, we will propose a new architectural model and present our solutions to factoring in them.
+
+
+Section \ref{sec:intro-arch} will discuss architectural models. We will present the definition of an
+architectural models and give examples of them from the
+current literature, with names like \textsf{AC} and \textsf{NTC}. We will discuss the idea of architectural
+sub-models, with names like \textsf{2D CCNTC}. Finally,
+we will describe our contribution of a new architectural model, called \textsf{2D CCNTCM}, which is a weakly 2D,
+hybrid architecture that introduces the idea of allowing both short-range (local) interactions and long-range
+interactions, and providing a configurable tradeoff in between them.
+
+In order to build long-range interactions out of short-range interactions, Section \ref{sec:intro-cdc} 
+gives a thorough background on recent constant-depth communication techniques. These include three
+basic constructs for teleporting, copying, and uncopying quantum information across an unbounded
+lattice.
+
+All operations on a quantum architecture can be reduced to single-qubit operations and two-qubit operations.
+The latter operations are what we have been calling ``interactions,'' and we have studied how to overcome
+constraints on nearest-neighbor interactions using the constant-depth communication techniques previously.
+
+Ultimately, however, the limits to depth of a quantum architecture are dependent on the single-qubit operations.
+
+\section{Organization}
