@@ -1,0 +1,186 @@
+\section{Modules and Long-Range Interactions}
+\label{sec:intro-modules}
+
+\subsection{Random Notes on 2D Architectures}
+
+The main point should be shifted, in the intro, and maybe elucidated here,
+that low-depth for factoring can be achieved by moving into 2D, but
+moreover that the width and size blowups can also be reduced with a
+hybrid 2D module.
+
+The model is hybrid, because instead of a single, contiguous 2D lattice,
+say with $W$ qubits and $S$ interactions between qubits (counting the
+general case of all single- and two-qubit gates as interactions),
+the computation is split among many communicating 2D lattices
+(say $\overline{W}$ of them), each containing $W/\overline{W}$ qubits
+each. In this new model, we argue that there are now a total number of
+qubit interactions $S'$ across all modules, where $S' \le S$, and at
+the same time we have introduced $\overline{S}$
+new, \emph{long-range} interactions between modules. Based on experimental
+data of create shared entanglement between separate ion traps (citation needed here),
+these long-range interactions are more expensive than short-range interactions
+within a module, and so we count them separately.
+
+Currently, we impose no constraints on the connectivity of the modules, which exist
+on a higher-level graph of modules. This is supported by current proposals
+(cite MUSIQC here). However, it is interesting to see what effect such constraints
+would have on a factoring architecture. We will return to this later.
+
+With no such constraints (arbitrary connectivity of modules), we can now see the
+effect of setting the size of each module. If we set modules
+to be a single qubit in size ($\overline{W} = W$), we would get the architectural
+model \textsf{AC}. If we were to set module size to include the entire lattice
+($\overline{W} = 1$), then we would get the model described in the previous
+section, \textsf{2D CCNTC}. This new model then, \textsf{2D CCNTCM}, is a hybrid
+between \textsf{AC} and \textsf{2D CCNTC} with module size as a parameter.
+\textsf{AC} and \textsf{2D CCNTC} represent the two extremes of long-range
+interactions, where \textsf{AC} permits all long-range interactions and
+\textsf{2D CCNTC} permits none.
+
+There are now two more things to study and discuss. One is the optimal setting
+of the module size $W/\overline{W}$, which in this paper we have set to
+be $O(n)$. The second is the connectivity constraints of the modules.
+
+For the first parameter, we have not rigorously shown that the optimal setting
+of $W / \overline{W}$ is 
+
+Now then, what is the effect of imposing constraints on module connectivity?
+
+\subsection{\textsf{2D CCNTCM}: Two-Dimensional Nearest-Neighbor Two-Qubit Concurrent Gates with Classical Controller and Modules}
+\label{subsec:2dccntcm}
+
+A single, contiguous
+2D lattice that contains an entire quantum architecture may be prohibitively large to manufacture. In practice,
+scalable experiments will probably use many
+smaller quantum computers that communicate by means of shared
+entanglement \cite{Monroe2012}.
+We call these individual machines \emph{modules}, each of
+which is a self-contained \textsf{2D CCNTC} lattice. This should not be
+confused with the word ``modular'' as in ``modular arithmetic'' or as
+referring to the modulus $m$ that we are trying to factor.
+
+We treat these modules
+and teleportations between them as nodes and edges, respectively,
+in a higher-level planar graph. The teleportations each transmit one qubit
+from one module to another, from any location within the source module
+to any location within the destination module, making use of the
+omnipresent classical controller. The modules can be arbitrarily far
+apart physically, but they have bounded-degree connectivity with other
+modules, and their edges are planar (they cannot intersect).
+
+A single module can be part of multiple teleportation operations in a single timestep, as long as they involve disjoint qubits within the module.
+We justify this assumption in that it is
+possible to establish entanglement between multiple
+quantum computers
+in parallel. We call this new model \textsf{2D CCNTCM},
+and we argue that is captures the essential aspects of 2D architectures
+without being overly sensitive to the exact geometry of the lattices involved.
+A graphic depiction of three modules in \textsf{2D CCNTCM} is shown in
+Figure \ref{fig:modules}. Each module contains within it a
+\textsf{2D CCNTC} lattice. We can equivalently consider the omnipresent,
+single
+classical controller as a collection of multiple classical controllers, one
+for each module or teleportation operation, which can inter-communicate
+classically and share a clock.
+
+\textsf{2D CCNTCM} is very similar to the model of a quantum multicomputer
+of Van Meter
+\cite{VanMeter2006} with the difference that we allow parallel teleportations.
+It is also very similar to the distributed quantum computer \textsf{DQC} of
+Beals et al. \cite{Beals2012} except that we require each module to have
+$\Omega(n)$ qubits in order to enforce some locality.
+
+\begin{figure}[btp!]
+\begin{center}
+\includegraphics[width=4in]{factor-polylog/figures/modules.pdf}
+\end{center}
+\caption{Three modules in the \textsf{2D CCNTCM} model}
+\label{fig:modules}
+\end{figure}
+
+\begin{definition}
+A \textsf{2D CCNTCM} architecture consists of
+
+\begin{itemize}
+\item a quantum computer $\overline{QC}$ which is represented by a planar graph $(\overline{V},\overline{E})$. A
+node $\overline{v} \in \overline{V}$ represents a module, or a graph $(V,E)$
+from a \textsf{2D CCNTC} architecture defined previously. It can have
+unbounded degree.
+An
+undirected edge $(\overline{u},\overline{v}) \in \overline{E}$ represents an
+allowed teleportation from any qubit in module $\overline{u}$ to
+another qubit in module $\overline{v}$.
+\item All modules are restricted to be linear in the number of their qubits:
+$|V| = \Theta(n)$ for all $(V,E) \in \overline{V}$.
+\item a universal gate set $\mathcal{G} = \{X, Z, H, T, T^{\dagger}, CNOT,
+MeasureZ\}$
+for the qubits \emph{within the same} modules which is the same as for \textsf{2D CCNTC},
+and an additional operation $Teleport$ which only operates on qubits
+\emph{in
+different} modules.
+\item a deterministic machine (classical controller) $\overline{CC}$ that applies a sequence
+of concurrent gates in each of $D+\overline{D}$ timesteps.
+This can be a separate classical controller
+for every pair of modules.
+\item In timestep $i$, $\overline{CC}$ applies
+gates $G_i = \{g_{i,j} : g_{i,j} \in \mathcal{G} \lor g_{i,j} = Teleport \}$.
+That is, there are two kinds of timesteps with respect to the kinds of gates
+which operate within them.
+\begin{enumerate}
+\item In the first kind, gates are exclusively from $\mathcal{G}$, and
+they operate within modules as described
+for \textsf{2D CCNTC} above. We say there are $D$ such timesteps.
+\item In the second kind, gates are exclusively $Teleport$ gates between two qubits $v^{(1)}_{i,j} \in \overline{v}_1$ and
+$v^{(2)}_{i,j} \in \overline{v}_2$ for
+(possibly non-distinct) modules $\overline{v}_1, \overline{v}_2 \in \overline{V}$.
+Again, all such qubits much be distinct within a timestep.
+We say there are $\overline{D}$ such timesteps.
+\end{enumerate}
+
+Again, we define the support of $G_i$
+as $V_i$, the set of all qubits acted upon by any $g_{i.j}$, which
+includes all the modules.
+\begin{equation}
+V_i = \bigcup_{j: g_{i,j} \in G_i} v_{i,j} \cup v^{(1)}_{i,j} \cup v^{(2)}_{i,j} 
+\end{equation}
+
+\end{itemize}
+\end{definition}
+
+We measure the efficiency of a circuit in this new module using not just
+the three conventional circuit resources, but with three novel resources
+based on modules.
+
+\begin{description}
+
+%, depicted in Figure \ref{fig:resources}:
+\item[module depth ($\overline{D}$):] the depth of consecutive teleportations between modules.
+\item[module size ($\overline{S}$):] the number of total qubits teleported between any two modules over all timesteps.
+\item[module width ($\overline{W}$):] the number of modules whose qubits are
+acted upon during any timestep.
+
+\end{description}
+
+%We can make an observation analogous to Equation \ref{eqn:depth-width} but
+%for modules in Equation \ref{eqn:module-depth-width}.
+
+%\begin{equation}
+%\overline{D} \le \overline{S} \le \overline{D}\cdot \overline{W}
+%\label{eqn:module-depth-width}
+%\end{equation}
+
+We note the following relationship between circuit width and
+module width.
+
+\begin{equation}
+W = O(n\overline{W})
+\label{eqn:module-width}
+\end{equation}
+
+This restriction imposes some locality on our model by constraining it to
+nearest-neighbor gates within a linear-sized group of qubits, but allowing
+it long-range teleportation to circumvent onerous geometric constraints.
+Using the constant-depth communication in Section \ref{sec:cdc}, and for
+the specific case of factoring, we
+can simulate arbitrary connectivity between modules with only a polynomial
+increase in the module size and a constant increase in module depth.
