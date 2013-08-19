@@ -13,17 +13,19 @@ has always existed.
 
 From the perspective of computer science, engineering is problem-driven.
 We humans wish to solve a problem, like calculating ballistic weapon
-trajectories, and we work backwards from there. To calculate,
+trajectories, and we work backwards to electromechanical relays or punched
+cards. To calculate,
 we need to perform fast
 arithmetic on stored numbers, for which we need to design devices in a
 certain configuration, for which we need certain materials from nature.
-At heart, it is the study of structured problem-solving which happens to have a strong
+At heart, it is the study of structured problem-solving which historically
+has a strong
 mechanical bias. This perspective asks the questions: what do we want to do,
 and how can we
-do it? It is like a child going into a LEGO store with a pre-existing plan
-and only buying the bricks needed. It is an efficient plan for brick procurement,
-but not
-necessarily creative.
+do it? It is like a child going into a LEGO store with a pre-existing plan:
+the child only buys the bricks needed, or orders custom bricks.
+It is an efficient plan for brick procurement, but not
+necessarily creative in exploring the space of all possible LEGO designs.
 
 From the perspective of quantum physics, engineering is phenomena-based.
 We humans wish to describe reality and observe nature. We discover objects
@@ -34,7 +36,8 @@ the discovery of quantum tunnelling and its subsequent use to build a
 field-effect transistor (FET) for digital electronics. This perspective asks the
 questions: what is available to us, and what could we do it? It is like a child
 going into a LEGO store with no pre-conceived plan, investigating all the
-parts and dreaming up ways to use them. This will generate completely new
+parts, dreaming up ways to use them, or even delving into custom brick design
+as a more fundamental level. This will generate completely new
 designs and models, but it is much slower than brick-shopping.
 
 These perspectives are intertwined and serve complementary purposes,
@@ -44,35 +47,33 @@ have thought to build a FET if we had not already needed fast electrical
 switching, for which vacuum tubes were proving inadequate. Moreover, we can
 go beyond using quantum physics to simulate a classical device. There is
 a remarkable example
-of a completely new algorithm designed using the building blocks of
-quantum physics. In 1994, Peter Shor contributed a quantum factoring algorithm
-to solve a human problem efficiently,
-one that has defied all classical algorithms before or since.
-where no known classical algorithm, previously or since.
-This kickstarted the entire field of quantum computing; united many
-disciplines including computer science, physics, engineering, and
-mathematics; and provided the foundation for this dissertation.
+of a new class of algorithms designed using the building blocks of
+quantum physics. The first instance of such an algorithm solves the problem
+of factoring.
 
 % II. Factoring
 The problem of factorization, or factoring,
 is simple to state and difficult to solve.
 Given an integer $m$, return the integers $\{p_1, \ldots, p_k\}$ whose
 product of their powers is $m$: $m = p_1^{\alpha_1}\cdots p_k^{\alpha_k}$.
-It is a beautiful theoretical problem posed by Carl Friedrich Gauss in 1801,
-one which he felt that every self-respecting scientist should devote their
-efforts to solving. Factoring is an important problem in the theory of
-numbers, which Gauss considered the crown jewel of mathematics, itself
-considered the queen of the sciences.\footnote{\emph{Gauss zum Ged\"achtniss} (1856) by Wolfgang Sartorius von Waltershausen}
+It is a beautiful theoretical problem posed by Carl Friedrich Gauss in 1801;
+although he is considered by many to be one of history's greatest mathematicians,
+he was still unable to factor arbitrarily large numbers. 
+His feelings on the subject can be paraphrased as follows:
+Factoring was the most important problem in the theory of
+numbers, itself the crown jewel of mathematics, itself
+the queen of the sciences.\footnote{\emph{Gauss zum Ged\"achtniss} (1856) by Wolfgang Sartorius von Waltershausen}
+However, all was not lost.
 It is a quirk of cryptography that the hardness of problems can be used
 to secure communication. Therefore, factoring also has immense practical
 usefulness as the basis of the RSA cryptosystem, the most widely-used
 cryptosystem around the world and on the internet.
 
-The somewhat sinister,
-but financially important, importance to
+The somewhat sinister political importance of factoring to
 governments is the ability to gather intelligence on each other and on their
 citizens. The importance to citizens is the ability to choose security
-parameters so that their correspondence is protected for a limited time.
+parameters so that their correspondence is protected from each other and
+their governments for a limited time.
 The organizers of the popular democratic uprisings in the Middle East known
 as the Arab Spring in 2011 definitely benefitted from using a cryptosystem that was
 secure against compromise given the resources of the regimes that they toppled.
@@ -89,25 +90,28 @@ Before 1994, the best known algorithm was the
 number field sieve (citation needed) which had a running time of
 $exp(\sqrt[3]{log n})$. This can be considered a pre-quantum (classical)
 algorithm in a pre-quantum era. Its sub-exponential (but still super-polynomial)
-running time is considered intractable and empirical proof of its hardness.
+running time is still considered intractable.
 This conjectured hardness is why users of the RSA cryptosystem above have faith
 that their information is resistant to compromise, while at the same time
-giving hope to the possibility of discovering some as yet unknown improvement.
+giving hope to mathematicians of some future improvement.
 
 In 1994, Peter Shor fulfilled this hope in a landmark
 discovery that using the more general computational power of quantum physics,
-factoring could be performed in running time $O(n^3\log n \log\log n)$ (citation
-needed). 
+factoring could be performed in running time $O(n^3\log n \log\log n)$\cite{Shor1994}. 
+This kickstarted the entire field of quantum computing; united many
+disciplines including computer science, physics, engineering, and
+mathematics; and provided the foundation for this dissertation.
 The computational model in which this remarkable feat was achieved
 made some assumptions about quantum computing devices, which are now
-standard in the field. 
-However, many remain skeptical of this achievement due to the perceived
-plausibility of these assumptions, which is why RSA still remains the
-most widely-used cryptosystem in the world.\footnote{Despite recommendations
-from the NSA to switch to ECC, itself susceptible to quantum attacks (citation needed).}
-These assumptions include that robust error-correction
-can be performed to preserve fragile quantum information and that quantum gates
-can be performed with high fidelity. Whether these assumptions can be
+standard in the field.
+%However, many remain skeptical of this achievement due to the perceived
+%plausibility of these assumptions, which is why RSA still remains the
+%most widely-used cryptosystem in the world.\footnote{Despite recommendations
+%from the NSA to switch to ECC, itself susceptible to quantum attacks (citation needed).}
+These assumptions include robust error-correction (to preserve fragile
+quantum information against environmental noise) and high-fidelity
+quantum gates (to exert reliable classical control).
+Whether these assumptions can be
 realized is an active area of experimental physics research, and is not the
 topic of this current work. However, given that these assumptions will
 eventually be realized, how can we optimize Shor's factoring algorithm?
@@ -115,7 +119,7 @@ Quantum computation is now a rapidly maturing field, and we cannot provide
 an adequate background in this dissertation. The interested reader is referred
 to the standard textbook in the field by Nielsen and Chuang \cite{Nielsen2000}.
 Building upon this background, we can provide an introduction into the subfield
-of quantum architecture.
+of quantum architecture with the current work.
 
 % III. Quantum circuits and quantum architecture
 First, we will introduce a quantum circuit.
@@ -132,6 +136,21 @@ left) to the final output state on the same qubits in the last timestep
 size, and width, which we will make more formal later.
 
 \begin{figure}
+\begin{array}{c}
+\text{Size} = 15 \\
+\Qcircuit @C=0.5em @R=.5em { 
+	& \gate{ } & \qw & \ctrl{1} & \gate{ } & \qw & \qw      & \ctrl{1} & \qw \\ 
+	& \gate{ } & \qw & \gate{ } & \ctrl{2} & \qw & \gate{K} & \targfix & \qw \\
+	& \gate{ } & \qw & \gate{ } & \qw      & \qw & \gate{H} & \qw      & \qw \\
+	& \gate{ } & \qw & \ctrl{1} & \gate{ } & \qw & \gate{H} & \qw      & \qw \\
+	& \gate{ } & \qw & \gate{ } & \gate{ } & \qw & \qw      & \qw      & \qw
+	\gategroup{1}{2}{5}{9}{.7em}{--}
+}\\
+\xymatrix {
+  & & \text{Depth} = 5 \ar[ll] \ar[rr] & & \\
+ }
+\end{array}
+
 \caption{A quantum circuit as a directed acyclic graph.}
 \label{fig:intro-qcirc}
 \end{figure}
@@ -149,6 +168,7 @@ is relevant to many kinds of laboratory experiments. At the same time,
 we can take into account the more complicated nature of physical devices
 to provide more pessimistic, accurate, and numerical resource estimates than more
 high-level theoretical results.
+
 The role of quantum architecture is two-fold. First,
 to quantify and improve the resources---such as circuit depth,
 size, and width mentioned above---required to run a quantum
@@ -205,11 +225,14 @@ Section \ref{sec:intro-arch} will discuss architectural models. We will present 
 architectural models and give examples of them from the
 current literature, with names like \textsf{AC} and \textsf{NTC}. We will discuss the idea of architectural
 sub-models, with names like \textsf{2D CCNTC}. Finally,
-we will describe our contribution of a new architectural model, called \textsf{2D CCNTCM}, which is a weakly 2D,
-hybrid architecture that introduces the idea of allowing both short-range (local) interactions and long-range
+we will describe our contribution of a new architectural model, called
+\textsf{2D CCNTCM}, which is a weakly 2D,
+hybrid architecture that introduces the idea of allowing both short-range
+(local) interactions and long-range
 interactions, and providing a configurable tradeoff in between them.
 
-In order to build long-range interactions out of short-range interactions, Section \ref{sec:intro-cdc} 
+In order to build long-range interactions out of short-range interactions,
+Section \ref{sec:intro-cdc} 
 gives a thorough background on recent constant-depth communication techniques. These include three
 basic constructs for teleporting, copying, and uncopying quantum information across an unbounded
 lattice.
@@ -226,17 +249,63 @@ to understand quantum architecture in general and factoring architectures
 in particular. Quantum architecture has potentially many concerns, but we
 focus on two of them: interaction distance and fault-tolerant quantum compiling.
 Without loss of generality, the gates of a quantum circuit can be reduced to
-single-qubit and two-qubit gates. In fact, we can use a fixed two-qubit gate
+single-qubit and two-qubit gates, called a circuit basis.
+In fact, we can use a fixed two-qubit gate
 and combine it with arbitrary single-qubit gates.
 Section \ref{sec:intro-basis} provides the necessary background for
-understanding single-qubit gates, which do not impose any constraints on
-which qubits can interact with each other.
+understanding circuit bases and single-qubit gates,
+which do not impose any constraints on
+which qubits can interact with each other. Section \ref{sec:intro-arch}
+defines quantum architectures and architectural models in more detail using
+both a fixed, finite basis in both single-qubit and two-qubit operations
+and imposing connectivity constraints on the two-qubit operations.
+Section \ref{sec:intro-cdc} introduces recent constant-depth techniques
+for simulating long-distance interactions with nearest-neighbor
+interactions, using linear size and width. Constant-depth communication
+introduces a tradeoff between depth and the other two resources. Specifically,
+reducing depth raises the possibility that more circuit resources are
+devoted to communication than to computation. This tradeoff is examined 
+in more detail in Section \ref{sec:intro-modules}
+by introducing the notion of a module and hybrid nearest-neighbor
+quantum architectures.
 
-, its relationship to quantum compiling,
-recent constant-depth techniques in communicating quantum information across
-a lattice, and most importantly,
-the usefulness of architectural modules,
-and the conc
+After this chapter, the remainder of this dissertation is organized to
+examine and expound upon the thesis statement above. In the first two
+chapters, we focus on improving the depth of factoring architectures
+in our hybrid 2D nearest-neighbor model using parallelization and
+constant-depth communication. In contrast to nearest-neighbor factoring
+architectures, we will refer to our results as hybrid factoring architectures,
+or simply hybrid factoring.
+Chapter \ref{chap:factor-polylog} presents our first main result:
+hybrid factoring in polylogarithmic depth.
+Chapter \ref{chap:factor-sublog} presents a further exponential improvement
+in our second main result: hybrid factoring in sublogarithmic depth.
+
+At this point, we have run into a seemingly fundamental limit on improving
+hybrid factoring to be constant depth: the compilation of arbitrary
+single-qubit gates to a fault-tolerant basis. We examine this
+\emph{quantum compiling} limit in Chapter \ref{chap:qcompile}. First we
+present a background of quantum compiling and a survey of the current
+state-of-the-art in related literature to provide context. Then, in our
+third main result, we improve
+upon the Kitaev-Shen-Vyalyi procedure for generating quantum Fourier states,
+a vital subproblem for single-qubit quantum compiling.
+
+Finally, we change directions and question the approach of minimizing depth
+at all costs in the first two chapters. We argue that the most relevant
+tradeoff to consider along with decreasing depth is the increasing amount
+of error-correcting effort needed to maintain a useful quantum state for
+computation. Therefore we introduce a new resource called
+\emph{circuit coherence} in Chapter \ref{chap:coherence}. In this chapter,
+we explore circuit coherence and its relationship to other circuit resources
+in the hybrid model as well as other models of computation. In our final
+main result, we show the connection between the circuit coherence for a
+layered quantum circuit and a reversible pebble game, for which existing
+time-space tradeoffs are known.
+
+Finally we conclude our dissertation in Chapter \ref{chap:conclude} with a
+summary of our main results along with related open conjectures and
+directions for future research.
 
 \input{intro/intro-basis.tex}
 
@@ -247,31 +316,31 @@ and the conc
 \input{intro/intro-modules.tex}
 
 % Old leftover stuff
-So now we have discovered that quantum computing is theoretically interesting because it can solve an important human problem. But can quantum computers be actually built?
+So now we have discovered that quantum computing is theoretically interesting
+because it can solve an important human problem. But can quantum computers be
+actually built?
 
 Quantum architecture is the intermediate layer between algorithms and hardware.
-It is the design of how quantum bits and their allowed interactions in order to solve these algorithms efficiently on realistic models of quantum hardware.
-It aims to minimize circuit resources of interest, namely depth, size, and width. In analogy to classical circuits, the depth is the running time of an algorithm allowing parallelization, the size is the number of operations required over all parallel processors, and the width is the number of (quantum) bits required over all parallel processors.
+It is the design of how quantum bits and their allowed interactions in order
+to solve these algorithms efficiently on realistic models of quantum hardware.
+It aims to minimize circuit resources of interest, namely depth, size, and
+width. In analogy to classical circuits, the depth is the running time of an
+algorithm allowing parallelization, the size is the number of operations
+required over all parallel processors, and the width is the number of
+(quantum) bits required over all parallel processors.
 
-In this dissertation, we study quantum architecture in the context of optimizing Shor's factoring algorithm on nearest-neighbor architectures with realistic constraints. It is hoped that lessons learned in this special-case can contribute to the general community general principles which can be used to generalize other quantum algorithms. We posit that the larger overall goal of quantum architecture should be the design of a general-purpose quantum processor, one which can execute any quantum algorithm with emphasis on being able to perform a core group of operations efficiently. This core group of operations is defined by the instruction set. Once quantum architecture has progressed to this point, we can leverage the remarkable strides in normal digital architecture over the past 80 years.
+In this dissertation, we study quantum architecture in the context of
+optimizing Shor's factoring algorithm on nearest-neighbor architectures with
+realistic constraints. It is hoped that lessons learned in this special-case
+can contribute to the general community general principles which can be used
+to generalize other quantum algorithms. We posit that the larger overall goal
+of quantum architecture should be the design of a general-purpose quantum
+processor, one which can execute any quantum algorithm with emphasis on being
+able to perform a core group of operations efficiently. This core group of
+operations is defined by the instruction set. Once quantum architecture has
+progressed to this point, we can leverage the remarkable strides in normal
+digital architecture over the past 80 years.
 
-As well, we may be able to use the insights of quantum architecture to build quantum processors which can surpass digital architectures in the solution of large-scale problems over exponentially-sized solution spaces.
-
-In Chapter \ref{chap:factor-polylog}, we present our first main result, a
-nearest-neighbor architecture for factoring in polylogarithmic depth. This is an exponential improvement of the previous best-known result, which required quadratic depth.
-
-In Chapter \ref{chap:factor-sublog}, we further improve our result with a
-factoring architecture which executes in sublogarithmic depth, which represents another exponential improvement over our first result. Therefore, this achievement represents a remarkable doubly-exponential improvement over previous factoring architectures.
-
-In Chapter \ref{chap:qcompile}, we study the relationship between quantum architecture and compiling. In digital computing, the boundary between architecture and compilers is quite porous and is determined by a processor's instruction set. Architecture studies processor resources to solve an algorithm given a particular instruction set which is fixed in hardware. This instruction set is produced by a compiler, a piece of (low-level) software which transforms over pieces of (high-level) software. This instruction set can change based on which algorithms it allows to solve efficiently as well as which processors it allows to manufacture efficiently as well as which operations it allows humans to understand easily. All of these factors combine to make architecture an art and an engineering discipline rather than merely a science.
-
-Quantum computers make this problem even more difficult due to the nature of a quantum bit. Because transformations between quantum states vary continuously over the space of unitary matrices with complex coefficients, we can only approximate desired quantum logic gates using a fixed set, given to us by fault-tolerance.
-
-This difficulty of approximation, which we call quantum compiling, represents the fundamental limit to the depth of factoring architectures. All known constant-depth factoring implementations, as well as sorting networks for those implementations which are not nearest-neighbor, assume arbitrary single-qubit rotations. That is, they assume the model where quantum compiling can be done in constant-depth, in polynomial size, for free. However, this is not the case when we combine these abstract circuit models with our model of fault-tolerant quantum computing. Under FTQC, quantum compiling depth represents a sufficient, but not known to be necessary, condition for constant-depth factoring. 
-
-We leave this ultimately as an open problem and change directions.
-Given that decreasing factoring depth with abandon increases size and width at relatively large polynomial growth rates (up to $n^8$). This is a rather undesirable time-space tradeoff.
-
-Here, we insert the estimate of electricity and square miles and centuries of run-time based on our estimates given in the final exam.
-
-In Chapter \ref{chap:coherence}, we introduce a novel quantum circuit resource called \emph{circuit coherence}.
+As well, we may be able to use the insights of quantum architecture to build
+quantum processors which can surpass digital architectures in the solution of
+large-scale problems over exponentially-sized solution spaces.
