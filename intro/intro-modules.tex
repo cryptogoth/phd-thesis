@@ -1,78 +1,122 @@
 \section{Modules and Long-Range Interactions}
 \label{sec:intro-modules}
 
-\subsection{Random Notes on 2D Architectures}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Subsection 0: Motivation, why modules?
 
-The main point should be shifted, in the intro, and maybe elucidated here,
-that low-depth for factoring can be achieved by moving into 2D, but
-moreover that the width and size blowups can also be reduced with a
-hybrid 2D module.
+Unfortunately, the model \textsf{2D CCNTC} has several shortcomings
+which are highlighted by the constant-depth communication in the
+previous section. First and foremost, it is difficult to realize physically. 
+A single, contiguous
+2D lattice that contains an entire quantum architecture
+may be prohibitively large to manufacture or too difficult to control
+coherently. In practice,
+scalable experiments already prefer to use many
+smaller quantum computers that communicate by means of shared
+entanglement \cite{Monroe2012}. Second, for highly parallellized
+algorithms, the amount of quantum information undergoing active
+computation is so large that communicating data across the
+quantum processor consumes more resources than the computation
+itself. Finally, as quantum architects we are interested in distilling
+the essential locality of a computation, and distinguishing it from
+communication (which itself may be an interesting problem).
 
-The model is hybrid, because instead of a single, contiguous 2D lattice,
-say with $W$ qubits and $S$ interactions between qubits (counting the
-general case of all single- and two-qubit gates as interactions),
-the computation is split among many communicating 2D lattices
-(say $\overline{W}$ of them), each containing $W/\overline{W}$ qubits
-each. In this new model, we argue that there are now a total number of
-qubit interactions $S'$ across all modules, where $S' \le S$, and at
-the same time we have introduced $\overline{S}$
-new, \emph{long-range} interactions between modules. Based on experimental
-data of create shared entanglement between separate ion traps (citation needed here),
-these long-range interactions are more expensive than short-range interactions
-within a module, and so we count them separately.
+Running an
+algorithm on a single \textsf{2D CCNTC} architecture makes it
+sensitive to the geometry of the different computation sites and how they
+are arranged on the same lattice. Calculating the circuit resources of different
+geometric arrangements will have vastly different numerical constants but will asymptotically
+be the same. We would like a model that abstracts away this sensitivity.
+The key to characterizing this essential locality is the long-range interaction. Rather than simulating them using short-range interactions,
+we account for them separately. We will define a
+\emph{hybrid architectural model} as one which accounts for long-range
+and short-range interactions separately and also constrains them
+according to independent graphs.
 
-Currently, we impose no constraints on the connectivity of the modules, which exist
-on a higher-level graph of modules. This is supported by current proposals
-(cite MUSIQC here). However, it is interesting to see what effect such constraints
-would have on a factoring architecture. We will return to this later.
+In fact, an example of this hybrid approach has already been proposed
+in the \emph{quantum multicomputer} of Van Meter et al. \cite{VanMeter2008}.
+This hybrid model is also called a distributed quantum computer since it contains several communicating nodes operating in parallel.
+We will abbreviate is \textsf{QMC}.
+Our approach is
+very similar in that we divide a computation, which normally occurs on a single connected qubit graph $G$, into smaller subdivisions connected in
+a graph $\overline{G}$. If two qubits $\ket{u}$ and $\ket{v}$ are connected
+in $G$, then their two containing subdivisions $\overline{u} \ni \ket{u}$
+and $\overline{v} \ni \ket{v}$ are connected in $\overline{G}$.
+Like \textsf{QMC}, we also consider ``flying qubits,'' or shared
+entanglement to allow for long-range, inter-node interactions. Moreover,
+we also
+consider a constrained topology for the nodes, one where the connectivity
+graph has bounded degree. Finally, we treat short-range interactions between
+qubits in the same node as being faster and cheaper.
 
-With no such constraints (arbitrary connectivity of modules), we can now see the
-effect of setting the size of each module. If we set modules
-to be a single qubit in size ($\overline{W} = W$), we would get the architectural
-model \textsf{AC}. If we were to set module size to include the entire lattice
-($\overline{W} = 1$), then we would get the model described in the previous
-section, \textsf{2D CCNTC}. This new model then, \textsf{2D CCNTCM}, is a hybrid
-between \textsf{AC} and \textsf{2D CCNTC} with module size as a parameter.
-\textsf{AC} and \textsf{2D CCNTC} represent the two extremes of long-range
-interactions, where \textsf{AC} permits all long-range interactions and
-\textsf{2D CCNTC} permits none.
+However, we divide our
+circuit into \emph{modules} to emphasize the following differences from
+\textsf{QMC} nodes.\footnote{This should not be
+confused with the word ``modular'' as in ``modular arithmetic'' or as
+referring to the modulus $m$ that we are trying to factor.}
+Each module is a self-contained \textsf{2D CCNTC} lattice, where the qubits
+are constrained to have nearest-neighbor interactions. Qubits in a node,
+in contrast, are \textsf{AC} circuits with arbitrary connectivity. The
+Van Meter paper is more empirical, providing numerical calculations
+based on estimates of current physical technology as well as more realistic
+circuit implementations of long-range teleportations. Our work is more
+abstract, providing asymptotic formulae for circuit resources. Finally,
+while both nodes and modules have configurable size, we have come to the
+conclusion that modules should contain $O(n)$ qubits each, whereas
+the Van Meter paper concludes that nodes have an optimal $O(1)$ size for 
+factoring.
+We discuss module size in more detail in Section \ref{subsec:module-size}.
 
-There are now two more things to study and discuss. One is the optimal setting
-of the module size $W/\overline{W}$, which in this paper we have set to
-be $O(n)$. The second is the connectivity constraints of the modules.
+A related work by Beals et al. \cite{Beals2012} describes how to achieve
+low-depth, generic simulations of any \textsf{AC} circuit, either by
+rearranging qubits using a sorting network on \textsf{NTC} or
+by mapping it to \textsf{QMC}
+(even with fixed-size nodes connected in a \textsf{LNN} topology). The
+depth overhead in either case for an $n$-qubit \textsf{AC} circuit is $O(\log^2 n)$. Their first approach of \textsf{NTC} sorting networks can be used
+as an alternative to hybrid architectures. As we will see later in
+Chapter \ref{chap:factor-polylog}, the asymptotic depth of the generic sorting network approach will be the same as our ``hand-crafted'' architecture for factoring,
+but possibly with worse constants and asymptotically larger width and size. 
 
-For the first parameter, we have not rigorously shown that the optimal setting
-of $W / \overline{W}$ is 
+We have now described the motivation for a hybrid architectural model which
+allows us to capture the essential locality of a quantum algorithm while
+still accounting for long-range interactions. Consequently, we can
+extend the model \textsf{2D CCNTC} to a further submodel which includes
+modules.
 
-Now then, what is the effect of imposing constraints on module connectivity?
-
-\subsection{\textsf{2D CCNTCM}: Two-Dimensional Nearest-Neighbor Two-Qubit Concurrent Gates with Classical Controller and Modules}
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{The Submodel \textsf{2D CCNTCM}}
 \label{subsec:2dccntcm}
 
-A single, contiguous
-2D lattice that contains an entire quantum architecture may be prohibitively large to manufacture. In practice,
-scalable experiments will probably use many
-smaller quantum computers that communicate by means of shared
-entanglement \cite{Monroe2012}.
-We call these individual machines \emph{modules}, each of
-which is a self-contained \textsf{2D CCNTC} lattice. This should not be
-confused with the word ``modular'' as in ``modular arithmetic'' or as
-referring to the modulus $m$ that we are trying to factor.
-
-We treat these modules
-and teleportations between them as nodes and edges, respectively,
+The main feature of our new submodel is that modules
+and long-range teleportations between them are nodes and edges, respectively,
 in a higher-level planar graph. The teleportations each transmit one qubit
 from one module to another, from any location within the source module
 to any location within the destination module, making use of the
 omnipresent classical controller. The modules can be arbitrarily far
-apart physically, but they have bounded-degree connectivity with other
+apart physically, but they have bounded-degree (at most 4) connectivity with other
 modules, and their edges are planar (they cannot intersect).
+
+We do not discuss the physical technology underlying the long-range
+teleportation other than acknowledging that it is based on shared
+entanglement. Namely, the two modules which are the source and destination
+of any long-range teleportation must each possess one half of an
+Einstein-Podolsky-Rosen (EPR) pair, as shown in Equation \ref{eqn:epr}.
+
+\begin{equation}
+\normtwo \left( \ket{00} + \ket{11} \right)
+\end{equation}
+
+Therefore, each long-range teleportation includes a preprocessing step in
+which the EPR pairs are generated and transported, along the bounded-degree
+module graph, to the modules where future teleportations will take place.
 
 A single module can be part of multiple teleportation operations in a single timestep, as long as they involve disjoint qubits within the module.
 We justify this assumption in that it is
-possible to establish entanglement between multiple
-quantum computers
-in parallel. We call this new model \textsf{2D CCNTCM},
+possible for a quantum computer to share multiple EPR pairs with a
+second quantum computer, and even multiple other quantum computers,
+simultaneously.
+
+We call this new submodel \textsf{2D CCNTCM}, since it 
 and we argue that is captures the essential aspects of 2D architectures
 without being overly sensitive to the exact geometry of the lattices involved.
 A graphic depiction of three modules in \textsf{2D CCNTCM} is shown in
@@ -97,6 +141,54 @@ $\Omega(n)$ qubits in order to enforce some locality.
 \caption{Three modules in the \textsf{2D CCNTCM} model}
 \label{fig:modules}
 \end{figure}
+
+
+
+The main point should be shifted, in the intro, and maybe elucidated here,
+that low-depth for factoring can be achieved by moving into 2D, but
+moreover that the width and size blowups can also be reduced with a
+hybrid 2D module.
+
+The model is hybrid, because instead of a single, contiguous 2D lattice,
+say with $W$ qubits and $S$ interactions between qubits (counting the
+general case of all single- and two-qubit gates as interactions),
+the computation is split among many communicating 2D lattices
+(say $\overline{W}$ of them), each containing $W/\overline{W}$ qubits
+each. In this new model, we argue that there are now a total number of
+qubit interactions $S'$ across all modules, where $S' \le S$, and at
+the same time we have introduced $\overline{S}$
+new, \emph{long-range} interactions between modules. Based on experimental
+data of create shared entanglement between separate ion traps (citation needed here),
+these long-range interactions are more expensive than short-range interactions
+within a module, and so we count them separately.
+
+Currently, we impose no constraints on the connectivity of the modules, which exist
+on a higher-level graph of modules. This is supported by current proposals
+(cite MUSIQC here). However, it is interesting to see what effect such constraints
+would have on a factoring architecture. We will return to this later.
+
+
+With no such constraints (arbitrary connectivity of modules), we can now see the
+effect of setting the size of each module. If we set modules
+to be a single qubit in size ($\overline{W} = W$), we would get the architectural
+model \textsf{AC}. If we were to set module size to include the entire lattice
+($\overline{W} = 1$), then we would get the model described in the previous
+section, \textsf{2D CCNTC}. This new model then, \textsf{2D CCNTCM}, is a hybrid
+between \textsf{AC} and \textsf{2D CCNTC} with module size as a parameter.
+\textsf{AC} and \textsf{2D CCNTC} represent the two extremes of long-range
+interactions, where \textsf{AC} permits all long-range interactions and
+\textsf{2D CCNTC} permits none.
+
+There are now two more things to study and discuss. One is the optimal setting
+of the module size $W/\overline{W}$, which in this paper we have set to
+be $O(n)$. The second is the connectivity constraints of the modules.
+
+For the first parameter, we have not rigorously shown that the optimal setting
+of $W / \overline{W}$ is 
+
+Now then, what is the effect of imposing constraints on module connectivity?
+
+
 
 \begin{definition}
 A \textsf{2D CCNTCM} architecture consists of

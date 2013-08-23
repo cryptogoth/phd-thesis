@@ -136,13 +136,18 @@ left) to the final output state on the same qubits in the last timestep
 size, and width, which we will make more formal later.
 
 \begin{figure}
+\begin{displaymath}
+\begin{matrix}% matrix for left braces
+%\vphantom{a}\\ 
+\coolleftbrace{Width = 5}{a \\ a \\ a \\ a \\ a \\ a \\ a \\ a }
+\end{matrix}%
 \begin{array}{c}
 \text{Size} = 15 \\
 \Qcircuit @C=0.5em @R=.5em { 
 	& \gate{ } & \qw & \ctrl{1} & \gate{ } & \qw & \qw      & \ctrl{1} & \qw \\ 
-	& \gate{ } & \qw & \gate{ } & \ctrl{2} & \qw & \gate{K} & \targfix & \qw \\
-	& \gate{ } & \qw & \gate{ } & \qw      & \qw & \gate{H} & \qw      & \qw \\
-	& \gate{ } & \qw & \ctrl{1} & \gate{ } & \qw & \gate{H} & \qw      & \qw \\
+	& \gate{ } & \qw & \gate{ } & \ctrl{2} & \qw & \gate{ } & \gate{ } & \qw \\
+	& \gate{ } & \qw & \gate{ } & \qw      & \qw & \gate{ } & \qw      & \qw \\
+	& \gate{ } & \qw & \ctrl{1} & \gate{ } & \qw & \gate{ } & \qw      & \qw \\
 	& \gate{ } & \qw & \gate{ } & \gate{ } & \qw & \qw      & \qw      & \qw
 	\gategroup{1}{2}{5}{9}{.7em}{--}
 }\\
@@ -150,7 +155,7 @@ size, and width, which we will make more formal later.
   & & \text{Depth} = 5 \ar[ll] \ar[rr] & & \\
  }
 \end{array}
-
+\end{displaymath}
 \caption{A quantum circuit as a directed acyclic graph.}
 \label{fig:intro-qcirc}
 \end{figure}
@@ -166,8 +171,8 @@ abstract theory (algorithms divorced of all physical constraints).
 As quantum architects, we can optimize algorithms in a general way which
 is relevant to many kinds of laboratory experiments. At the same time,
 we can take into account the more complicated nature of physical devices
-to provide more pessimistic, accurate, and numerical resource estimates than more
-high-level theoretical results.
+to provide more pessimistic, accurate, and numerical resource estimates than
+more high-level, theoretical results.
 
 The role of quantum architecture is two-fold. First,
 to quantify and improve the resources---such as circuit depth,
@@ -181,68 +186,50 @@ physical constraints into account.
 
 
 % Point 
-We are now ready to state the thesis that we investigate in this dissertation.
+We are now ready to state our thesis:
 
 \begin{quote}
-Studying the depth of quantum architectures can help us design quantum computers that can solve
+Studying the depth of quantum architectures can help us design quantum
+computers that can solve
 human problems with a human lifetime.
 \end{quote}
 
-Here, or somewhere else, we must distinguish between quantum architecture as a field and quantum architecture as a
-circuit with hardware constraints. Actually, the two definitions are pretty close.
+In particular ``a human lifetime'' means on the order of 50 years, which is
+the remaining expected lifetime for a human male of the same age as the
+author. This not only means that an implementation of a quantum architecture
+in a laboratory should complete within 50 years, but that all resources
+needed to build and power such a laboratory should also be acquirable in
+50 years.
 
-We also need to provide preliminary definitions of a quantum bit.
+``Human problems'' in this dissertation is exemplified by the special-case of
+factoring. We will optimize the circuit resources for Shor's algorithm mapped
+to a specific quantum architecture with the hope of discovering general
+principles that can be applied to other quantum algorithms in the future.
 
-This deserves some unpacking. A quantum architecture is a circuit designed to implement a particular algorithm given certain
-hardware constraints. The depth of a quantum architecture is the amount of time it takes for the circuit to complete.
-Given a particular input $x$, how long (in human clock time) does it take to return the output of some function $f(x)$?
-Quantum computers are interesting because for some algorithms, namely factoring, the depth of a quantum circuit is
-less than the depth of any known classical circuit. However, this depth may correspond to a running time which is
-still much longer than a single human lifetime. In particular this author, who is 32 years old at the time of this
-writing, is interested in techniques to optimize the successful completion of a problem within his own lifetime.
+``Studying the depth'' of quantum architectures is meant to
+make progress towards answering several questions.
+First, is it possible to improve circuit depth, at the cost of all
+other circuit resources, for a factoring architecture
+beyond currently known results?
+Second, what is the optimal depth possible?
+Third, what tradeoffs are introduced between depth and other circuit
+resources? Finally, what is the most relevant of these tradeoffs?
+Achieving minimal depth may require materials or energy beyond
+human abilities to acquire within the 50 years quoted above. Even ignoring the
+important concerns of scalable error-correction and high-fidelity control,
+we can ask the question ``Can a quantum factoring machine be built?'' in
+terms of physical resources alone.
 
-Therefore, one meaning of ``studying the depth'' means to \emph{decrease} depth. The main technique for decreasing
-depth is to parallelize a quantum circuit, that is, to divide and duplicate information to allow them to be processed
-in a parallel way, using multiple classical controllers. However, parallelizing can increase other circuit resources,
-usually due to this information duplication. This introduces a time-space tradeoff. In practical reality, we cannot
-decrease depth at the expense of other circuit resources, such as the amount of information in a form suitable for
-operation over time.
+ Therefore,
+in support of this thesis,
+our dissertation will investigate both low-depth factoring architectures
+as well as characterizing their circuit resource tradeoffs.
+Our results will represent progress towards a more realistic, configurable
+quantum factoring architecture.
 
-Decreasing depth can increase circuit size (the total number of operations to be performed) and circuit width
-(the total amount of quantum information that can exist at any one time). This increase may again far
-outstrip human resources, and delay completion of a quantum computer's construction, let alone its
-successful execution, until well after that author's death. Therefore, the useful study of depth to help
-quantum computers solve human problems must also limit this time-space tradeoff overhead. It should also
-involve defining the exact tradeoff that is useful to minimize.
-
-We have outlined the problems of designing such a low-depth quantum architecture so far in a very general,
-abstract form. In this thesis, we will make these concepts more concrete by describing a formalism for
-quantum circuits and quantum computation that is well-known to the research community.
-Building on this formalism, we will propose a new architectural model and present our solutions to factoring in them.
-
-
-Section \ref{sec:intro-arch} will discuss architectural models. We will present the definition of an
-architectural models and give examples of them from the
-current literature, with names like \textsf{AC} and \textsf{NTC}. We will discuss the idea of architectural
-sub-models, with names like \textsf{2D CCNTC}. Finally,
-we will describe our contribution of a new architectural model, called
-\textsf{2D CCNTCM}, which is a weakly 2D,
-hybrid architecture that introduces the idea of allowing both short-range
-(local) interactions and long-range
-interactions, and providing a configurable tradeoff in between them.
-
-In order to build long-range interactions out of short-range interactions,
-Section \ref{sec:intro-cdc} 
-gives a thorough background on recent constant-depth communication techniques. These include three
-basic constructs for teleporting, copying, and uncopying quantum information across an unbounded
-lattice.
-
-All operations on a quantum architecture can be reduced to single-qubit operations and two-qubit operations.
-The latter operations are what we have been calling ``interactions,'' and we have studied how to overcome
-constraints on nearest-neighbor interactions using the constant-depth communication techniques previously.
-
-Ultimately, however, the limits to depth of a quantum architecture are
-dependent on the single-qubit operations. 
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\section{Organization of Dissertation}
+\label{sec:intro-org}
 
 The remainder of this chapter is devoted to the necessary background needed
 to understand quantum architecture in general and factoring architectures
@@ -314,33 +301,3 @@ directions for future research.
 \input{intro/intro-cdc.tex}
 
 \input{intro/intro-modules.tex}
-
-% Old leftover stuff
-So now we have discovered that quantum computing is theoretically interesting
-because it can solve an important human problem. But can quantum computers be
-actually built?
-
-Quantum architecture is the intermediate layer between algorithms and hardware.
-It is the design of how quantum bits and their allowed interactions in order
-to solve these algorithms efficiently on realistic models of quantum hardware.
-It aims to minimize circuit resources of interest, namely depth, size, and
-width. In analogy to classical circuits, the depth is the running time of an
-algorithm allowing parallelization, the size is the number of operations
-required over all parallel processors, and the width is the number of
-(quantum) bits required over all parallel processors.
-
-In this dissertation, we study quantum architecture in the context of
-optimizing Shor's factoring algorithm on nearest-neighbor architectures with
-realistic constraints. It is hoped that lessons learned in this special-case
-can contribute to the general community general principles which can be used
-to generalize other quantum algorithms. We posit that the larger overall goal
-of quantum architecture should be the design of a general-purpose quantum
-processor, one which can execute any quantum algorithm with emphasis on being
-able to perform a core group of operations efficiently. This core group of
-operations is defined by the instruction set. Once quantum architecture has
-progressed to this point, we can leverage the remarkable strides in normal
-digital architecture over the past 80 years.
-
-As well, we may be able to use the insights of quantum architecture to build
-quantum processors which can surpass digital architectures in the solution of
-large-scale problems over exponentially-sized solution spaces.
