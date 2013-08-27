@@ -21,7 +21,7 @@ were experimentally motivated. For example, these layouts correspond
 to early ion trap proposals \cite{Kielpinski2002}
 and were later analyzed at the level of physical qubits and error correction in the context of Shor's algorithm \cite{Kubi09}.
 Choi and Van Meter designed one of the first adders targeted to a 2D architecture 
-and showed it runs in $\Theta(\sqrt{n})$-depth on \textsc{2D NTC} \cite{Choi2010}
+and showed it runs in $\Theta(\sqrt{n})$-depth on \textsf{2D NTC} \cite{Choi2010}
 using $O(n)$-qubits with dedicated, special-purpose areas of a physical
 circuit layout.
 
@@ -45,26 +45,26 @@ used by the following implementations.
 
 Beauregard \cite{Beauregard2002}
 constructs a cubic-depth quantum period-finder using only $2n+3$ qubits on
-\textsc{AC}.
+\textsf{AC}.
 It combines the ideas of Draper's transform adder \cite{Draper2000},
 Vedral et al.'s modular arithmetic blocks \cite{Vedral1996}, and a
 semi-classical QFT.
-This approach was subsequently adapted to \textsc{1D NTC} by Fowler, Devitt,
+This approach was subsequently adapted to \textsf{1D NTC} by Fowler, Devitt,
 and Hollenberg
 \cite{Fowler2004} to achieve resource counts for an $O(n^3)$-depth
 quantum period-finder. Kutin \cite{Kutin2006} later improved this using
 an idea from Zalka for approximate multipliers to produce a QPF circuit on
-\textsc{1D NTC}
+\textsf{1D NTC}
 in $O(n^2)$-depth. Thus, there is only a constant overhead from
-Zalka's own factoring implementation on \textsc{AC}, which also has
+Zalka's own factoring implementation on \textsf{AC}, which also has
 quadratic depth \cite{Zalka1998}.
 Takahashi and Kunihiro extended their earlier $O(n)$-depth adder to a factoring
 circuit in $O(n^3)$-depth with linear width \cite{Takahashi2006}.
 Van Meter and Itoh explore many different approaches for serial QPF,
 with their lowest achievable depth being $O(n^2\log n)$ with
-$O(n^2)$ on \textsc{NTC} \cite{VanMeter2005}. Cleve and Watrous
+$O(n^2)$ on \textsf{NTC} \cite{VanMeter2005}. Cleve and Watrous
 calculate a factoring circuit depth of $O(\log^3 n)$ and corresponding
-circuit size of $O(n^3)$ on \textsc{AC},
+circuit size of $O(n^3)$ on \textsf{AC},
 assuming an adder which has depth $O(\log n)$ and
 $O(n)$ size and width. We beat this depth and provide a concrete
 architectural implementation using an adder with $O(1)$-depth and $O(n)$
@@ -115,7 +115,7 @@ the approach described in \cite{VanMeter2005,Cleve2000}.
 We also note that recent results by Browne, Kashefi, and Perdrix (BKP) connect the power of
 measurement-based quantum computing to the quantum circuit model augmented with
 unbounded fanout \cite{Browne2009}. Their model, which we adapt and call
-\textsc{CCNTC}, uses the classical controller mentioned in Section \ref{sec:cdc}.
+\textsf{CCNTC}, uses the classical controller mentioned in Section \ref{sec:cdc}.
 Using results by H{\o}yer and {\v S}palek \cite{Hoyer2002} that
 unbounded quantum fanout would allow for a constant-depth factoring algorithm,
 they conclude that a probabilistic polytime classical machine with access

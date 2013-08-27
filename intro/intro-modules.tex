@@ -1,0 +1,501 @@
+\section{Modules and Long-Range Interactions}
+\label{sec:intro-modules}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%% Subsection 0: Motivation, why modules?
+
+Unfortunately, the model \textsf{2D CCNTC} has several shortcomings
+which are highlighted by the constant-depth communication in the
+previous section. First and foremost, it is difficult to realize physically. 
+A single, contiguous
+2D lattice that contains an entire quantum architecture
+may be prohibitively large to manufacture or too difficult to control
+coherently. In practice,
+scalable experiments already prefer to use many
+smaller quantum computers that communicate by means of shared
+entanglement \cite{Monroe2012}. Second, for highly parallellized
+algorithms, the amount of quantum information undergoing active
+computation is so large that communicating data across the
+quantum processor consumes more resources than the computation
+itself. Finally, as quantum architects we are interested in distilling
+the essential locality of a computation, and distinguishing it from
+communication (which itself may be an interesting problem). All of these
+notions will be made more rigorous below.
+
+Running an
+algorithm on a single \textsf{2D CCNTC} architecture makes it
+sensitive to the geometry of the different computation sites and how they
+are arranged on the same lattice. Calculating the circuit resources of different
+geometric arrangements will have vastly different numerical constants but will asymptotically
+be the same. We would like a model that abstracts away this sensitivity.
+The key to characterizing this essential locality is the long-range interaction. Rather than simulating them using short-range interactions,
+we account for them separately. We will define a
+\emph{hybrid architectural model} as one which accounts for long-range
+and short-range interactions separately and also constrains them
+according to independent graphs.
+
+In fact, an example of this hybrid approach has already been proposed
+in the \emph{quantum multicomputer} of Van Meter et al. \cite{VanMeter2008}.
+This hybrid model is also called a distributed quantum computer since it contains several communicating nodes operating in parallel.
+We will abbreviate is \textsf{QMC}.
+Our approach is
+very similar in that we divide a computation, which normally occurs on a single connected qubit graph $G$, into smaller subdivisions connected in
+a graph $\overline{G}$. If two qubits $\ket{u}$ and $\ket{v}$ are connected
+in $G$, then their two containing subdivisions $\overline{u} \ni \ket{u}$
+and $\overline{v} \ni \ket{v}$ are connected in $\overline{G}$.
+Like \textsf{QMC}, we also consider ``flying qubits,'' or shared
+entanglement to allow for long-range, inter-node interactions. Moreover,
+we also
+consider a constrained topology for the nodes, one where the connectivity
+graph has bounded degree. Finally, we treat short-range interactions between
+qubits in the same node as being faster and cheaper.
+
+However, we divide our
+circuit into \emph{modules} to emphasize the following differences from
+\textsf{QMC} nodes.\footnote{This should not be
+confused with the word ``modular'' as in ``modular arithmetic'' or as
+referring to the modulus $m$ that we are trying to factor.}
+Each module is a self-contained \textsf{2D CCNTC} lattice, where the qubits
+are constrained to have nearest-neighbor interactions. Qubits in a node,
+in contrast, are \textsf{AC} circuits with arbitrary connectivity. The
+Van Meter paper is more empirical, providing numerical calculations
+based on estimates of current physical technology as well as more realistic
+circuit implementations of long-range teleportations. Our work is more
+abstract, providing asymptotic formulae for circuit resources. Importantly,
+our model allows concurrent teleportations, even among non-disjoint
+pairs of modules, whereas \textsf{QMC} nodes can only perform long-range
+teleportations one-at-a-time. Finally,
+while both nodes and modules have configurable size, we have come to the
+conclusion that modules should contain $O(n)$ qubits each, whereas
+the Van Meter paper concludes that nodes have an optimal $O(1)$ size for 
+factoring.
+We discuss module size in more detail in Section \ref{subsec:module-size}.
+
+A related work by Beals et al. \cite{Beals2012} describes how to achieve
+low-depth, generic simulations of any \textsf{AC} circuit, either by
+rearranging qubits using a sorting network on \textsf{NTC} or
+by mapping it to \textsf{QMC}
+(even with fixed-size nodes connected in a \textsf{LNN} topology). The
+depth overhead in either case for an $n$-qubit \textsf{AC} circuit is $O(\log^2 n)$. Their first approach of \textsf{NTC} sorting networks can be used
+as an alternative to hybrid architectures. As we will see later in
+Chapter \ref{chap:factor-polylog}, the asymptotic depth of the generic sorting network approach will be the same as our ``hand-crafted'' architecture for factoring,
+but possibly with worse constants and asymptotically larger width and size. 
+
+We have now described the motivation for a hybrid architectural model which
+allows us to capture the essential locality of a quantum algorithm while
+still accounting for long-range interactions. Consequently, we can
+extend the model \textsf{2D CCNTC} to a further submodel which includes
+modules.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{The Model \textsf{2D CCNTCM}}
+\label{subsec:2dccntcm}
+
+The main feature of our new submodel is that modules
+and long-range teleportations between them are nodes and edges, respectively,
+in a higher-level planar graph. The teleportations each transmit one qubit
+from one module to another, from any location within the source module
+to any location within the destination module, making use of the
+omnipresent classical controller.
+
+We do not discuss the physical technology underlying the long-range
+teleportation other than acknowledging that it is based on shared
+entanglement. Namely, the two modules which are the source and destination
+of any long-range teleportation must each possess one half of an
+Einstein-Podolsky-Rosen (EPR) pair, as shown in Equation \ref{eqn:epr}.
+
+\begin{equation}
+\normtwo \left( \ket{00} + \ket{11} \right)
+\label{eqn:epr}
+\end{equation}
+
+%Therefore, each long-range teleportation includes a preprocessing step in
+%which the EPR pairs are generated and transported, along the bounded-degree
+%module graph, to the modules where future teleportations will take place.
+
+ The modules can be arbitrarily far
+apart physically and have arbitrary connectivity. This is a reasonable
+assumption because entangled pairs can be generated and distributed between
+any two modules. This generation and distribution is counted as part of
+the (preprocessing) costs of the long-range teleportation itself as a
+one-to-one correspondence in the worst case. One could imagine that 
+generating and distributing many entangled pairs in a batch might be more
+efficient physically than doing so for individual pairs. Moreover, the
+distribution of entangled pairs may occur along a constrained graph of
+module connectivity, but such constraints can be overcome with only
+polylogarithmic depth overhead as previously noted \cite{Beals2012}.
+
+A single module can be part of multiple teleportation operations in a single
+timestep, as long as they involve disjoint qubits within the module.
+We justify this assumption in that it is
+possible for a quantum computer to share multiple EPR pairs with a
+second quantum computer, and even multiple other quantum computers,
+simultaneously.
+
+We call this new model \textsf{2D CCNTCM}, since it generalizes the
+model \textsf{2D CCNTC} to have more than one module. Equivalently,
+each module corresponds exactly to a \textsf{2D CCNTC} architecture.
+All modules can share a single omnipresent
+classical controller or a collection of multiple, inter-communicating classical controllers.
+A graphic depiction of three modules in \textsf{2D CCNTCM} is shown in
+Figure \ref{fig:modules}.
+
+\begin{figure}[btp!]
+\begin{center}
+\includegraphics[width=4in]{factor-polylog/figures/modules.pdf}
+\end{center}
+\caption{Three modules in the \textsf{2D CCNTCM} model.}
+\label{fig:modules}
+\end{figure}
+
+\begin{definition}
+A \textsf{2D CCNTCM} architecture consists of
+
+\begin{itemize}
+\item a quantum computer $\overline{QC}$ which is represented by a graph
+$(\overline{V},\overline{E})$ of arbitrary degree.
+A node $\overline{v} \in \overline{V}$ represents a module,
+or a graph $(V,E)$
+from a \textsf{2D CCNTC} architecture defined previously.
+An
+undirected edge $(\overline{u},\overline{v}) \in \overline{E}$ represents an
+allowed teleportation from any qubit in module $\overline{u}$ to
+another qubit in module $\overline{v}$.
+\item All modules are restricted to be linear in the number of their qubits:
+$|V| = \Theta(n)$ for all $(V,E) \in \overline{V}$.
+\item a universal gate set $\mathcal{G} = \{X, Z, H, T, T^{\dagger}, CNOT,
+MeasureZ\}$
+for the qubits \emph{within the same} modules which is the same as for \textsf{2D CCNTC},
+and an additional operation $Teleport$ which only operates on qubits
+\emph{in
+different} modules.
+\item a deterministic machine (classical controller) $\overline{CC}$ that applies a sequence
+of concurrent gates in each of $D+\overline{D}$ timesteps.
+This can be a separate classical controller
+for every pair of modules.
+\item In timestep $i$, $\overline{CC}$ applies
+gates $G_i = \{g_{i,j} : g_{i,j} \in \mathcal{G} \lor g_{i,j} = Teleport \}$.
+That is, there are two kinds of timesteps with respect to the kinds of gates
+which operate within them.
+\begin{enumerate}
+\item In the first kind, gates are exclusively from $\mathcal{G}$, and
+they operate within modules as described
+for \textsf{2D CCNTC} above. We say there are $D$ such timesteps.
+\item In the second kind, gates are exclusively $Teleport$ gates between two qubits $v^{(1)}_{i,j} \in \overline{v}_1$ and
+$v^{(2)}_{i,j} \in \overline{v}_2$ for
+(possibly non-distinct) modules $\overline{v}_1, \overline{v}_2 \in \overline{V}$.
+Again, all such qubits much be distinct within a timestep.
+We say there are $\overline{D}$ such timesteps.
+\end{enumerate}
+
+Again, we define the support of $G_i$
+as $V_i$, the set of all qubits acted upon by any $g_{i.j}$, which
+includes all the modules.
+\begin{equation}
+V_i = \bigcup_{j: g_{i,j} \in G_i} v_{i,j} \cup v^{(1)}_{i,j} \cup v^{(2)}_{i,j} 
+\end{equation}
+
+\end{itemize}
+\end{definition}
+
+We measure the efficiency of a circuit in this new module using not just
+the three conventional circuit resources defined for \textsf{2D CCNTC}, but with three novel resources
+based on modules.
+
+\begin{description}
+
+\item[circuit depth ($D$):] the depth of all operations over all modules,
+as defined above.
+\item[circuit size ($S$):] the total operations on all qubits within all
+modules
+\item[circuit width ($W$):] the total number of qubits, equal to the sum of all the module sizes.
+%, depicted in Figure \ref{fig:resources}:
+\item[module depth ($\overline{D}$):] the depth of consecutive teleportations between modules.
+\item[module size ($\overline{S}$):] the number of total qubits teleported between any two modules over all timesteps.
+\item[module width ($\overline{W}$):] the number of modules whose qubits are
+acted upon during any timestep.
+
+\end{description}
+
+We can define the size of a module $W_i$ as the number of qubits within it,
+where all the module sizes add up to the total circuit width.
+
+\begin{equation}
+\sum_{i \in [\overline{W}]} W_i = W
+\end{equation}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Module Size and Model Comparisons}
+\label{subsec:module-compare}
+
+Not all modules in a \textsf{2D CCNTCM} architecture need have the same
+size. However, it is useful to upper bound the size of any module and call
+this the \emph{module size} for the entire architecture. In this 
+dissertation, we only consider \emph{uniformly-sized} \textsf{CCNTCM} architectures, one where
+the module size $\hat{W}$
+is upper-bounded by the average of all the module sizes, up to a constant
+factor.
+
+\begin{equation}
+\hat{W} = \max_{i \in [\overline{W}]} W_i \equiv O(W / \overline{W})
+\end{equation}
+
+We argue that module size is a key, configurable parameter of any
+hybrid architecture that greatly affects its resource usage. To see this,
+we will now compare the overhead of simulating a generic architecture
+(an \textsf{AC} circuit) on three different models with nearest-neighbor
+interactions: \textsf{2D NTC}, \textsf{2D CCNTC}, and \textsf{2D CCNTCM}.
+This will demonstrate how \textsf{2D CCNTCM} simplies our view of computation
+versus communication resources.
+
+%Related to module
+%size, we define two restrictions we can make to the \textsf{CCNTCM} model
+%to simplify the analyses in this dissertation. Neither of these is strictly
+%part of the \textsf{CCNTCM} model as we've defined it above.
+
+%\begin{definition}
+%A \emph{one-way} \textsf{CCNTCM} architecture is one where each module
+%only interacts with other modules either before or after computation
+%within the module itself. That is, all long-range, inter-module 
+%teleportations that are counted as part of $\overline{S}$ take place in
+%a cohort of operations either before or after the short-range interactions
+%and gates that are counted as part of $S$. Furthermore, all
+%inter-module teleportations occur in one-direction. Once 
+
+%The second is that we only consider \emph{efficient} partitionings such
+%that a module only participates in long long-range teleportations 
+%\end{definition}
+
+% IV. Compare & Contrast
+
+At this point, it is useful to compare and contrast how \textsf{2D CCNTCM}
+allows us to express resources for a generic architecture as compared to
+\textsf{2D NTC} and \textsf{2D CCNTC}. This will allow us to see how
+the resources change between these modules and how \textsf{2D CCNTCM}
+allows us to simplify our view of computation versus communication
+resources.
+
+In each of these three models, we must simulate the long-range
+interactions of a completely general \textsf{AC} circuit (call it $C$, with
+depth $D$, size $S$, and width $W$), using only the
+constraints of each particular model. We will define a depth overhead
+of $\tilde{D}$, a size overhead $\tilde{S}$, a width overhead $\tilde{W}$
+associated purely with communication (not computation) associated with
+this long-range simulation. The first two models do not use modules
+(i.e. $\overline{W} = 1$),
+whereas the last model has a module size parameter $\hat{W}$ as defined above, with $1 \le \hat{W} \le W$ depending on the number of modules
+$\overline{W}$. Modules are now seen as an elegant framework for
+interpolating hybrid models between a completely unconstrained and a completely nearest-neighbor architectural model. When $\overline{W} = 1$,
+there is a contiguous lattice which corresponds exactly to \textsf{2D CCNTC}.
+When $\overline{W} = W$, there is an unconstrained network of single qubits
+which corresponds exactly to \textsf{AC}.
+%% TODO I really love something about the sentences below,
+%% find some way to put them back in
+%This new model then, \textsf{2D CCNTCM}, is a hybrid
+%-between \textsf{AC} and \textsf{2D CCNTC} with module size as a parameter.
+%-\textsf{AC} and \textsf{2D CCNTC} represent the two extremes of long-range
+%-interactions, where \textsf{AC} permits all long-range interactions and
+%-\textsf{2D CCNTC} permits none.
+
+A comparison of these three models are
+summarized in Table \ref{tab:mod-comp} by measuring the circuit resources
+needed to simulate an \textsf{AC} circuit \emph{with lowest depth}.
+Note that \textsf{AC} is
+the most efficient architecture, but the most unrealistic. All other
+architectures pay an overhead for simulating interactions with
+varying degrees of nearest-neighbor realism.
+
+\begin{table}
+\begin{tabular}{|c|c|c|c|c|}
+\hline
+Circuit Resources & \textsf{AC} & \textsf{2D NTC} & \textsf{2D CCNTC} & \textsf{2D CCNTCM} \\
+\hline
+$D + \tilde{D}$ & $D$ & $D\cdot O(\sqrt{W})$    & $D(1 + O(1))$   & $D(1 + O(1))$ \\
+$S + \tilde{S}$ & $S$ & $S + D\cdot O(W)$ & $S + D\cdot O(W^2)$ & $S + D\cdot \overline{W} \cdot O(\hat{W}^2)$ \\
+$W + \tilde{W}$ & $W$ & $W$               & $W(1 + W)$    & $W(1 + \hat{W})$\\
+\hline
+$\overline{D}$  & $D$ &                   &               & $\overline{D}$\\
+$\overline{S}$  & $S$ &                   &               & $\overline{S}$\\
+$\overline{W}$  & $W$ &                   &               & $\overline{W}$\\
+\hline
+\end{tabular}
+\caption{A comparison of simulating \textsf{AC} interactions on three
+other models. Unmarked entries signify $\overline{D}=\overline{S} = 0$ and
+$\overline{W} = 1$.}
+\end{table}
+
+A \textsf{2D NTC} circuit can only
+use $SWAP$ gates to rearrange each of the $W$ qubits after each of $D$
+timesteps, so that all gates can occur between nearest neighbors. We choose
+to use a sorting network approach of Beals et al. \cite{Beals2012} which
+has the following consequences. The sorting that occurs after every timestep
+has depth $O(\sqrt{W})$ and total depth $\tilde{D} = D\cdot O(\sqrt{W})$.
+This sorting after every timestep has size $O(W)$ and total size
+$\tilde{S} = O(D\cdot W)$. Because sorting happens in-place,
+no additional ancillary qubits are needed ($\tilde{W} = 0$). 
+
+A \textsf{2D CCNTC} circuit achieves lowest-depth by using the constant-depth
+communication of Section \ref{subsec:intro-cdc} and Rosenbaum's
+construction for reordering qubits \cite{Rosenbaum2012}. Other, more
+efficient reorderings may be possible for a specific algorithm, but
+the Rosenbaum reordering is completely general. This doesn't
+asymptotically increase the depth ($\tilde{D} = D\cdot O(1)$) but it does
+increase size and width by the ancillary qubits needed for the reordering
+grid ($\tilde{W} = W^2$, $\tilde{S} = O(W^2)$).
+
+In the first two models, there was only one contiguous lattice
+($\overline{W} = 1$) and therefore no long-range, inter-module interactions
+($\overline{D} = \overline{S} = 0$). However, in the third model, we now
+consider multiple modules which represent a partitioning of the qubits
+in the original \textsf{AC} circuit. In the worst case, we still need to
+perform a Rosenbaum reordering after each of $D$ timesteps $(\tilde{D} = D\cdot O(1)$), but this time
+only within smaller modules of size at most $\hat{W}$. This gives the
+required number of operations $\tilde{S} = D\cdot \overline{W} \cdot O(\hat{W}^2)$.
+
+The comparison between \textsf{2D NTC} and \textsf{2D CCNTC} underscores the
+tradeoff between a large depth on one hand and a large ancillary qubit
+overhead on the other hand.
+
+Two things are worth noting here.
+This is a reduction in number of intra-module operations over \textsf{CCNTC} 
+if the number of modules is non-constant:
+$\overline{W} = \omega(1)$. However, this reduction in $S$ must be
+balanced with the relative cost of $\overline{S}$, which is non-zero in
+\textsf{CCNTCM} and zero in all other models. Achieving exact bounds on
+$\overline{S}$ will be calculated later for factoring in Chapter
+\ref{chap:factor-polylog}.
+
+However, only
+physical experiments can determine the actual resources needed to
+perform both long-range teleportations counted in $\overline{S}$ and
+short-range interactions counted in $S$.
+
+%We can make an observation analogous to Equation \ref{eqn:depth-width} but
+%for modules in Equation \ref{eqn:module-depth-width}.
+
+%\begin{equation}
+%\overline{D} \le \overline{S} \le \overline{D}\cdot \overline{W}
+%\label{eqn:module-depth-width}
+%\end{equation}
+
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Objections to Modules and Future Directions}
+\label{subsec:module-size}
+
+Although we have demonstrate the usefulness of modules in capturing
+the locality of a quantum algorithm, our new \textsf{CCNTCM} model also
+contains some weaknesses. Chief among them are the possiblities of
+wasteful modules
+and the misrepresentation of the costs of long-range teleportation. We will
+address objections to these weaknesses here before presenting useful
+open questions needed to fully explore the potential of modules in
+hybrid architectures.
+
+It is allowable under the \textsf{CCNTCM} model for an architecture
+to have only a small,
+or constant, number of qubits in each module be useful for computation.
+Alternatively, the qubits could be partitioned among modules such that most
+computationally useful interactions must be long-range and involve
+qubits in other modules.
+Such modules are wasteful in the sense that they are not capturing any
+locality.
+We argue that such an architecture, and partitioning of qubits, can be
+further optimized to use fewer resources, including both long-range
+$\overline{S}$-type interactions and short-range $S$-type interactions.
+Even an \textsf{AC} circuit can have extraneous
+qubits and extraneous gates that are not useful for computation.
+Bad implementations are possible with any model, and so the wasteful module
+objection is not specific to \textsf{CCNTCM}.
+
+Another objection to \textsf{CCNTCM} is that it may conceal the true
+costs of long-range teleportation. Whereas the models \textsf{NTC} and
+\textsf{CCNTC} present the communicaton costs of a circuit in a unified
+way with computation, it can be argued that \textsf{CCNTCM} is unfairly
+optimizing $S$ and $W$ compared to these two models. Indeed, for any
+sufficiently localized algorithm, a \textsf{CCNTCM} architecture can be designed with asymptotically lower $S$ and $W$ than a corresponding \textsf{NTC} or \textsf{CCNTC}. However, the costs of communication are not being
+misrepresented, they are just counted separately
+in the module resources $\overline{D}$, $\overline{S}$, and
+$\overline{W}$. Later, when physical experiments have determined the
+true cost of each resource, architects can make informed decisions about
+the best tradeoffs between module size and long-range interactions.
+The separate accounting of \textsf{CCNTCM} reflects the belief that
+practically, $\overline{S}$-type operations (or their equivalent simulation
+on a contiguous lattice) will always be much slower
+and expensive than $S$-type operations. A comparison in terms of our
+factoring architectures is presented in Section \ref{sec:fpl-results}.
+
+Beyond these objections, there is still more work to be done to fully
+understand the usefulness of modules and the \textsf{CCNTCM} model.
+First and foremost, the connectivity
+of the modules themselves. We allow teleportation between any two modules
+because an entangled pair can be generated and distributed between any
+two modules. However, in reality, this distribution might occur along
+constrained paths between modules. Although 
+
+Furthermore, \textsf{CCNTCM} can be defined for other dimensionalities,
+which constrain the \textsf{CCNTC} lattices in each modules.
+However, we concentrate on the \textsf{2D} case in this dissertation,
+although the module graph $\overline{G}$ could be connected with
+a \textsc{1D} topology independently of the modules, which could contain
+\textsc{2D} lattices. It is a subject of future research to determine
+the optimal setting of connectivities of the graphs $G$
+and $\overline{G}$ independently.
+
+Another useful investigation would be
+the particular tradeoff between the number of
+long-range interactions $\overline{S}$ and the module size $\hat{W}$.
+In our comparison in the previous section, we make no assumptions about the 
+partitioning of qubits into
+modules or how the $\overline{S}$ long-range interactions are distributed
+in the circuit. This prevents us from relating $\overline{S}$,
+$\overline{W}$, and $W$ in the general case.
+What particular features of an algorithm make this tradeoff better or worse?
+Unfortunately, such investigations are beyond the scope of the current
+work. In Chapter \ref{chap:factor-polylog}, we use the heuristic of linear 
+size modules ($\hat{W} = O(n)$) to match the amount of computation and
+communication within each module. This appears to give reasonably efficient
+numerical results for our hybrid factoring architectures. We hope that
+the importance of
+both factoring and realistic hybrid architectures drive further work in this
+area.
+
+Note that 
+
+ However, the main argument
+of Chapter \ref{chap:factor-polylog} is that our 
+-The main point should be shifted, in the intro, and maybe elucidated here,
+-that low-depth for factoring can be achieved by moving into 2D, but
+-moreover that the width and size blowups can also be reduced with a
+-hybrid 2D module.
+-
+-The model is hybrid, because instead of a single, contiguous 2D lattice,
+-say with $W$ qubits and $S$ interactions between qubits (counting the
+-general case of all single- and two-qubit gates as interactions),
+-the computation is split among many communicating 2D lattices
+-(say $\overline{W}$ of them), each containing $W/\overline{W}$ qubits
+-each. In this new model, we argue that there are now a total number of
+-qubit interactions $S'$ across all modules, where $S' \le S$, and at
+-the same time we have introduced $\overline{S}$
+-new, \emph{long-range} interactions between modules. Based on experimental
+-data of create shared entanglement between separate ion traps (citation needed here),
+-these long-range interactions are more expensive than short-range interactions
+-within a module, and so we count them separately.
+-
+-Currently, we impose no constraints on the connectivity of the modules, which exist
+-on a higher-level graph of modules. This is supported by current proposals
+-(cite MUSIQC here). However, it is interesting to see what effect such constraints
+-would have on a factoring architecture. We will return to this later.
+
+-There are now two more things to study and discuss. One is the optimal setting
+-of the module size $W/\overline{W}$, which in this paper we have set to
+-be $O(n)$. The second is the connectivity constraints of the modules.
+-
+-For the first parameter, we have not rigorously shown that the optimal setting
+-of $W / \overline{W}$ is 
+-
+-Now then, what is the effect of imposing constraints on module connectivity?
+-
+

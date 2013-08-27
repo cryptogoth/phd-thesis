@@ -74,13 +74,13 @@ is shown in Equation \ref{eqn:mod-reduce}.
 \begin{lemma}[Modular Reduction in Constant Depth]
 The modular addition of three $n$-bit numbers to two $n$-bit numbers can be
 accomplished
-in constant depth with $O(n)$ width in \textsc{2D CCNTC}.
+in constant depth with $O(n)$ width in \textsf{2D CCNTC}.
 \end{lemma}
 
 \begin{proof}
 Our goal is to show how to perform modular addition while keeping our numbers
 of a fixed size by treating overflow bits correctly.
-We map the proof of \cite{Gossett1998} to \textsc{2D CCNTC} and show that
+We map the proof of \cite{Gossett1998} to \textsf{2D CCNTC} and show that
 we meet our required depth and width.
 First, we enlarge our registers to allow the addition of $(n+2)$-bit numbers,
 while keeping our modulus of size $n$ bits.
@@ -213,7 +213,7 @@ modulus.}
 \end{figure*}
 \end{center}
 
-A \textsc{2D CCNTC} circuit for modular addition of $5$-bit numbers using
+A \textsf{2D CCNTC} circuit for modular addition of $5$-bit numbers using
 four layers of parallel CSA's is shown graphically in Figure \ref{fig:csa-add-4}
 which corresponds directly to the schematic proof in Figure \ref{fig:csa-proof}.
 Note that in Figure \ref{fig:csa-add-4}, the least significant qubits are

@@ -67,7 +67,7 @@ The last two sections represent the main contributions of this chapter.
 %the overall themes of quantum compiling and presenting interesting
 %directions for future research.
 
-\input{qcompile/qcompile-basis.tex}
+%\input{qcompile/qcompile-basis.tex}
 
 \input{qcompile/qcompile-bg.tex}
 
@@ -82,5 +82,11 @@ The last two sections represent the main contributions of this chapter.
 \input{qcompile/qcompile-ksv.tex}
 
 \input{qcompile/qcompile-maj.tex}
+
+% Old stuff, from old intro, maybe we can fit it into here to add color
+In digital computing, the boundary between architecture and compilers is quite porous and is determined by a processor's instruction set. Architecture studies processor resources to solve an algorithm given a particular instruction set which is fixed in hardware. This instruction set is produced by a compiler, a piece of (low-level) software which transforms over pieces of (high-level) software. This instruction set can change based on which algorithms it allows to solve efficiently as well as which processors it allows to manufacture efficiently as well as which operations it allows humans to understand easily. All of these factors combine to make architecture an art and an engineering discipline rather than merely a science.
+
+Quantum computers make this problem even more difficult due to the nature of a quantum bit. Because transformations between quantum states vary continuously over the space of unitary matrices with complex coefficients, we can only approximate desired quantum logic gates using a fixed set, given to us by fault-tolerance.
+
 
 %\input{qcompile/qcompile-conclude.tex}

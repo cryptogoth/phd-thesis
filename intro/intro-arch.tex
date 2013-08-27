@@ -1,0 +1,220 @@
+\section{Quantum Architecture}
+\label{sec:intro-arch}
+
+As defined in the introduction, a quantum architecture is a quantum circuit
+with two main constaints: a fault-tolerant basis (fixed, finite) basis of
+gates and a layout graph which defines the connectivity (allowed two-qubit
+interactions) between qubits.
+In this section, we define an architectural model and give definitions of
+several important models that are common in the literature. We define
+how submodels are related to parent models. In particular, we define the
+important model \textsf{2D CCNTC} as a foundation for a new model that we
+introduce in Section \ref{sec:intro-modules}. Finally, we define how
+circuit resources are counted using this model in the rest of this
+dissertation.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Architectural Models}
+\label{subsec:models}
+
+Following Van Meter and Itoh \cite{VanMeter2005},
+we distinguish between a model and an architectural implementation as follows.
+A \emph{model} is a set of constraints and rules for the placement and
+interaction of qubits.
+An \emph{architecture} (or interchangeably, an \emph{implementation} 
+or a \emph{circuit}) is a particular
+spatial layout of qubits (as a graph of vertices) and allowed interactions (edges between the vertices),
+following the constraints of a given model. In this section, we describe
+several models that try to incorporate resources of physical interest from
+experimental work.
+
+The most general model is called Abstract Concurrent (\textsf{AC})
+and allows arbitrary, long-range interactions between any qubits and concurrent
+operation of quantum gates.
+This corresponds to a complete graph with an edge between every pair of nodes.
+It is the model assumed in most quantum algorithms.
+
+A more specialized model restricts interactions to nearest-neighbor, two-qubit,
+concurrent gates (\textsf{NTC}) in a regular one-dimensional chain (\textsf{1D NTC}),
+which is sometimes called linear nearest-neighbor (\textsf{LNN}).
+This corresponds to a line graph. This is a more realistic model than
+\textsf{AC}, but correspondingly, circuits in this model may incur greater
+resource overheads.
+Traditionally, quantum architecture papers that
+implement Shor's factoring algorithm, have focused exclusively on
+nearest-neighbor constraints (see Section \ref{fpl-related} for a full
+bibliography). Since Shor's original algorithm was
+presented in \textsf{AC}, we expect an increase in circuit resources to
+simulate these same long-range interaction using the nearest-neighbor
+interactions of \textsf{NTC}.
+In this dissertation, we focus on designing a realistic nearest-neighbor circuit for running
+Shor's factoring algorithm on two-dimensional
+architectural models of a physical quantum device with nearest-neighbor
+interactions.
+
+
+To relieve movement congestion,
+we can consider a two-dimensional regular grid
+(\textsf{2D NTC}), where each
+qubit has four planar neighbors, and 
+there is an extra degree of freedom over the 1D model
+in which to move data.
+We can extend this model in two powerful ways, which are described in the next section.
+
+\subsection{\textsf{2D CCNTC}: Two-Dimensional Nearest-Neighbor Two-Qubit Concurrent Gates with Classical Controller}
+\label{subsec:2dccntc}
+
+The first extension allows arbitrary planar graphs
+with bounded degree, rather than a regular square lattice.
+Namely, we assume qubits lie in a plane and edges are not allowed to intersect.
+All qubits are accessible from above
+or below by control and measurement apparatus.
+Whereas 2D NTC conventionally assumes each qubit
+has four neighbors, we consider up to six neighbors in a roughly hexagonal
+layout. The edge length in this model is no more than twice the edge length
+in a regular 2D NTC lattice. The second extension is the realistic assumption
+that classical control (CC) can
+access every qubit in parallel, and we do not count these classical
+resources in our implementation since they are polynomially bounded. The
+classical controllers
+correspond to fast digital computers which are
+available in actual experiments and are necessary for constant-depth
+communication in the next section.
+
+We call an AC or NTC model augmented by these two extensions
+\textsf{CCAC} and \textsf{CCNTC}, respectively. Before we describe the
+third extension, let us formalize our model for \textsf{2D CCNTC}, with definitions that are (asymptotically) equivalent to those in 
+\cite{Rosenbaum2012}.
+
+\begin{definition}
+A \textsf{2D CCNTC} architecture consists of
+
+\begin{itemize}
+\item a quantum computer $QC$ which is represented by a planar graph $(V,E)$. A
+node $v \in V$ represents a qubit which is acted upon in a circuit, and an
+undirected edge $(u,v) \in E$ represents 
+an allowed two-qubit interaction between qubits $u,v \in V$. Each node has
+degree at most $6$.
+\item a universal gate set $\mathcal{G} = \{X, Z, H, T, T^{\dagger}, CNOT, MeasureZ\}$.
+
+\item a deterministic machine (classical controller) $CC$ that applies a sequence
+of concurrent gates in each of $D$ timesteps.
+\item In timestep $i$, $CC$ applies a set of
+gates $G_i = \{g_{i,j} \in \mathcal{G} \}$.
+Each $g_{i,j}$ operates in one of the following two ways:
+\begin{enumerate}
+\item It is a single-qubit gate from $\mathcal{G}$ acting on a single qubit $v_{i,j} \in V$
+\item
+It is the gate CNOT from $\mathcal{G}$ acting on two qubits $v^{(1)}_{i,j}, v^{(2)}_{i,j} \in V$ where
+$(v^{(1)}_{i,j}, v^{(2)}_{i,j}) \in E$
+\end{enumerate}
+All the $g_{i,j}$ can only operate on
+disjoint qubits for a given timestep $i$. We define the support of $G_i$
+as $V_i$, the set of all qubits acted upon during timestep $i$.
+
+\begin{equation}
+V_i = \bigcup_{j: g_{i,j} \in G_i} v_{i,j} \cup v^{(1)}_{i,j} \cup v^{(2)}_{i,j}
+\end{equation}
+
+\end{itemize}
+\end{definition}
+
+We can then define the three conventional circuit resources in this model.
+
+\begin{description}
+\item[circuit depth ($D$):] the number of concurrent timesteps.
+\item[circuit size ($S$):] the total number of non-identity gates applied
+from $\mathcal{G}$, equal to $\sum_{i=1}^D |G_i|$.
+\item[circuit width ($W$):] the total number of qubits operated upon by
+any gate, including inputs, outputs, and ancillae. It is equal to $| \bigcup_{i=1}^D V_i|$.
+\end{description}
+
+We observe that the following relationship holds between the circuit resources.
+The circuit size is bounded above by
+the product of circuit depth and circuit width, since in the worst case,
+every qubit is acted upon by a gate for every timestep of a circuit.
+The circuit depth is also bounded above by the size, since in the worst case,
+every gate is executed serially without any concurrency.
+
+\begin{equation}
+D \le S \le D\cdot W
+\label{eqn:depth-width}
+\end{equation}
+
+The set $\mathcal{G}$ includes measurement in the $Z$ basis, which is
+actually not a unitary operation but which may be slower than unitary
+operations in actual practice \cite{DiVincenzo2007}.
+Therefore we count it in our resource
+estimates.
+All other gates
+in $\mathcal{G}$ form a universal set of unitary
+gates \cite{Kitaev2002}.
+ In this paper we
+will treat the operations in $\mathcal{G}$ as \emph{elementary gates}.
+We can also define a Bell basis measurement using operations
+from $\mathcal{G}$. A circuit performing this measurement is shown
+in Figure \ref{fig:bell-measure} and has depth $4$,
+size $4$, and width $2$.
+
+\begin{figure*}[tb!]
+\begin{center}
+\begin{displaymath}
+\begin{array}{ccc}
+\Qcircuit @C=1em @R=1em {
+& \qw & \multimeasureD{1}{\mbox{Bell}} & \cw & \rstick{j} \\
+& \qw & \ghost{\mbox{Bell}}            & \cw & \rstick{k}
+}
+& \qquad \equiv \qquad &
+\Qcircuit @C=1em @R=1em {
+& \qw & \ctrl{1} & \qw & \gate{H} & \qw & \meter & \cw & \rstick{j} \\
+& \qw & \targfix & \qw & \qw      & \qw & \meter & \cw & \rstick{k}
+}
+\end{array}
+\end{displaymath}
+\centerline{}
+\caption{A circuit for measurement in the Bell state basis.}
+\label{fig:bell-measure}
+\end{center}\end{figure*}
+
+The third extension to our model, and the most significant, is to consider
+multiple disconnected planar graphs, each of which is a 2D CCNTC
+architecture. This is described in more detail in the next section.
+
+
+\subsection{Circuit Resource Comparisons}
+
+Counting gates from $\mathcal{G}$ as having unit size and unit depth
+is
+an overestimate compared to the model in \cite{Kutin2006}, in which a
+two-qubit gate has unit size and unit depth and
+absorbs the depth and size of any adjacent single-qubit gates. We intend
+for this more pessimistic estimate to reflect the practical difficulties
+in compiling these gates using a non-Clifford gate in a fault-tolerant way,
+such as the $T$ gate or the Toffoli gate
+\cite{Fowler2011}.
+%However, these difficulties may be mitigated by using
+%Toffoli gates directly, which can be fault-tolerantly implemented using
+%magic-state distillation according to recent works \cite{Eastin2012,Jones2013a}.
+
+In both our resource counting method and that of \cite{Fowler2004,Kutin2006}, multiple gates acting on disjoint qubits
+can occur in parallel during the same timestep. For each building block,
+from modular addition to modular multiplication and finally to modular
+exponentiation, we provide closed form equations upper-bounding the required circuit
+resources as a function of $n$, the size of the modulus $m$ to be factored.
+We will use the
+term \emph{numerical upper bound} to distinguish these formulae from asymptotic
+upper bounds.
+
+It is possible to reduce the numerical constants with more detailed analysis,
+which would be important for any physical implementation.
+However, we have chosen instead to simplify the number of terms in the formulae
+for the current work. We do not intend for these upper bounds to represent
+the optimal or final work in this area.
+
+The modular adder in Section \ref{sec:csa-mod-add} and its carry-save
+subcomponents only occur within a single module, so we only give their
+circuit resources in terms of circuit depth, circuit size, and circuit width. 
+For the modular multiplier in
+Section \ref{sec:csa-mod-mult} and the modular exponentiator in
+Section \ref{sec:modexp}, we also give circuit resources in
+terms of module depth, module size, and module width.
