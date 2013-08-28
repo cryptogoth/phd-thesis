@@ -1,6 +1,6 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Constant-depth Communication}
-\label{sec:cdc}
+\label{sec:intro-cdc}
 
 Communication, namely the \emph{moving} and \emph{copying} of quantum information, in nearest-neighbor quantum architectures is challenging.
 In this section we quote known results for teleportation and
@@ -66,15 +66,23 @@ These correction layers are not shown in the circuit.
 
 Although general cloning is
 impossible \cite{Nielsen2000}, the second challenge of copying information can be addressed by performing an unbounded quantum
-fanout operation:
+fanout (or just fanout) operation:
 $\ket{x,y_1,\ldots,y_n} \rightarrow \ket{x,y_1\oplus x, \ldots, y_n\oplus x}$.
 This is used in our arithmetic circuits when
 a single qubit needs to control (be entangled with) a large quantum register
-(called a \emph{fanout rail}).
-We employ a constant-depth circuit due to insight from
+(called a \emph{fanout rail}). The result of a fanout is an $n$-qubit cat
+state stored in the fanout rail, as shown in the following equation.
+
+\begin{equation}
+\normtwo (\ket{0}^{\otimes n} + \ket{1}^{\otimes n})
+\label{eqn:fanned-out}
+\end{equation}
+
+To implement the fanout from the basis $\mathcal{G}$,
+we employ a constant-depth circuit due to insight from
 measurement-based quantum computing \cite{Raussendorf2003}
-that relies on the creation of an
-$n$-qubit cat state \cite{Browne2009} which was communicated to
+that first relies on the creation of an
+$n$-qubit cat state \cite{Browne2009}. This method was communicated to
 us by Harrow and Fowler \cite{Harrow2012}.
 
 This circuit requires $O(1)$-depth, $O(n)$-size, and $O(n)$-width. Approximately
@@ -113,6 +121,34 @@ depth 2 and size 2. Also, given the symmetric nature of the cat state, there
 is an alternate set of Pauli corrections which would give the same state and
 is of equal size to the corrections given above.
 
+Reversing the fanout is an operation called \emph{unfanout}. Unfanout
+takes as input 
+the $n$-qubit cat state from Equation \ref{eqn:fanned-out} which is the result of a fanout.
+The output of unfanout, after Pauli corrections, is the product state
+consisting of all $\ket{0}$'s except for a single target qubit $\alpha\ket{0} + \beta\ket{1}$, which is in the
+same state as the original source qubit of the fanout.
+
+In the model of \cite{Hoyer2002}, the fanout and unfanout were identical, elementary
+operations. In Figure \ref{fig:cdf}, the given \textsf{CCNTC} fanout circuit is not its own self-inverse
+due to
+the one-way nature of the measurement and the assumption that ancillary qubits begin in the
+$\ket{0}$ state. Therefore, one major contribution of this current work is
+a \textsf{CCNTC} circuit which performs unfanout, or the inverse of the fanout circuit in
+Figure \ref{fig:cdf}. The relationship of our fanout and unfanout constructions and their
+effect on intermediate quantum states is shown below.
+\begin{equation}
+(\alpha\ket{0} + \beta\ket{1})\otimes\ket{0}^{\otimes n} \rightarrow^{fanout}
+\alpha\ket{0}^{\otimes n+1} + \beta\ket{1}^{\otimes n+1} \rightarrow^{unfanout}
+(\alpha\ket{0} + \beta\ket{1})\otimes\ket{0}^{\otimes n}
+\end{equation}
+We give a concrete example of our unfanout circuit in Figure \ref{fig:cdu}
+for $n=7$ which executes in constant depth on \textsf{2D CCNTC}.
+Note that the state in Equation \ref{eqn:fanned-out}
+is completely symmetric in that all qubits are
+equivalent entangled copies of each other. Therefore, the asymmetry 
+of the final target qubit is entirely determined by the unfanout circuit,
+which in this case selects the bottom qubit in the figure to be the target.
+
 \begin{figure*}[tb!]
 \begin{center}
 \begin{displaymath}
@@ -128,48 +164,14 @@ is of equal size to the corrections given above.
 \end{displaymath}
 \centerline{}
 \caption{A novel, constant-depth circuit for unbounded quantum unfanout on
-CCNTC, from the $7$-qubit entangled state $\alpha\ket{0}^{\otimes 7} + \beta\ket{1}^{\otimes 7}$ to the
+\textsf{CCNTC}, from the $7$-qubit entangled state $\alpha\ket{0}^{\otimes 7} + \beta\ket{1}^{\otimes 7}$ to the
 target product state $(\alpha\ket{0} + \beta\ket{1})\otimes\ket{0}^{\otimes 6}$.}
 \label{fig:cdu}
 \end{center}\end{figure*}
 
-Reversing the fanout is an operation called \emph{unfanout}. Unfanout
-takes as input 
-the following entangled $n$-qubit state which is the result of a fanout.
-
-\begin{equation}
-\normtwo (\ket{0}^{\otimes n} + \ket{1}^{\otimes n})
-\label{eqn:fanned-out}
-\end{equation}
-
-The output of unfanout, after Pauli corrections, is the product state
-consisting of all $\ket{0}$'s except for a single target qubit $\alpha\ket{0} + \beta\ket{1}$, which is in the
-same state as the original source qubit of the fanout.
-
-In the model of \cite{Hoyer2002}, the fanout and unfanout were identical, elementary
-operations. In Figure \ref{fig:cdf}, the given CCNTC fanout circuit is not its own self-inverse
-due to
-the one-way nature of the measurement and the assumption that ancillary qubits begin in the
-$\ket{0}$ state. Therefore, one major contribution of this current work is
-a \textsc{CCNTC} circuit which performs unfanout, or the inverse of the fanout circuit in
-Figure \ref{fig:cdf}. The relationship of our fanout and unfanout constructions and their
-effect on intermediate quantum states is shown below.
-\begin{equation}
-(\alpha\ket{0} + \beta\ket{1})\otimes\ket{0}^{\otimes n} \rightarrow^{fanout}
-\alpha\ket{0}^{\otimes n} + \beta\ket{1}^{\otimes n} \rightarrow^{unfanout}
-(\alpha\ket{0} + \beta\ket{1})\otimes\ket{0}^{\otimes n}
-\end{equation}
-We give a concrete example of our unfanout circuit in Figure \ref{fig:cdu}
-for $n=7$ which executes in constant depth on \textsf{2D CCNTC}.
-Note that the state in Equation \ref{eqn:fanned-out}
-is completely symmetric in that all qubits are
-equivalent entangled copies of each other. Therefore, the asymmetry 
-of the final target qubit is entirely determined by the unfanout circuit,
-which in this case selects the bottom qubit in the figure to be the target.
-
 The initial fanned out state lives in a $2$-dimensional subspace. The
 round of Hadamard gates increases its dimension to $2^n$, and the two
-interleaved layers of CNOTs in a sense ``disentangle'' the qubits from
+interleaved layers of $CNOT$s in a sense ``disentangle'' the qubits from
 one another, up to a Pauli $Z$ correction. This correction, on the
 final target qubit, is controlled by the parity of the classical measurements
 on every ``even'' qubit ($j_2$ and $j_4$ in the figure), excluding the 
@@ -180,13 +182,14 @@ the target qubit into a final $2$-dimensional subspace, which is the
 qubit $\alpha\ket{0} + \beta\ket{1}$.
 
 Although the circuit shown works for odd $n$, we can easily take into
-account even $n$ with an initial CNOT to ``uncopy'' one qubit from its
+account even $n$ with an initial $CNOT$ to ``uncopy'' one qubit from its
 neighbors. The unfanout circuit in Figure \ref{fig:cdu} is the
 functional inverse of the fanout circuit in 
-Figure \ref{fig:cdf}, which by itself only requires a 1D layout. However,
-it relies on the fanned-out qubits
-being teleported back into adjacent positions,
-which is only possible in an overall 2D layout. This layout is not shown but can easily be constructed.
+Figure \ref{fig:cdf}, which by itself only requires a \textsc{1D} layout.
+However, it relies on the fanned-out qubits
+being teleported back into adjacent positions (in constant depth),
+which is only possible in an overall \textsc{2D} layout.
+This layout is not shown but can easily be constructed.
 The target qubit of an unfanout is usually chosen to be in the same location
 as the source qubit of the previous, corresponding fanout. 
 The resources for unfanout are given in
@@ -217,4 +220,4 @@ From an experimental perspective, it is physically efficient to create
 a cat state in trapped ions using the M{\o}lmer-S{\o}rensen gate
 \cite{Sorensen2000}\cite{Benhelm2008}. However, the fanout circuit for
 the \textsf{2D CCNTCM} model would still be useful for other technologies, such
-as superconducting qubits on a 2D lattice.
+as superconducting qubits on a \textsc{2D} lattice.

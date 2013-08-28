@@ -1,0 +1,52 @@
+\section{Organization of Dissertation}
+\label{sec:intro-conclude}
+
+This introduction has motivated the field of quantum computing in
+general, and quantum architecture in particular, by placing
+Shor's factoring algorithm in context, both historically and
+technologically. We have provided all the background necessary
+to understand and reason about bases for quantum circuits,
+quantum architectural models, constant-depth communication,
+and hybrid architectural models.
+
+The remainder of this dissertation is organized to
+examine and expound upon the thesis statement above. In the first two
+chapters, we focus on improving the depth of factoring architectures
+in our hybrid 2D nearest-neighbor model using parallelization and
+constant-depth communication. In contrast to nearest-neighbor factoring
+architectures, we will refer to our results as hybrid factoring architectures,
+or simply hybrid factoring.
+Chapter \ref{chap:factor-polylog} presents our first main result:
+hybrid factoring in polylogarithmic depth.
+In a futher exponential improvement, Chapter \ref{chap:factor-sublog} presents 
+our second main result: hybrid factoring in sublogarithmic depth.
+
+At this point, we have run into a seemingly fundamental limit on improving
+hybrid factoring to be constant depth: the compilation of arbitrary
+single-qubit gates to a fault-tolerant basis. We examine this
+\emph{quantum compiling} limit in Chapter \ref{chap:qcompile}. First we
+present a background of quantum compiling and a survey of the current
+state-of-the-art in related literature to provide context. Then, in our
+third main result, we improve
+upon the Kitaev-Shen-Vyalyi procedure for generating quantum Fourier states,
+a vital subproblem for single-qubit quantum compiling.
+
+Finally, we change directions and question the approach of minimizing depth
+at all costs in the first two chapters. We argue that the most relevant
+tradeoff to consider along with decreasing depth is the increasing amount
+of error-correcting effort needed to maintain a useful quantum state for
+computation. Therefore we introduce a new resource called
+\emph{circuit coherence} in Chapter \ref{chap:coherence}. In this chapter,
+we explore circuit coherence and its relationship to other circuit resources
+in the hybrid model as well as to measurement-based quantum computing.
+We provide definitions and an algorithm for upper-bounding coherence for
+a given circuit. In our final
+main result, we show the connection between the circuit coherence for a
+layered quantum circuit and a reversible pebble game, for which existing
+time-space tradeoffs are known. This sets the stage for proving an
+asymptotic separation between circuit coherence and the circuit
+depth-width product for the special case of factoring.
+
+Finally we conclude our dissertation in Chapter \ref{chap:conclude} with a
+summary of our main results along with related open conjectures and
+directions for future research.

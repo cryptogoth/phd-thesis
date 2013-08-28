@@ -161,8 +161,6 @@ An
 undirected edge $(\overline{u},\overline{v}) \in \overline{E}$ represents an
 allowed teleportation from any qubit in module $\overline{u}$ to
 another qubit in module $\overline{v}$.
-\item All modules are restricted to be linear in the number of their qubits:
-$|V| = \Theta(n)$ for all $(V,E) \in \overline{V}$.
 \item a universal gate set $\mathcal{G} = \{X, Z, H, T, T^{\dagger}, CNOT,
 MeasureZ\}$
 for the qubits \emph{within the same} modules which is the same as for \textsf{2D CCNTC},
@@ -210,7 +208,8 @@ as defined above.
 modules
 \item[circuit width ($W$):] the total number of qubits, equal to the sum of all the module sizes.
 %, depicted in Figure \ref{fig:resources}:
-\item[module depth ($\overline{D}$):] the depth of consecutive teleportations between modules.
+\item[module depth ($\overline{D}$):] the depth of parallel teleportations
+of disjoint qubits between modules.
 \item[module size ($\overline{S}$):] the number of total qubits teleported between any two modules over all timesteps.
 \item[module width ($\overline{W}$):] the number of modules whose qubits are
 acted upon during any timestep.
@@ -234,10 +233,12 @@ this the \emph{module size} for the entire architecture. In this
 dissertation, we only consider \emph{uniformly-sized} \textsf{CCNTCM} architectures, one where
 the module size $\hat{W}$
 is upper-bounded by the average of all the module sizes, up to a constant
-factor.
+factor. In the definition below, we iterate over all modules $\overline{v}$
+in the set of all modules $\overline{V}$, where the number of modules is
+defined as $\overline{W} = |\overline{V}|$.
 
 \begin{equation}
-\hat{W} = \max_{i \in [\overline{W}]} W_i \equiv O(W / \overline{W})
+\hat{W} = \max_{\overline{v} \in \overline{V}} |v| \equiv O(W / \overline{W})
 \end{equation}
 
 We argue that module size is a key, configurable parameter of any
@@ -322,6 +323,7 @@ $\overline{W}$  & $W$ &                   &               & $\overline{W}$\\
 \caption{A comparison of simulating \textsf{AC} interactions on three
 other models. Unmarked entries signify $\overline{D}=\overline{S} = 0$ and
 $\overline{W} = 1$.}
+\label{tab:mod-comp}
 \end{table}
 
 A \textsf{2D NTC} circuit can only
@@ -335,7 +337,7 @@ $\tilde{S} = O(D\cdot W)$. Because sorting happens in-place,
 no additional ancillary qubits are needed ($\tilde{W} = 0$). 
 
 A \textsf{2D CCNTC} circuit achieves lowest-depth by using the constant-depth
-communication of Section \ref{subsec:intro-cdc} and Rosenbaum's
+communication of Section \ref{sec:intro-cdc} and Rosenbaum's
 construction for reordering qubits \cite{Rosenbaum2012}. Other, more
 efficient reorderings may be possible for a specific algorithm, but
 the Rosenbaum reordering is completely general. This doesn't
@@ -461,41 +463,4 @@ numerical results for our hybrid factoring architectures. We hope that
 the importance of
 both factoring and realistic hybrid architectures drive further work in this
 area.
-
-Note that 
-
- However, the main argument
-of Chapter \ref{chap:factor-polylog} is that our 
--The main point should be shifted, in the intro, and maybe elucidated here,
--that low-depth for factoring can be achieved by moving into 2D, but
--moreover that the width and size blowups can also be reduced with a
--hybrid 2D module.
--
--The model is hybrid, because instead of a single, contiguous 2D lattice,
--say with $W$ qubits and $S$ interactions between qubits (counting the
--general case of all single- and two-qubit gates as interactions),
--the computation is split among many communicating 2D lattices
--(say $\overline{W}$ of them), each containing $W/\overline{W}$ qubits
--each. In this new model, we argue that there are now a total number of
--qubit interactions $S'$ across all modules, where $S' \le S$, and at
--the same time we have introduced $\overline{S}$
--new, \emph{long-range} interactions between modules. Based on experimental
--data of create shared entanglement between separate ion traps (citation needed here),
--these long-range interactions are more expensive than short-range interactions
--within a module, and so we count them separately.
--
--Currently, we impose no constraints on the connectivity of the modules, which exist
--on a higher-level graph of modules. This is supported by current proposals
--(cite MUSIQC here). However, it is interesting to see what effect such constraints
--would have on a factoring architecture. We will return to this later.
-
--There are now two more things to study and discuss. One is the optimal setting
--of the module size $W/\overline{W}$, which in this paper we have set to
--be $O(n)$. The second is the connectivity constraints of the modules.
--
--For the first parameter, we have not rigorously shown that the optimal setting
--of $W / \overline{W}$ is 
--
--Now then, what is the effect of imposing constraints on module connectivity?
--
 

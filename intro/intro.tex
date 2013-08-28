@@ -54,7 +54,7 @@ of factoring.
 % II. Factoring
 The problem of factorization, or factoring,
 is simple to state and difficult to solve.
-Given an integer $m$, return the integers $\{p_1, \ldots, p_k\}$ whose
+Given an integer $m$, return the prime integers $\{p_1, \ldots, p_k\}$ whose
 product of their powers is $m$: $m = p_1^{\alpha_1}\cdots p_k^{\alpha_k}$.
 It is a beautiful theoretical problem posed by Carl Friedrich Gauss in 1801;
 although he is considered by many to be one of history's greatest mathematicians,
@@ -62,7 +62,8 @@ he was still unable to factor arbitrarily large numbers.
 His feelings on the subject can be paraphrased as follows:
 Factoring was the most important problem in the theory of
 numbers, itself the crown jewel of mathematics, itself
-the queen of the sciences.\footnote{\emph{Gauss zum Ged\"achtniss} (1856) by Wolfgang Sartorius von Waltershausen}
+the queen of the sciences.\footnote{\emph{Gauss zum Ged\"achtniss} (1856) by
+Wolfgang Sartorius von Waltershausen}
 However, all was not lost.
 It is a quirk of cryptography that the hardness of problems can be used
 to secure communication. Therefore, factoring also has immense practical
@@ -87,17 +88,18 @@ organizations interested in and able to afford such a device.
 How can we reason about the computational resources needed to solve the
 problem of factoring an $n$-bit number?
 Before 1994, the best known algorithm was the
-number field sieve (citation needed) which had a running time of
-$exp(\sqrt[3]{log n})$. This can be considered a pre-quantum (classical)
+number field sieve which has a running time of
+$exp(\sqrt[3]{c \log n (\log \log n)^2})$\cite{Lenstra1993}.
+This can be considered a pre-quantum (classical)
 algorithm in a pre-quantum era. Its sub-exponential (but still super-polynomial)
 running time is still considered intractable.
-This conjectured hardness is why users of the RSA cryptosystem above have faith
+This conjectured hardness is why users of the RSA cryptosystem have faith
 that their information is resistant to compromise, while at the same time
 giving hope to mathematicians of some future improvement.
 
 In 1994, Peter Shor fulfilled this hope in a landmark
-discovery that using the more general computational power of quantum physics,
-factoring could be performed in running time $O(n^3\log n \log\log n)$\cite{Shor1994}. 
+discovery using the more general computational power of quantum physics
+to factor in running time $O(n^3\log n \log\log n)$\cite{Shor1994}. 
 This kickstarted the entire field of quantum computing; united many
 disciplines including computer science, physics, engineering, and
 mathematics; and provided the foundation for this dissertation.
@@ -117,33 +119,37 @@ topic of this current work. However, given that these assumptions will
 eventually be realized, how can we optimize Shor's factoring algorithm?
 Quantum computation is now a rapidly maturing field, and we cannot provide
 an adequate background in this dissertation. The interested reader is referred
-to the standard textbook in the field by Nielsen and Chuang \cite{Nielsen2000}.
+to the standard textbook in the field by Nielsen and Chuang \cite{Nielsen2000}
+or the course notes by Dave Bacon\footnote{\url{http://www.cs.washington.edu/education/courses/cse599d/06wi/}},
+especially for a primer to quantum circuits.
 Building upon this background, we can provide an introduction into the subfield
 of quantum architecture with the current work.
 
 % III. Quantum circuits and quantum architecture
-First, we will introduce a quantum circuit.
 Analogous to the classical circuit model, a quantum circuit consists of
-a network, or graph, of gates operating on quantum bits (qubits). One can
-arrange this graph such that directed edges represent qubits and
-nodes represent reversible quantum gates with in-degree equal to out-degree.
-See Figure \ref{fig:intro-qcirc} for a representation of a quantum circuit
-as a special class of directed
-acyclic graphs. All flows travel from the input state of the qubits at the
-first timestep (on the far
-left) to the final output state on the same qubits in the last timestep
-(on the far right). This induces a natural definition of circuit depth,
-size, and width, which we will make more formal later.
+a network of gates operating on quantum bits (qubits). A quantum
+circuit possesses certain quantifiable properties known as \emph{resources},
+such the time it takes to complete (circuit depth), how many gates
+it contains (circuit size), and how many quantum bits it operates on
+(circuit width).
+See Figure \ref{fig:intro-qcirc} for the standard graphical representation of
+a quantum circuit with the resources marked, which will often refer to
+simply as depth, size, and width.
+We will define these resources more formally later.
+The horizontal
+lines represent qubits, which begin in some input state
+(usually initialized to all $\ket{0}$'s) on the left and ending in some
+output state on the right.
 
 \begin{figure}
 \begin{displaymath}
 \begin{matrix}% matrix for left braces
 %\vphantom{a}\\ 
-\coolleftbrace{Width = 5}{a \\ a \\ a \\ a \\ a \\ a \\ a \\ a }
+\coolleftbrace{Width = 5}{a \\ a \\ a \\ a }
 \end{matrix}%
 \begin{array}{c}
 \text{Size} = 15 \\
-\Qcircuit @C=0.5em @R=.5em { 
+\Qcircuit @C=01.0em @R=1.0em { 
 	& \gate{ } & \qw & \ctrl{1} & \gate{ } & \qw & \qw      & \ctrl{1} & \qw \\ 
 	& \gate{ } & \qw & \gate{ } & \ctrl{2} & \qw & \gate{ } & \gate{ } & \qw \\
 	& \gate{ } & \qw & \gate{ } & \qw      & \qw & \gate{ } & \qw      & \qw \\
@@ -152,31 +158,31 @@ size, and width, which we will make more formal later.
 	\gategroup{1}{2}{5}{9}{.7em}{--}
 }\\
 \xymatrix {
-  & & \text{Depth} = 5 \ar[ll] \ar[rr] & & \\
+  & & \text{Depth} = 5 \ar[l] \ar[r] & & \\
  }
 \end{array}
 \end{displaymath}
-\caption{A quantum circuit as a directed acyclic graph.}
+\caption{A quantum circuit with single-qubit and two-qubit gates and with
+the resources of depth, size, and width marked.}
 \label{fig:intro-qcirc}
 \end{figure}
 
 A quantum architecture is a quantum circuit with constraints. For this
 dissertation, we will concern ourselves with two main constraints:
-(1) the layout graph of qubits which constrain two-qubit gate interactions and
+(1) the layout graph of qubits which constrain a fixed two-qubit gate interactions and
 (2) the decomposition of all single-qubit gates to a discrete, finite,
-set of gates which are universal combined with a fixed two-qubit gate.
+set of gates which are universal when combined with a fixed two-qubit gate.
 Quantum architecture provides an intermediate layer in between working
-with actual hardware (the physical technology in a laboratory) and the
+with actual hardware (the physical technology in a laboratory) and
 abstract theory (algorithms divorced of all physical constraints).
 As quantum architects, we can optimize algorithms in a general way which
 is relevant to many kinds of laboratory experiments. At the same time,
 we can take into account the more complicated nature of physical devices
-to provide more pessimistic, accurate, and numerical resource estimates than
+to provide more pessimistic, accurate, numerical resource estimates than
 more high-level, theoretical results.
 
 The role of quantum architecture is two-fold. First,
-to quantify and improve the resources---such as circuit depth,
-size, and width mentioned above---required to run a quantum
+to quantify and improve the circuit resources required to run a quantum
 algorithm on a system of varying degrees of realism. Second, to provide
 tradeoffs between circuit resources, or conceptual knobs used to tune a
 particular implementation. This allows experimentalists to configure a
@@ -184,19 +190,18 @@ quantum architecture to meet their needs in a laboratory while allowing
 theorists to improve tradeoffs or design new algorithms which take
 physical constraints into account.
 
-
 % Point 
 We are now ready to state our thesis:
 
 \begin{quote}
-Studying the depth of quantum architectures can help us design quantum
+Studying the depth of quantum architectures will help us design quantum
 computers that can solve
 human problems with a human lifetime.
 \end{quote}
 
 In particular ``a human lifetime'' means on the order of 50 years, which is
-the remaining expected lifetime for a human male of the same age as the
-author. This not only means that an implementation of a quantum architecture
+the remaining expected lifetime for a human male of the author's age.
+This not only means that an implementation of a quantum architecture
 in a laboratory should complete within 50 years, but that all resources
 needed to build and power such a laboratory should also be acquirable in
 50 years.
@@ -228,13 +233,20 @@ Our results will represent progress towards a more realistic, configurable
 quantum factoring architecture.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\section{Organization of Dissertation}
-\label{sec:intro-org}
 
 The remainder of this chapter is devoted to the necessary background needed
 to understand quantum architecture in general and factoring architectures
 in particular. Quantum architecture has potentially many concerns, but we
 focus on two of them: interaction distance and fault-tolerant quantum compiling.
+Most importantly, we do not examine the resources required for error-correction
+and we assume that all qubits are logical qubits and the operations on them
+are logical operations. We also do not model properties that are extremely
+specific to physical technologies, although eventually a
+fault-tolerant quantum architecture will need to commit to such a technology.
+Readers interested in integrated, technology-specific papers are referred
+to Jones et al. for quantum dots \cite{Jones2010}
+and Kreger-Stickles and Oskin for ion traps \cite{Kreger-Stickles2008}.
+
 Without loss of generality, the gates of a quantum circuit can be reduced to
 single-qubit and two-qubit gates, called a circuit basis.
 In fact, we can use a fixed two-qubit gate
@@ -255,44 +267,10 @@ devoted to communication than to computation. This tradeoff is examined
 in more detail in Section \ref{sec:intro-modules}
 by introducing the notion of a module and hybrid nearest-neighbor
 quantum architectures.
-
-After this chapter, the remainder of this dissertation is organized to
-examine and expound upon the thesis statement above. In the first two
-chapters, we focus on improving the depth of factoring architectures
-in our hybrid 2D nearest-neighbor model using parallelization and
-constant-depth communication. In contrast to nearest-neighbor factoring
-architectures, we will refer to our results as hybrid factoring architectures,
-or simply hybrid factoring.
-Chapter \ref{chap:factor-polylog} presents our first main result:
-hybrid factoring in polylogarithmic depth.
-Chapter \ref{chap:factor-sublog} presents a further exponential improvement
-in our second main result: hybrid factoring in sublogarithmic depth.
-
-At this point, we have run into a seemingly fundamental limit on improving
-hybrid factoring to be constant depth: the compilation of arbitrary
-single-qubit gates to a fault-tolerant basis. We examine this
-\emph{quantum compiling} limit in Chapter \ref{chap:qcompile}. First we
-present a background of quantum compiling and a survey of the current
-state-of-the-art in related literature to provide context. Then, in our
-third main result, we improve
-upon the Kitaev-Shen-Vyalyi procedure for generating quantum Fourier states,
-a vital subproblem for single-qubit quantum compiling.
-
-Finally, we change directions and question the approach of minimizing depth
-at all costs in the first two chapters. We argue that the most relevant
-tradeoff to consider along with decreasing depth is the increasing amount
-of error-correcting effort needed to maintain a useful quantum state for
-computation. Therefore we introduce a new resource called
-\emph{circuit coherence} in Chapter \ref{chap:coherence}. In this chapter,
-we explore circuit coherence and its relationship to other circuit resources
-in the hybrid model as well as other models of computation. In our final
-main result, we show the connection between the circuit coherence for a
-layered quantum circuit and a reversible pebble game, for which existing
-time-space tradeoffs are known.
-
-Finally we conclude our dissertation in Chapter \ref{chap:conclude} with a
-summary of our main results along with related open conjectures and
-directions for future research.
+Finally, Section \ref{sec:intro-conclude}
+gives an overview of the remaining chapters in this dissertation,
+placing them within the context of this introduction and our thesis statement
+above.
 
 \input{intro/intro-basis.tex}
 
@@ -301,3 +279,5 @@ directions for future research.
 \input{intro/intro-cdc.tex}
 
 \input{intro/intro-modules.tex}
+
+\input{intro/intro-conclude.tex}
