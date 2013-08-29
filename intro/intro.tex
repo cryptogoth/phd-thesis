@@ -2,14 +2,15 @@
 \label{chap:intro}
 
 % I. Quantum computing and perspectives
-The combination of existing scientific disciplines provides fertile ground
-for the development of entirely new scientific discoveries. Computer science
-and quantum physics are now coming together in this way to give birth to
-quantum computing. Computer science and quantum physics originated
-as contemporaries in the early part of the 20th century, culminating in
+The combination of existing scientific disciplines has often been the
+cradle and the playground for entirely new discoveries.
+Quantum computing is one such unification of two seemingly disparate
+fields.
+ Computer science and quantum physics originated
+as contemporaries in the early part of the 20th century, both culminating in
 technology that decisively ended World War II. They have remained
 largely independent until recently, but the common thread connecting them
-has always existed.
+has always existed: engineering.
 
 From the perspective of computer science, engineering is problem-driven.
 We humans wish to solve a problem, like calculating ballistic weapon
@@ -18,26 +19,30 @@ cards. To calculate,
 we need to perform fast
 arithmetic on stored numbers, for which we need to design devices in a
 certain configuration, for which we need certain materials from nature.
-At heart, it is the study of structured problem-solving which historically
-has a strong
+At heart, computer science
+is the study of structured problem-solving which historically
+has had a strong
 mechanical bias. This perspective asks the questions: what do we want to do,
-and how can we
-do it? It is like a child going into a LEGO store with a pre-existing plan:
+what is desirable, and how can we
+build it? It is like a child going into a LEGO\footnote{Trademarked.}
+store with a pre-existing plan:
 the child only buys the bricks needed, or orders custom bricks.
 It is an efficient plan for brick procurement, but not
-necessarily creative in exploring the space of all possible LEGO designs.
+necessarily creative in exploring the space of all possible designs.
 
 From the perspective of quantum physics, engineering is phenomena-based.
 We humans wish to describe reality and observe nature. We discover objects
-and effects in nature, and afterwards we may
+and effects in nature, and only afterwards may we
 then discover that they
-can be useful in performing some useful task. An example is
-the discovery of quantum tunnelling and its subsequent use to build a
-field-effect transistor (FET) for digital electronics. This perspective asks the
-questions: what is available to us, and what could we do it? It is like a child
+can perform some useful task. An example is
+the discovery of quantum tunneling and its subsequent use to build a
+field-effect transistor (FET) for digital electronics.
+Physics asks the
+questions: what is available to us, what is possible, and what could we do it?
+It is like a child
 going into a LEGO store with no pre-conceived plan, investigating all the
 parts, dreaming up ways to use them, or even delving into custom brick design
-as a more fundamental level. This will generate completely new
+at a more fundamental level. This will generate completely new
 designs and models, but it is much slower than brick-shopping.
 
 These perspectives are intertwined and serve complementary purposes,
@@ -46,8 +51,7 @@ between the two of them. In our transistor example, we probably would not
 have thought to build a FET if we had not already needed fast electrical
 switching, for which vacuum tubes were proving inadequate. Moreover, we can
 go beyond using quantum physics to simulate a classical device. There is
-a remarkable example
-of a new class of algorithms designed using the building blocks of
+a remarkable new class of algorithms designed using the building blocks of
 quantum physics. The first instance of such an algorithm solves the problem
 of factoring.
 
@@ -60,13 +64,13 @@ It is a beautiful theoretical problem posed by Carl Friedrich Gauss in 1801;
 although he is considered by many to be one of history's greatest mathematicians,
 he was still unable to factor arbitrarily large numbers. 
 His feelings on the subject can be paraphrased as follows:
-Factoring was the most important problem in the theory of
+``Factoring was the most important problem in the theory of
 numbers, itself the crown jewel of mathematics, itself
-the queen of the sciences.\footnote{\emph{Gauss zum Ged\"achtniss} (1856) by
+the queen of the sciences.''\footnote{\emph{Gauss zum Ged\"achtniss} (1856) by
 Wolfgang Sartorius von Waltershausen}
-However, all was not lost.
-It is a quirk of cryptography that the hardness of problems can be used
-to secure communication. Therefore, factoring also has immense practical
+However,
+it is a quirk of cryptography that the hardness of problems can be used as
+an advantage. Therefore, factoring also has immense practical
 usefulness as the basis of the RSA cryptosystem, the most widely-used
 cryptosystem around the world and on the internet.
 
@@ -76,8 +80,10 @@ citizens. The importance to citizens is the ability to choose security
 parameters so that their correspondence is protected from each other and
 their governments for a limited time.
 The organizers of the popular democratic uprisings in the Middle East known
-as the Arab Spring in 2011 definitely benefitted from using a cryptosystem that was
-secure against compromise given the resources of the regimes that they toppled.
+as the Arab Spring in 2011 definitely benefited from using cryptosystems.
+RSA was
+secure against compromise given the resources of the regimes that were
+toppled.
 A government able to hack the organizers' Twitter accounts or Facebook pages
 could misdirect protest actions or identify activists for imprisonment.
 Similarly, being able to accurately estimate the resources needed to factor
@@ -89,23 +95,25 @@ How can we reason about the computational resources needed to solve the
 problem of factoring an $n$-bit number?
 Before 1994, the best known algorithm was the
 number field sieve which has a running time of
-$exp(\sqrt[3]{c \log n (\log \log n)^2})$\cite{Lenstra1993}.
-This can be considered a pre-quantum (classical)
-algorithm in a pre-quantum era. Its sub-exponential (but still super-polynomial)
-running time is still considered intractable.
-This conjectured hardness is why users of the RSA cryptosystem have faith
-that their information is resistant to compromise, while at the same time
+$exp(\sqrt[3]{c \log n (\log \log n)^2})$ \cite{Lenstra1993}.
+This can be considered a pre-quantum
+algorithm in a pre-quantum era, when computer scientists could remain
+unaware of their future with quantum physics.
+The number field sieve's sub-exponential (but still super-polynomial)
+running time is intractable.
+This conjectured hardness allows users and attackers of the RSA cryptosystem
+to experience the kind of dramatic tension above while at the same time
 giving hope to mathematicians of some future improvement.
 
 In 1994, Peter Shor fulfilled this hope in a landmark
 discovery using the more general computational power of quantum physics
-to factor in running time $O(n^3\log n \log\log n)$\cite{Shor1994}. 
+to factor in polynomial time: $O(n^3\log n \log\log n)$ \cite{Shor1994}. 
 This kickstarted the entire field of quantum computing; united many
 disciplines including computer science, physics, engineering, and
 mathematics; and provided the foundation for this dissertation.
 The computational model in which this remarkable feat was achieved
 made some assumptions about quantum computing devices, which are now
-standard in the field.
+standard within the field but which engender skepticism outside it.
 %However, many remain skeptical of this achievement due to the perceived
 %plausibility of these assumptions, which is why RSA still remains the
 %most widely-used cryptosystem in the world.\footnote{Despite recommendations
@@ -114,16 +122,10 @@ These assumptions include robust error-correction (to preserve fragile
 quantum information against environmental noise) and high-fidelity
 quantum gates (to exert reliable classical control).
 Whether these assumptions can be
-realized is an active area of experimental physics research, and is not the
+realized is an active area of experimental physics research, but this is not the
 topic of this current work. However, given that these assumptions will
 eventually be realized, how can we optimize Shor's factoring algorithm?
-Quantum computation is now a rapidly maturing field, and we cannot provide
-an adequate background in this dissertation. The interested reader is referred
-to the standard textbook in the field by Nielsen and Chuang \cite{Nielsen2000}
-or the course notes by Dave Bacon\footnote{\url{http://www.cs.washington.edu/education/courses/cse599d/06wi/}},
-especially for a primer to quantum circuits.
-Building upon this background, we can provide an introduction into the subfield
-of quantum architecture with the current work.
+To answer this question, we need to characterize quantum circuits.
 
 % III. Quantum circuits and quantum architecture
 Analogous to the classical circuit model, a quantum circuit consists of
@@ -138,10 +140,10 @@ simply as depth, size, and width.
 We will define these resources more formally later.
 The horizontal
 lines represent qubits, which begin in some input state
-(usually initialized to all $\ket{0}$'s) on the left and ending in some
+(usually initialized to all $\ket{0}$'s) on the left and resulting in some
 output state on the right.
 
-\begin{figure}
+\begin{figure}{htb!}
 \begin{displaymath}
 \begin{matrix}% matrix for left braces
 %\vphantom{a}\\ 
@@ -163,11 +165,22 @@ output state on the right.
 \end{array}
 \end{displaymath}
 \caption{A quantum circuit with single-qubit and two-qubit gates and with
-the resources of depth, size, and width marked.}
+resources of depth, size, and width.}
 \label{fig:intro-qcirc}
 \end{figure}
 
-A quantum architecture is a quantum circuit with constraints. For this
+Because quantum computation is a rapidly maturing field, we cannot provide
+an adequate background to quantum circuits from first principles for
+novices. The interested beginner is referred
+to the standard textbook in the field by Nielsen and Chuang \cite{Nielsen2000}
+or the course notes by Dave
+Bacon,\footnote{\url{http://www.cs.washington.edu/education/courses/cse599d/06wi/}}
+especially for a primer on quantum circuits.
+Building upon this background, we can provide an introduction into the subfield
+of quantum architecture with the current work.
+
+Quantum architecture is both a thing and a study of that thing.
+A quantum architecture (as a thing) is a quantum circuit with constraints. For this
 dissertation, we will concern ourselves with two main constraints:
 (1) the layout graph of qubits which constrain a fixed two-qubit gate interactions and
 (2) the decomposition of all single-qubit gates to a discrete, finite,
@@ -181,26 +194,26 @@ we can take into account the more complicated nature of physical devices
 to provide more pessimistic, accurate, numerical resource estimates than
 more high-level, theoretical results.
 
-The role of quantum architecture is two-fold. First,
+The role of quantum architecture (as a study) is two-fold. First,
 to quantify and improve the circuit resources required to run a quantum
 algorithm on a system of varying degrees of realism. Second, to provide
 tradeoffs between circuit resources, or conceptual knobs used to tune a
 particular implementation. This allows experimentalists to configure a
-quantum architecture to meet their needs in a laboratory while allowing
-theorists to improve tradeoffs or design new algorithms which take
+quantum architecture (the thing) to meet their needs in a laboratory while
+allowing theorists to improve tradeoffs or design new algorithms which take
 physical constraints into account.
 
 % Point 
-We are now ready to state our thesis:
+We are now ready to state the thesis of this dissertation:
 
 \begin{quote}
 Studying the depth of quantum architectures will help us design quantum
-computers that can solve
-human problems with a human lifetime.
+computers to solve
+human problems within a human lifetime.
 \end{quote}
 
 In particular ``a human lifetime'' means on the order of 50 years, which is
-the remaining expected lifetime for a human male of the author's age.
+the expected expected lifetime for the author.
 This not only means that an implementation of a quantum architecture
 in a laboratory should complete within 50 years, but that all resources
 needed to build and power such a laboratory should also be acquirable in
@@ -209,7 +222,8 @@ needed to build and power such a laboratory should also be acquirable in
 ``Human problems'' in this dissertation is exemplified by the special-case of
 factoring. We will optimize the circuit resources for Shor's algorithm mapped
 to a specific quantum architecture with the hope of discovering general
-principles that can be applied to other quantum algorithms in the future.
+principles that can be applied to other quantum algorithms (and other human
+problems) in the future.
 
 ``Studying the depth'' of quantum architectures is meant to
 make progress towards answering several questions.
@@ -222,8 +236,9 @@ resources? Finally, what is the most relevant of these tradeoffs?
 Achieving minimal depth may require materials or energy beyond
 human abilities to acquire within the 50 years quoted above. Even ignoring the
 important concerns of scalable error-correction and high-fidelity control,
-we can ask the question ``Can a quantum factoring machine be built?'' in
-terms of physical resources alone.
+we can already answer the question ``Can a quantum factoring machine be built?''
+by upper-bounding physical resources for the best known architectures,
+the ones presented in this work.
 
  Therefore,
 in support of this thesis,
@@ -240,10 +255,12 @@ in particular. Quantum architecture has potentially many concerns, but we
 focus on two of them: interaction distance and fault-tolerant quantum compiling.
 Most importantly, we do not examine the resources required for error-correction
 and we assume that all qubits are logical qubits and the operations on them
-are logical operations. We also do not model properties that are extremely
+are logical operations. However, our results will also directly benefit
+error-correcting architectures. We also do not model properties that are extremely
 specific to physical technologies, although eventually a
 fault-tolerant quantum architecture will need to commit to such a technology.
-Readers interested in integrated, technology-specific papers are referred
+Readers interested in integrated, fault-tolerant,
+technology-specific papers are referred
 to Jones et al. for quantum dots \cite{Jones2010}
 and Kreger-Stickles and Oskin for ion traps \cite{Kreger-Stickles2008}.
 
@@ -255,9 +272,10 @@ Section \ref{sec:intro-basis} provides the necessary background for
 understanding circuit bases and single-qubit gates,
 which do not impose any constraints on
 which qubits can interact with each other. Section \ref{sec:intro-arch}
-defines quantum architectures and architectural models in more detail using
-both a fixed, finite basis in both single-qubit and two-qubit operations
-and imposing connectivity constraints on the two-qubit operations.
+defines quantum architectures and architectural models in more detail using a
+fixed, finite basis
+and imposing connectivity constraints on two-qubit gates (also
+described as \emph{interactions}).
 Section \ref{sec:intro-cdc} introduces recent constant-depth techniques
 for simulating long-distance interactions with nearest-neighbor
 interactions, using linear size and width. Constant-depth communication

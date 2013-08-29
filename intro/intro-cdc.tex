@@ -39,7 +39,34 @@ These correction layers are not shown in the circuit.
 \label{fig:cdt}
 \end{center}\end{figure*}
 
-\begin{figure*}[tb!]
+Although general cloning is
+impossible \cite{Nielsen2000}, the second challenge of copying information can be addressed by performing an unbounded quantum
+fanout (or just fanout) operation:
+$\ket{x,y_1,\ldots,y_n} \rightarrow \ket{x,y_1\oplus x, \ldots, y_n\oplus x}$.
+This is used in our arithmetic circuits when
+a single qubit needs to control (be entangled with) a large quantum register
+(called a \emph{fanout rail}). The result of a fanout is an $n$-qubit
+\emph{cat state} stored in the fanout rail, as shown in the following equation.
+
+\begin{equation}
+\normtwo (\ket{0}^{\otimes n} + \ket{1}^{\otimes n})
+\label{eqn:fanned-out}
+\end{equation}
+
+To implement the fanout from the basis $\mathcal{G}$,
+we employ a constant-depth circuit due to insight from
+measurement-based quantum computing \cite{Raussendorf2003}
+that first relies on the creation of an
+$n$-qubit cat state \cite{Browne2009}. This method was communicated to
+us by Harrow and Fowler \cite{Harrow2012}.
+This circuit requires $O(1)$-depth, $O(n)$-size, and $O(n)$-width. Approximately
+two-thirds of the ancillae are reusable and can be reset to $\ket{0}$ after
+being measured. Numerical upper bounds are given in Table \ref{tab:cd-resources}.
+The constant-depth fanout circuit is shown in Figure \ref{fig:cdf}
+for the case of fanning out a given single-qubit state
+$\ket{\psi} = \alpha\ket{0} + \beta\ket{1}$ to four qubits.
+
+\begin{figure}[tb!]
 \begin{center}
 \begin{displaymath}
 %& \qquad \qquad \qquad &
@@ -62,34 +89,9 @@ These correction layers are not shown in the circuit.
 \centerline{}
 \caption{Constant-depth circuits based on \protect{\cite{Broadbent2007,Browne2009}} for fanout \protect{\cite{Harrow2012}} of one qubit to $n=4$ entangled copies.}
 \label{fig:cdf}
-\end{center}\end{figure*}
+\end{center}
+\end{figure}
 
-Although general cloning is
-impossible \cite{Nielsen2000}, the second challenge of copying information can be addressed by performing an unbounded quantum
-fanout (or just fanout) operation:
-$\ket{x,y_1,\ldots,y_n} \rightarrow \ket{x,y_1\oplus x, \ldots, y_n\oplus x}$.
-This is used in our arithmetic circuits when
-a single qubit needs to control (be entangled with) a large quantum register
-(called a \emph{fanout rail}). The result of a fanout is an $n$-qubit cat
-state stored in the fanout rail, as shown in the following equation.
-
-\begin{equation}
-\normtwo (\ket{0}^{\otimes n} + \ket{1}^{\otimes n})
-\label{eqn:fanned-out}
-\end{equation}
-
-To implement the fanout from the basis $\mathcal{G}$,
-we employ a constant-depth circuit due to insight from
-measurement-based quantum computing \cite{Raussendorf2003}
-that first relies on the creation of an
-$n$-qubit cat state \cite{Browne2009}. This method was communicated to
-us by Harrow and Fowler \cite{Harrow2012}.
-
-This circuit requires $O(1)$-depth, $O(n)$-size, and $O(n)$-width. Approximately
-two-thirds of the ancillae are reusable and can be reset to $\ket{0}$ after
-being measured. Numerical upper bounds are given in Table \ref{tab:cd-resources}.
-The constant-depth fanout circuit is shown in Figure \ref{fig:cdf} for the case of fanning out a given single-qubit state
-$\ket{\psi} = \alpha\ket{0} + \beta\ket{1}$ to four qubits.
 The technique works by creating multiple small
 cat states of a fixed size (in this case, three qubits), linking them
 together into a larger cat state of unbounded size with Bell basis measurements,
@@ -137,9 +139,9 @@ a \textsf{CCNTC} circuit which performs unfanout, or the inverse of the fanout c
 Figure \ref{fig:cdf}. The relationship of our fanout and unfanout constructions and their
 effect on intermediate quantum states is shown below.
 \begin{equation}
-(\alpha\ket{0} + \beta\ket{1})\otimes\ket{0}^{\otimes n} \rightarrow^{fanout}
-\alpha\ket{0}^{\otimes n+1} + \beta\ket{1}^{\otimes n+1} \rightarrow^{unfanout}
-(\alpha\ket{0} + \beta\ket{1})\otimes\ket{0}^{\otimes n}
+(\alpha\ket{0} + \beta\ket{1})\otimes\ket{0}^{\otimes n-1} \rightarrow^{fanout}
+\alpha\ket{0}^{\otimes n} + \beta\ket{1}^{\otimes n} \rightarrow^{unfanout}
+(\alpha\ket{0} + \beta\ket{1})\otimes\ket{0}^{\otimes n-1}
 \end{equation}
 We give a concrete example of our unfanout circuit in Figure \ref{fig:cdu}
 for $n=7$ which executes in constant depth on \textsf{2D CCNTC}.
@@ -163,7 +165,8 @@ which in this case selects the bottom qubit in the figure to be the target.
 }
 \end{displaymath}
 \centerline{}
-\caption{A novel, constant-depth circuit for unbounded quantum unfanout on
+\caption[A novel, constant-depth circuit for unbounded quantum unfanout on
+\textsf{CCNTC}]{A novel, constant-depth circuit for unbounded quantum unfanout on
 \textsf{CCNTC}, from the $7$-qubit entangled state $\alpha\ket{0}^{\otimes 7} + \beta\ket{1}^{\otimes 7}$ to the
 target product state $(\alpha\ket{0} + \beta\ket{1})\otimes\ket{0}^{\otimes 6}$.}
 \label{fig:cdu}
@@ -219,5 +222,5 @@ Table \ref{tab:cd-resources}.
 From an experimental perspective, it is physically efficient to create
 a cat state in trapped ions using the M{\o}lmer-S{\o}rensen gate
 \cite{Sorensen2000}\cite{Benhelm2008}. However, the fanout circuit for
-the \textsf{2D CCNTCM} model would still be useful for other technologies, such
+the \textsf{CCNTCM} model would still be useful for other technologies, such
 as superconducting qubits on a \textsc{2D} lattice.

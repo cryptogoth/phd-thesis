@@ -9,7 +9,7 @@ the introduction more formal here.
 
 \begin{definition}
 A quantum architecture consists of a quantum circuit $C$ with
-two main constaints.
+two main constraints.
 
 \begin{enumerate}
 \item a fault-tolerant basis (fixed, finite) basis of
@@ -31,14 +31,14 @@ graph, which may be common to many quantum architectures. Models allow us
 to abstract our study of quantum architectures further and reason about
 general properties of the constraints themselves.
 We say that an architecture is implemented \emph{on} such-and-such a model,
-or that a model is meant to mimic a physical technology such as
+or that a model is meant to closely correspond to a physical technology such as
 superconducting qubits.
 
 In the rest of this section, we give definitions of
 several important models that are common in the literature and how they are
 related to each other.
 In particular, we define the
-model \textsf{2D CCNTC} as a foundation for a new \emph{hybrd}
+model \textsf{2D CCNTC} as a foundation for a new \emph{hybrid}
 model that we
 introduce in Section \ref{sec:intro-modules}. Finally, we define how
 circuit resources are counted using \textsf{2D CCNTC} in the rest of this
@@ -55,24 +55,21 @@ The layout graph is a complete graph with an edge between every pair of nodes.
 It is the model assumed in most abstract quantum algorithms. 
 The circuit basis
 for this model is arbitrary (infinite) single-qubit operations and some
-two-qubit operation that completes it as a universal gateset (usually CNOT).
+two-qubit operation that completes it as a universal gateset (usually $CNOT$).
 All operations are usually counted to have unit depth and unit size.
 
 A more specialized model restricts interactions to nearest-neighbor, two-qubit,
 concurrent gates (\textsf{NTC}). This is a submodel of \textsf{AC} in that it
 has the same circuit basis, but loosens a restriction on the layout graph,
-which no longer has to be a complete graph. All \textsf{AC} architectures
+which no longer has to be complete. All \textsf{AC} architectures
 are also \textsf{NTC} architectures, but not vice versa.
 
 In a more realistic restriction of \textsf{NTC}, we confine the qubits to
 lie in a regular one-dimensional chain. We call this new model
-\textsf{1D NTC}, and commonly also 
+\textsf{1D NTC} or more commonly
 linear nearest-neighbor (\textsf{LNN}).
 The layout graph is now a line graph.
-Traditionally, quantum architecture papers that
-implement Shor's factoring algorithm, have focused exclusively on
-nearest-neighbor constraints (see Section \ref{sec:fpl-related} for a full
-bibliography). Since Shor's original algorithm was
+Since Shor's original algorithm was
 presented in \textsf{AC} \cite{Shor1994}, we expect an increase in circuit resources to
 simulate these same long-range interaction using the nearest-neighbor
 interactions of \textsf{NTC}. This model more realistically captures multiple
@@ -80,13 +77,14 @@ ion traps that are arranged in a linear chain, perhaps one where each
 trap encodes a single logical qubit.
 
 An even more realistic model is described in Beckman et al.
-\cite{Beckman1996} called \textsf{Ion Trap}, which unsurprisingly,
+\cite{Beckman1996} called \textsf{ION TRAP}, which unsurprisingly,
 corresponds to a single linear trap where all ions are coupled by
-common vibrational modes\cite{Cirac1995}.
+common vibrational modes \cite{Cirac1995}.
 The layout graph consists of a star topology,
 where all ion qubits are connected to the motional qubit, and the basis
 again consists of arbitrary single-qubit gates and fixed two qubit
-gates (usually CNOT or its equivalent in another basis). All gates require
+gates (usually $CNOT$ or the controlled phase gate $\Lambda(Z)$).
+All gates require
 a constant number of laser pulses to implement, although some are more
 expensive than others. An interesting consequence of this model is that
 multiply-controlled single-qubit gates of the form $\Lambda^n(U)$ for
@@ -102,16 +100,14 @@ qubit has four planar neighbors, and
 there is an extra degree of freedom over the \textsc{1D} model
 in which to move data. While this extra degree of freedom allows us to
 decrease depth over \textsf{1D NTC}, it possible to improve it further.
-To allow this, we extend this model in two powerful yet still physically
-realistic ways. We describe these in the next section.
+To allow this, we extend this model in three powerful yet still physically
+realistic ways, described in the next section.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{The Model \textsf{2D CCNTC}}
 \label{subsec:2dccntc}
 
-
-Two-dimensional models and their
-extensions are the focus of this dissertation,
+Two-dimensional models are the focus of this dissertation,
 especially our factoring architectures in Chapters \ref{chap:factor-polylog}
 and \ref{chap:factor-sublog}.
 
@@ -124,6 +120,7 @@ Whereas \textsf{2D NTC} conventionally assumes each qubit
 has four neighbors, we consider up to six neighbors in a roughly hexagonal
 layout. The edge length in this model is no more than twice the edge length
 in a regular \textsf{2D NTC} lattice.
+
 The second extension is the realistic assumption
 that classical control (CC) can
 access every qubit in parallel, and we do not count these classical
@@ -142,6 +139,20 @@ regardless of the connectivity of the layout graph.
 Let us now formalize our model for \textsf{2D CCNTC},
 with definitions that are (asymptotically) equivalent to those in 
 \cite{Rosenbaum2012}.
+
+In our third extension, we restrict our gate set to be the
+fault-tolerant, finite, fixed basis $\mathcal{G}$ defined
+in the previous section and repeated below.
+Traditionally, quantum architecture papers that
+implement Shor's factoring algorithm have focused exclusively on
+nearest-neighbor constraints for the layout graph (see Section \ref{sec:fpl-related} for a full
+bibliography). A crucial difference in our architectures is
+the use of this more realistic circuit basis.
+We retain Rosenbaum's name \textsf{2D CCNTC}, although
+his work does not necessarily use the same basis.
+
+Now we define our formal model combining these three
+extensions.
 
 \begin{definition}
 A \textsf{2D CCNTC} architecture consists of
@@ -188,7 +199,8 @@ any gate, including inputs, outputs, and ancillae. It is equal to $| \bigcup_{i=
 
 We observe that the following relationship holds between the circuit resources.
 The circuit size is bounded above by
-the product of circuit depth and circuit width, since in the worst case,
+the product of circuit depth and circuit width, henceforce known as the
+\emph{depth-width product}. This inequality holds since in the worst case,
 every qubit is acted upon by a gate for every timestep of a circuit.
 The circuit depth is also bounded above by the size, since in the worst case,
 every gate is executed serially without any concurrency.
@@ -236,7 +248,7 @@ size $4$, and width $2$.
 
 Counting gates from $\mathcal{G}$ as having unit size and unit depth
 is
-an overestimate compared to the models \textsf{NTC} and \text{AC} which are
+an overestimate compared to the models \textsf{NTC} and \textsf{AC} which are
 used in previous works.
 We intend
 for this more pessimistic estimate to reflect the practical difficulties
@@ -249,7 +261,7 @@ superior architectures.
 Next, we will show how the
 seemingly simple basis $\mathcal{G}$ can nevertheless allow it to simulate
 long-range interactions on a contiguous lattice using some
-communication buildling blocks.
+communication building blocks.
 For each building block, including those for arithmetic in
 Chapter \ref{chap:factor-polylog},
 we provide closed-form equations upper-bounding the required circuit

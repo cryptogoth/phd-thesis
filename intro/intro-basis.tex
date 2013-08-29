@@ -5,8 +5,9 @@ To compile, or implement, arbitrary quantum algorithms, we must construct circui
 out of gates from a universal set, which we call a \emph{circuit basis},
 or just \emph{basis}.
 This should not be confused with a basis for a vector space.
-Therefore, we will now review quantum gates, how to combine them into
-circuits, and what it means to be universal.
+Therefore, we will now review quantum gates and how to combine them into
+circuits. This procedure is known as quantum compiling, but we will not
+delve into its details until we need them in Chapter \ref{chap:qcompile}.
 
 A quantum gate on $n$-qubits is a $2^n \times 2^n$ unitary matrix
 (an element of $U(2^n)$). We can consider this the overall circuit width.
@@ -17,8 +18,7 @@ phase on a particular system $S$ may result in a measurable relative phase
 in a large system $S'$ of which $S$ is a subsystem. Therefore, for our
 purposes we will only distinguish between $U(2^n)$ and
 $SU(2^n)$ in the few cases where it matters for
-quantum compiling. As in the discussion of classical circuits from
-Section \ref{sec:fsl-circuits}, the distinction between a quantum circuit
+quantum compiling. The distinction between a quantum circuit
 and a quantum gate is relative; often we consider a quantum gate as a
 fundamental primitive of our physical technology, and a circuit as a
 composite of these gates corresponding to a quantum algorithm.
@@ -34,7 +34,7 @@ general single-qubit gate can be compiled into rotations about Bloch sphere axes
 In Section \ref{subsec:distance} we will present distance metrics to
 measure the quality of our single-qubit (and later multi-qubit) approximations.
 In Section \ref{subsec:qcompile-bases} we will finally
-define what it means to be a universal gate set, or a circuit basis.
+define what it means for a gate set to be universal.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Pauli Group}
@@ -42,9 +42,9 @@ define what it means to be a universal gate set, or a circuit basis.
 
 We review here the Pauli group on one qubit, $\mathcal{P}_1 = \{I, X, Y, Z\}$.
 These last three represent
-rotations of $\pi$ on Bloch sphere about the $x$-axis, $y$-axis, and $z$-axis,
-using the homomorphism between $SU(2)$ and $SO(3)$, as well as the
-identity matrix $I$. The group $\mathcal{P}_1$ also serves as a complex vector
+rotations of $\pi$ on the Bloch sphere about the $x$-axis, $y$-axis, and $z$-axis,
+using the homomorphism between $SU(2)$ and $SO(3)$. The $2\times 2$ identity matrix
+is denoted $I$. The group $\mathcal{P}_1$ also serves as a complex vector
 basis for generating elements of $U(2)$.
 
 \begin{IEEEeqnarray}{rcrclCrcrcl}
@@ -151,7 +151,7 @@ That is why the gate is called $CNOT$, for ``controlled-NOT.'' Its inclusion
 in the generating set for $\mathcal{C}_2$ means that it can be applied
 in either direction: with control on qubit 1 and target on qubit 2 or
 vice versa. $CNOT$ is defined below.
-
+%
 \begin{equation}
 CNOT = 
  \left[
@@ -162,9 +162,24 @@ CNOT =
     0 & 0 & 1 & 0
   \end{array} \right]
 \end{equation}
-
-Likewise, general $\mathcal{C}_n$ can be generated from the same set
+%
+Likewise, the general Clifford group on $n$ qubits $\mathcal{C}_n$
+can be generated from the same set
 as $\mathcal{C}_2$, with gates understood to apply to any of the $n$ qubits.
+With three $CNOT$'s, we can implement the $SWAP$ gate which exchanges the
+states of two qubits.
+%
+\begin{equation}
+SWAP = 
+ \left[
+  \begin{array}{cccc}
+    1 & 0 & 0 & 0 \\
+    0 & 0 & 1 & 0 \\
+    0 & 1 & 0 & 0 \\
+    0 & 0 & 0 & 1
+  \end{array} \right]
+\end{equation}
+%
 The gate $CNOT$ has historical importance in quantum computing partly
 due to its use in many
 early quantum gate decompositions and its ability to
@@ -172,7 +187,7 @@ be performed fault-tolerantly in many physical technologies. It will be our
 primary two-qubit gate.
 Along with arbitrary single-qubit gates, it is universal for quantum computation \cite{Barenco1995a}.
 Therefore, we will give this basis a special name:
-
+%
 \begin{equation}
 \mathcal{Q} = \{ U(2) \cup CNOT \}
 \end{equation}
@@ -351,9 +366,7 @@ infinity-norm, or supremum-norm (sup-norm).
 
 However, this is not an operational definition.
 Moreover, we often wish to neglect a global phase in a unitary matrix,
-which is not measurable in quantum physics. This is equivalent to
-defining the set of valid $n$-qubit quantum gates as the
-group $SU(2^n) = U(2^n) / U(1)$. To measure phase-independent
+which is not measurable in quantum physics. To measure phase-independent
 distance between two unitary matrices, we can use the following
 distance measure due to Fowler \cite{Fowler2011}.
 
@@ -379,8 +392,9 @@ k = \log(1/\epsilon)
 \end{equation}
 
 It is natural to suppose that compiling better approximations requires
-more resources, and these resources are expressed as functions of these
-parameters $\epsilon$ and $k$.
+more resources, and these resources are expressed as functions of
+these
+parameters, increasing with decreasing $\epsilon$ and increasing $k$.
 In fact, often the efficiency and the
 capabilities of a quantum
 compiler depend on its basis. Therefore, we conclude this section by
@@ -396,7 +410,7 @@ bounded-qubit gates (usually operating on no more than 3 qubits each).
 We call a basis \emph{finite} if it contains a finite
 number of gates; that is, it contains discrete gates and not an infinite
 continuum of gates. We call a basis \emph{fixed} if its members are independent
-of any input circuit width.
+of the number of qubits in the input circuit (its width).
 \end{definition}
 
 For fault-tolerant quantum computing, we are interested in compiling
@@ -438,14 +452,12 @@ It is important to note that the only non-Clifford gate in the above basis
 is $Toffoli$.
 The Clifford group $\mathcal{C}_n$ by itself is \emph{not}
 universal.
-This is unfortunate given that many quantum error-correcting codes have
-efficient implementations \emph{only} for Clifford gates. In fact, it is provable
+In fact, it is provable
 that \emph{any} universal gateset must possess at least one
 non-Clifford gate \cite{Zeng2011}.
-
 Two popular choices for the non-Clifford gate in a basis are the $T = R_Z(\pi/4)$
 gate and the $Toffoli = \Lambda^2(X)$ gate. Since these are not ``natively''
-supported (non-transveral) in many codes, they must often be implemented
+supported (non-transversal) in many codes, they must often be implemented
 probabilistically using only Clifford operations and $MeasureZ$, usually
 by way of a so-called ``magic'' state.
 Therefore, many quantum compilers
@@ -459,8 +471,8 @@ whether $T$ or $Toffoli$ is more efficient to implement
 
 For single-qubit compilation, the $\{H,T, T^{\dagger}\}$ gateset is universal and
 plays an important role in the literature. Other compilers may add
-the Clifford gates $S$ and $S^{\dagger}$ to the basis $\mathcal{G}$ above,
-but this does not change its universality nor its asymptotic efficiency for
+the Clifford gates $S$ and $S^{\dagger}$ to the bases above,
+but this does not change their universality nor its asymptotic efficiency for
 compiling. From our discussion in this section
 on quantum gates and circuit bases, we are now prepared to add some additional
 circuit constraints to form quantum architectures.
