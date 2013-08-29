@@ -254,12 +254,12 @@ R_Z(\phi) =
     0 & e^{i\phi/2} \\
   \end{array} \right]
 =
-e^{i\phi / 2} \left[
+e^{-i\phi / 2} \left[
   \begin{array}{cc}
     1 & 0 \\
     0 & e^{i\phi} \\
   \end{array} \right]
-= e^{i\phi / 2} \Lambda(e^{i\phi})
+= e^{-i\phi / 2} \Lambda(e^{i\phi})
 \end{equation}
 
 We can now state the relationship between $S$ and $Z$, as well as introduce
@@ -431,7 +431,7 @@ our circuit basis in Chapters \ref{chap:factor-polylog} and
 \ref{chap:factor-sublog}.
 
 \begin{equation}
-\mathcal{G}' = \{X, Z, H, Toffoli, CNOT\}
+\mathcal{G} = \{X, Z, H, Toffoli, CNOT\}
 \end{equation}
 
 It is important to note that the only non-Clifford gate in the above basis
@@ -459,7 +459,7 @@ whether $T$ or $Toffoli$ is more efficient to implement
 
 For single-qubit compilation, the $\{H,T, T^{\dagger}\}$ gateset is universal and
 plays an important role in the literature. Other compilers may add
-the Clifford gates $S$ and $S^{\dagger}$ to the basis $\mathcal{G}'$ above,
+the Clifford gates $S$ and $S^{\dagger}$ to the basis $\mathcal{G}$ above,
 but this does not change its universality nor its asymptotic efficiency for
 compiling. From our discussion in this section
 on quantum gates and circuit bases, we are now prepared to add some additional
