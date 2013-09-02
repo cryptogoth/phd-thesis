@@ -1,4 +1,78 @@
 \section{Conclusion}
 \label{sec:fpl-conclude}
 
-Insert acknowledgements for 2D factoring work, mention paper in which these results appear.
+In this chapter, we've presented the first main result of
+our dissertation in Section \ref{sec:mod-exp}:
+factoring on a hybrid nearest-neighbor architecture in polylogarithmic depth.
+We've place it in the context of previous factoring implementations on a
+variety of different models. We provided a firm grounding
+in the carry-save technique before using it to construct
+a modular adder, a modular multiplier, and finally a
+modular exponentiator. Combining the carry-save technique
+with constant-depth
+communication and parallel phase estimation yielded
+this exponential improvement over the previous
+state-of-the-art, a quadratic-depth nearest-neighbor
+factoring architecture.
+
+We have also examined the
+effect of introducing modules by comparing our
+implementation on both a hybrid model \textsf{2D CCNTCM}
+and a non-hybrid model \textsf{2D CCNTC}.
+Our hybrid model has reduced circuit resources
+($D$, $S$, $W$) which better
+capture the essential computational locality of Shor's factoring
+algorithm while measuring part of the communication
+costs in the module resources ($\overline{D}$, $\overline{S}$, $\overline{W}$).
+
+The key point in this chapter is that
+low-depth (sub-linear) factoring is possible
+on a hybrid nearest-neighbor architecture
+at only a polynomial increase in circuit size
+and 
+circuit width. It is possible to decrease
+circuit size and width further by increasing
+module size and module width.
+
+Using our numerical
+upper bounds, we can compute the amount of
+physical resources to compromise a $4096$-bit
+RSA key, currently regarded as a secure key size
+for at least several decades. At a rate of
+1 millisecond per timestep or long-range
+teleportation, our implementation would
+complete in 10 days.
+ Our architecture
+would require 5,736 communicating quantum
+computers. If each quantum computer generated
+enough entangled pairs for long-range
+teleportation at a rate of 1 Hz, it would
+take 4.5 hours to generate all required pairs.
+At the current cost of residential electricity 
+in Seattle of 10.71 cents per kilowatt-hour,
+the architecture would cost $2.8$ billion
+to power.
+ Given a typical
+separation of ions of 5 microns\footnote{Provided by Tom Noel for barium ions in the lab of Boris Blinov.},
+the entire apparatus would occupy at least 1.26
+square miles, about twice the land area of the city
+of Seattle. Such figures, while large, are
+within the realm of possibility in 50 years, especially
+for governments.\footnote{For example,
+1.26 square miles in low earth orbit would be cheap.
+However, the commute would be quite expensive.}
+
+Even if our figures were off by an order of magnitude,
+our results would still confirm our thesis. We
+would have provided a quantum architecture to solve
+the human problem of factoring that is
+buildable and runnable within the author's lifetime.
+However, progress rarely stops with what is
+feasible and usually moves on to what is possible.
+Can the depth of factoring be improved even futher?
+This question will be examined
+in the next chapter.
+
+The work in this chapter was partially supported by
+Microsoft Research. The latest version is
+available on the arXiv \cite{Pham2012}.
