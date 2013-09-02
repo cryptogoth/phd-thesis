@@ -1,41 +1,44 @@
-\section{Introduction}
-\label{sec:fpl-intro}
+This is the first of two chapters which contribute a low-depth
+implementation of Shor's factoring algorithm on our hybrid nearest-neighbor
+architecture, \textsf{2D CCNTCM}. In support of our thesis,
+we are studying the depth of factoring architectures by minimizing
+their depth, and therefore decreasing the running time of this
+particular algorithm. Our main result is the
+factoring of an
+$n$-bit number in circuit depth $O(\log^2(n))$
+with a circuit size and width of $O(n^4)$.
+This is an exponential improvement in circuit depth
+over all previous implementations
+\cite{Beauregard2002,Kutin2006,VanMeter2006,VanMeter2005,VanMeterIL2005}
+at the cost of a polynomial increase in circuit size and width.
 
-Shor's factoring algorithm is a central result in quantum computing, with an
-exponential speed-up over the best known classical algorithm \cite{Shor1994}.
-As the most notable example of a quantum-classical complexity separation, much
-effort has been devoted to implementations of factoring on a
-realistic architectural model of a quantum computer
-\cite{Beauregard2002,Kutin2006,VanMeter2006,VanMeter2005,VanMeterIL2005}.
-We can bridge the gap between
-the theoretical algorithm and a physical implementation by describing
-the layout and interactions of qubits at an intermediate,
-architectural level of abstraction.
-This gives us a model for measuring circuit resources and their tradeoffs.
-In this work, we present a circuit implementation for prime
-factorization of an $n$-bit integer
-on a two-dimensional architecture that allows concurrent (parallel) two-qubit operations
-between neighboring qubits, an omnipresent classical controller, and
-modules which are allowed to teleport qubits to each other. We call this new
-model \textsf{2D CCNTCM}.
-We show that our circuit construction is asymptotically more efficient in circuit depth than previous state-of-the-art techniques for nearest-neighbor
-architectures, achieving a depth of $O(\log^3 n)$, a size of
-$O(n^4\log n)$, and a width of $O(n^4)$ qubits, as detailed in Table
-\ref{tab:fpl-results} of Section \ref{sec:fpl-results}.
+We use the
+following three key techniques:
+parallel phase estimation due to Kitaev-Shen-Vyalyi \cite{Kitaev2002};
+constant-depth communication introduced in Section \ref{sec:intro-cdc}
+including our circuit for quantum unfanout,
+and 
+constant-depth carry-save modular addition due to Gossett \cite{Gossett1998}.
 
-Our technique hinges on several key building blocks, including
-constant-depth communication from Section \ref{sec:intro-cdc}
-and hybrid architectures with modules from Section \ref{sec:intro-modules}.
 Section \ref{sec:fpl-related} places our work in the context of existing
 results.
 In Section \ref{sec:csa}, we provide a self-contained pedagogical review
 of the carry-save technique and encoding.
+We use this foundation to construct building blocks of increasing complexity,
+deriving numerical upper bounds on circuit and module resources
+on \textsf{2D CCNTCM} as we go along.
 In Section \ref{sec:csa-mod-add} we modify and extend the carry-save technique to a 2D
 modular adder,
 which we then use as a basis for a modular multiplier
 (Section \ref{sec:csa-mod-mult}) and a modular exponentiator
-(Section \ref{sec:modexp}).
-For each building block, we provide numerical upper bounds for the
-required circuit resources.
-Finally, we compare our asymptotic circuit resource usage
-with other factoring implementations.
+(Section \ref{sec:modexp}), which contains our
+main result of polylogarithmic-depth factoring.
+
+
+In Section \ref{sec:fpl-results}, we provide a comparison of our \textsf{2D CCNTCM}
+hybrid factoring architecture to all previous nearest-neighbor factoring
+implementations. We also compare our hybrid architecture with a
+variant on the non-hybrid model \textsf{2D CCNTC} to show the
+benefit of using modules. Finally, we conclude our exploration
+of polylogarithmic-depth hybrid factoring in Section
+\ref{sec:fpl-conclude}.
