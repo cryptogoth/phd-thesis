@@ -14,8 +14,8 @@ $(u+v) = (a+b+c)[m]$,
 where $(u+v)$ is a CSE number.
 
 In this section, we provide an alternate, pedagogical explanation of
-Gossett's modular reduction \cite{Gossett1998}. Later, we contribute a mapping of this adder
-to a 2D architecture,
+Gossett's modular reduction \cite{Gossett1998}. Later, we contribute a
+mapping of this adder to a 2D nearest-neighbor architecture,
 using unbounded fanout to maintain constant depth for adding back
 modular residues. This last step is absent in Gossett's original approach.
 
@@ -29,7 +29,7 @@ a slightly larger input and output number ($n+1$ bits in this case), truncating
 multiple overflow bits, and adding back their $n$-bit modular residues.
 
 For two $(n+1)$-bit conventional numbers $x$ and $y$,
-we truncate the three high-order bits of their sum $z_{n-1,n+3}$
+we truncate the three high-order bits of their sum $z_{n-1,n+1}$
 and
 add back their modular residue $x_{(n-1,n)}[m]$:
 %
@@ -44,7 +44,8 @@ to $x[m]$.
 
 Now we must do the same modular reduction on a CSE number $(u+v)$,
 which in this case represents an $(n+2)$-bit conventional number and has
-$2n+3$ bits.
+$2n+3$ bits.\footnote{It is not $2n+4$ as one might expect because the
+highest-order bit $v_n$ will always be zero, as we will see later.}
 %This is the special case mentioned in the
 %previous
 %section \label{star:csa-special}, where $x$ is the result of a single
@@ -80,7 +81,10 @@ in constant depth with $O(n)$ width in \textsf{2D CCNTC}.
 \begin{proof}
 Our goal is to show how to perform modular addition while keeping our numbers
 of a fixed size by treating overflow bits correctly.
-We map the proof of \cite{Gossett1998} to \textsf{2D CCNTC} and show that
+We map the proof of \cite{Gossett1998} to \textsf{2D CCNTC}\footnote{
+Note that now CCNTC is required, rather than NTC, due to the fanout and
+unfanout required for the overflow bits to control modular residues in
+constant depth.} and show that
 we meet our required depth and width.
 First, we enlarge our registers to allow the addition of $(n+2)$-bit numbers,
 while keeping our modulus of size $n$ bits.
@@ -115,36 +119,18 @@ in Figure \ref{fig:csa-proof}.
         &       &    & c^{v_5}_2 & c^{v_5}_1 & c^{v_5}_0 & \text{add back } 2^5 \bmod m \text{ controlled on } v_5 & \text{[Layer 4]}\\
 \hline
         & u'''_4 & u'''_3 & u'''_2 & u'''_1 & u'''_0 & \text{ Final CSE output with } 5 \text{ bits} &\\
-        & v'''_4 & v'''_3 & v'''_2 & v'''_1 &        & \text{ Final CSE output with } 5 \text{ bits} & \\
+        & v'''_4 & v'''_3 & v'''_2 & v'''_1 &        & \text{ Final CSE output with } 4 \text{ bits} & v'''_5 = 0 \\
 \end{array}
-%\begin{array}{cccccccr}
-%        & a_{n+1} & a_{n} & a_{n-1} & \ldots & a_1 & a_0 & \text{input number } a\\
-%        & b_{n+1} & b_{n} & b_{n-1} & \ldots & b_1 & b_0 & \text{input number } b\\
-%        & c_{n+1} & c_{n} & c_{n-1} & \ldots & c_1 & c_0 & \text{input number } c\\
-%\hline
-%        & u_{n+1} & u_{n} & u_{n-1} & \ldots & u_1 & u_0 & \text{truncate } u_{n+1} \\
-%v_{n+2} & v_{n+1} & v_{n} & v_{n-1} & \ldots & v_1 & 0   & \text{truncate } v_{n+1},v_{n+2} \\
-%        &         &       & x_{n-1} & \ldots & x_1 & x_0 \\
-%\hline
-%        &         & u'_{n} & u'_{n-1} & \ldots & u'_1 & u'_0 & \\
-%        & v'_{n+1} & v'_{n} & v'_{n-1} & \ldots & v'_1 & 0 &  \\
-%        &         &       & x_{n-1} & \ldots & x_1 & x_0 \\
-%\hline
-%        & u''_{n+1} & u''_{n} & u''_{n-1} & \ldots & u''_1 & u''_0 & \\
-%        & v''_{n+1} & v''_{n} & v''_{n-1} & \ldots & v''_1 & 0 &  \\
-%        &         &       & y_{n-1} & \ldots & y_1 & y_0 \\
-%\hline
-%        & u'''_{n+1} & u'''_{n} & u'''_{n-1} & \ldots & u'''_1 & u'''_0 & \\
-%        & v'''_{n+1} & v'''_{n} & v'''_{n-1} & \ldots & v'''_1 & 0 &  \\
-%\hline
-%\end{array}
 \end{displaymath}
 \caption{A schematic proof of Gossett's constant-depth modular reduction for $n=3$.}
 \label{fig:csa-proof}
 \end{figure*}
 \end{center}
 
-We use the following notation.
+We use the following notation for the general case of an n-bit
+modulus.\footnote{This can be hard to follow when looking at the concrete
+example of Figure \ref{fig:csa-proof}. This proof is repeated in the next
+Section \ref{subsec:concrete} using $n=3$ for the reader's convenience.}
 The non-modular sum of the first layer is $u$ and $v$.
 The CSE output of the first modular reduction layer
 is $u'$ and $v'$, and the modular residue is
@@ -166,12 +152,12 @@ is generated after the first modular reduction layer, because we have
 truncated away all $(n+1)$-bits. Second, we know that no $v''_{n+2}$ bit is
 generated because we only have one $(n+1)$-bit to add, $v'_{n+1}$.
 Finally, we need to show that $v'''_{n+2} = 0$ in the third modular reduction
-layer. 
+layer (Layer 4).
 
 Since $u'_{(n)} + v'_{(n+1)} =
 u_{(n)} + v_{(n)} \le 2^{n+1}$, the bits $u'_n$ and $v'_{n+1}$ cannot both be $1$.
 But $u''_{n+1} = v'_{n+1}$ and $v''_{n+1} = u'_n\land v'_n$, so $u''_{n+1}$ and
-$v''_{n+1}$ cannot both be $1$, and hence $v'''_{n+2} = 0$.
+$v''_{n+1}$ \emph{also} cannot both be $1$, and hence $v'''_{n+2} = 0$.
 %This bit is the majority of
 %$u''_{n+1}$, $v''_{n+1}$, and $c^{v_{n+2}}_{n+1} = 0$. This means we only have
 %to guarantee that at most one of $u''_{n+1}$ and $v''_{n+1}$ has value 1.
@@ -185,7 +171,7 @@ $v''_{n+1}$ cannot both be $1$, and hence $v'''_{n+2} = 0$.
 Everywhere
 we use the fact that the modular residues are restricted to $n$ bits.
 Therefore, the modular sum is computed as the sum of two $(n+2)$-bit numbers
-with no overflows in constant-depth.
+with no overflows in constant depth.
 \end{proof}
 
 As a side note, we can perform modular reduction in one layer instead of
@@ -248,7 +234,7 @@ The register $c^{v_4}$ has $n$ bits, which we add to the CSE results of layer 1.
 The results $u_i$ and $v_{i+1}$ are teleported into layer 3. The exception is
 $v'_4$ which is teleported into layer 4, since there are no other $4$-bits
 to which it can be added. Wherever there are only
-two bits of the same significance, we use the 2-2 adder from
+two bits of the same significance, we use the $2 \rightarrow 2$ adder from
 Section \ref{sec:csa}.
 
 Layer 3
@@ -278,7 +264,8 @@ The final modular sum $(a+b+c)[m]$ is $u'''+v'''$.
 
 The general circuit for adding three $n$-qubit quantum integers to
 two $n$-qubit quantum integers is called a \emph{CSA tile}. Each CSA tile in our architecture 
-corresponds to its own module, and it will be represented by the symbol in 
+corresponds to its own module on \textsf{2D CCNTCM},
+and it will be represented by the symbol in 
 Figure \ref{fig:csa-tile-symbol} for the rest of this paper. We call this
 an $n$-bit modular adder, even though it accepts $(n+2)$-bit inputs, because
 the size of the modulus is still $n$ bits.
@@ -288,7 +275,7 @@ the size of the modulus is still $n$ bits.
 \centerline{
 \includegraphics[width=1.5in]{factor-polylog/figures/csa-tile-symbol.pdf}
 }
-\caption{Symbol for an $n$-bit 3-to-2 modular adder, also called a CSA tile.}
+\caption{Symbol for an $n$-bit $3\rightarrow 2$ modular adder, also called a CSA tile.}
 \label{fig:csa-tile-symbol}
 \end{figure*}
 \end{center}
@@ -297,9 +284,9 @@ the size of the modulus is still $n$ bits.
 \subsection{Quantum Circuit Resources for Modular Addition}
 
 We now calculate numerical upper bounds for the circuit resources of
-the $n$-bit $3$-to-$2$ modular adder described in the previous section.
-There are four layers of non-modular $n'$-bit $3$-to-$2$ adders, each of which
-consists of $n'$ parallel single-bit adders whose
+the $n$-bit $3\rightarrow 2$ modular adder described in the previous section.
+There are four layers of non-modular $n'$-bit $3\rightarrow 2$ adders,
+each of which consists of $n'$ parallel single-bit adders whose
 resources are detailed in Table \ref{tab:csa-tile-resources}. For factoring
 an $n$-bit modulus, we have $n'=n+2$ in the first and fourth layers
 and $n'=n+1$ in the second and third layers.
@@ -311,13 +298,13 @@ the depth of teleportation is only more efficient for moving more than
 two qubits. The control bit for each modular residue needs to be
 teleported $0$, $4$, and $7$ qubits respectively according to the
 diagram in Figure \ref{fig:csa-add-4}, before being fanned out $n$
-times along the fanout rails, where the fanned out copies will end up
+times along the fanout rails, where the fanned-out copies will end up
 in the correct position to be added as inputs.
 
 %The detailed resources for a Toffoli gate and the single-bit adder that uses
 %them are given in Table \ref{tab:csa-tile-resources}.
 
-The resources for the $n$-bit $3$-to-$2$ modular adder depicted in Figure
+The resources for the $n$-bit $3\rightarrow 2$ modular adder depicted in Figure
 \ref{fig:csa-add-4} are given below.
 The formulae reflect the resources needed for both computing the output
 in the forward direction (including creating an entangled fanned-out state
@@ -326,19 +313,19 @@ and also uncomputing ancillae in the backward
 direction (including disentangling previous fanned-out copies).
 
 The circuit depth is $O(1)$:
-
+%
 \begin{equation}
-374\text{.}
+D_{CSA} = 374\text{.}
 \end{equation}
-
+%
 The circuit size is $O(n)$:
-
+%
 \begin{equation}
-551n + 757\text{.}
+S_{CSA} = 551n + 757\text{.}
 \end{equation}
-
+%
 The circuit width is $O(n)$:
-
+%
 \begin{equation}
-33n + 47\text{.}
+W_{CSA} = 33n + 47\text{.}
 \end{equation}

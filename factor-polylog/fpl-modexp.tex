@@ -49,14 +49,15 @@ In phase estimation for QPF, it is
 sufficient to take $t = O(n)$ \cite{Nielsen2000,Kitaev2002}. Therefore our total depth is
 $O(\log^2(n))$ and our total size and total width are $O(n^4)$, as desired. At this point, combined with the parallel phase
 estimation procedure of \cite{Kitaev2002}, we have a complete factoring
-implementation in our 2D nearest-neighbor architecture in polylogarithmic
+implementation in our hybrid 2D nearest-neighbor architecture in poly-logarithmic
 depth.
 %
 \begin{figure*}[tb!]
 \centerline{
 \includegraphics[width=5.5in]{factor-polylog/figures/mod-exp-par.pdf}
 }
-\caption{Parallel modular exponentiation: multiplying $t$ quantum integers
+\caption[Parallel modular exponentiation]
+{Parallel modular exponentiation: multiplying $t$ quantum integers
 %$\{\ket{x^{(0)}}, \ket{x^{(1)}}, \ldots, \ket{x^{(t-1)}}\}$ in parallel,
 in a $O(\log{(t)}\log{(n)})$-depth binary tree. Arrows indicate modular
 multiplication.}
@@ -69,7 +70,7 @@ constants to upper bound circuit resources.
 According to the Kitaev-Shen-Vyalyi parallelized phase estimation procedure
 \cite{Kitaev2002},
 for a constant success probability of $3/4$,
-it is sufficient to multiply together $t' = 2867n$ quantum integers,
+it is sufficient to multiply together $t = 2867n$ quantum integers,
 controlled on the qubits $\ket{p_j}$, in parallel.
 
 In Section \ref{subsec:qcla}, we describe the last step of modular
@@ -101,23 +102,23 @@ Adding in the teleportation circuit resources from Table \ref{tab:cd-resources},
 we can calculate the following resources.
 
 The circuit depth is $O(\log n)$:
-
+%
 \begin{equation}
-56\log_2 n + 28\text{.}
+D_{QCLA} = 56\log_2 n + 28\text{.}
 \end{equation}
-
+%
 The circuit size is $O(n^2 \log n)$:
-
+%
 \begin{eqnarray}
-96 \log_2^3 n & - & (384n + 624)\log_2^2 n \nonumber \\
+S_{QCLA} = 96 \log_2^3 n & - & (384n + 624)\log_2^2 n \nonumber \\
               & + & (384n^2 + 1152n + 840) \log_2 n \nonumber \\
               & + & (192n^2 + 672n + 588)\text{.}
 \end{eqnarray}
-
+%
 The circuit width is $O(n^2)$:
-
+%
 \begin{equation}
-4 \log_2^2 n - (16n + 30)\log_2 n + 16n^2 + 60n + 56\text{.}
+W_{QCLA} = 4 \log_2^2 n - (16n + 30)\log_2 n + 16n^2 + 60n + 56\text{.}
 \end{equation}
 
 
@@ -129,42 +130,42 @@ This leads to the following circuit resource upper bounds for a modular exponent
 single round of parallel QPF as part of Shor's factoring algorithm.
 
 The circuit depth is $O(\log^2 n)$:
-
-% From Notebook #16 p. 225
+% From Notebook #16 p. 225, N18, p. 3-4
 \begin{equation}
-D_{ME} = 1383\log_2^2(n) + 21253\log_2(n) + 49095\text{.}
+D_{ME} = 1383\log_2^2(n) + 21253\log_2(n) + 49098\text{.}
 \end{equation}
-
-The module depth is $O(\log n)$:
-
+%
+The module depth is $O(\log^2 n)$:
+%
 \begin{equation}
 \overline{D}_{ME} = 3\log_2 n + 24
 \end{equation}
-
+%
 The circuit size is $O(n^4)$:
-
+%
 \begin{eqnarray}
 S_{ME} & = & 96 \log_2^3 n + \nonumber \\
        & - & (384n + 624)\log_2^2 n \nonumber \\
        & + & (384n^2 + 1152n + 840) \log_2 n \nonumber \\
-       &   & 3302324 n^4 + 30900797 n^3 + 50521837 n^2  + 20284306 n + 
+       &   & 3302324 n^4 + 30900797 n^3 + 50527571 n^2  + 20287173 n + 
   -6494\text{.}
 \end{eqnarray}
-
-The module size is $O(n^2)$:
-
-\begin{equation}
-\overline{S}_{ME} = 5749n^2 + 8725n +175\text{.}
-\end{equation}
-
+%
+The module size is $O(n^4)$:
+%
+\begin{eqnarray}
+\overline{S}_{ME} & = & (17202 n^2 + 25797 n - 9) \log_2 n + \nonumber \\
+                  & + & 3302784 n^4 + 30905108 n^3 50534430 n^2 + 20295063 n - 7088 \text{.}
+\end{eqnarray}
+%
 The circuit width is $O(n^4)$:
-
+%
 \begin{equation}
-W_{ME} = 94598n^4 + 799749 n^3 + 1246692 n^2 + 415222 n - 145\text{.}
+W_{ME} = 94598n^4 + 799749 n^3 + 1246692 n^2 + 418089 n - 145\text{.}
 \end{equation}
-
-The module width is $O(n)$:
-
+%
+The module width is $O(n^3)$:
+%
 \begin{equation}
-\overline{W}_{ME} = 1434n\text{.}
+\overline{W}_{ME} = 5736 n^3 + 40152 n ^2 + 21510 n\text{.}
 \end{equation}

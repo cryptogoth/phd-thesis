@@ -5,7 +5,8 @@ Our 2D factoring approach rests on the central technique of the constant-depth
 carry-save adder (CSA) \cite{Gossett1998}, which converts the sum of three
 numbers $a$, $b$, and $c$, to the sum of two numbers $u$ and $v$:
 %\begin{equation}
-$a+b+c = u+v$. The explanation of this technique and how it achieves constant depth requires the following definitions.
+$a+b+c = u+v$. The explanation of this technique and how it achieves constant
+depth requires the following definitions.
 %\end{equation}
 
 A \emph{conventional number} $x$ can be represented in $n$ bits as
@@ -13,7 +14,9 @@ A \emph{conventional number} $x$ can be represented in $n$ bits as
 $x = \sum_{i=0}^{n-1} 2^i x_i$,
 %\end{equation}
 where $x_i \in \{0,1\}$ denotes the $i$-th bit of $x$, which we call
-an $i$-bit and has significance $2^i$, and the $0$-th bit is the low-order bit.\footnote{It will be clear from the context whether we mean an
+an $i$-bit and has significance $2^i$, where the $0$-th bit is
+called the low-order
+bit.\footnote{It will be clear from the context whether we mean an
 $i$-bit, which has significance $2^i$, or an $i$-bit number.}
 Equivalently, $x$ can be represented as a (non-unique)
 sum of two smaller, $(n-1)$-bit, conventional numbers, $u$ and $v$.
@@ -36,7 +39,6 @@ the bit $v_{i+1}$ is the majority of $\{a_i, b_i, c_i\}$.
 Figure \ref{fig:csa-encoding} gives a concrete example, where
 $(u+v)$ has $2n-2 = 8$ bits, not counting $v_0$.
 
-%
 It will also be useful to refer to a subset of the bits in a conventional
 number using subscripts to indicate a range of indices:
 \begin{equation}
@@ -56,13 +58,13 @@ x = x_{(0,n-1)} \equiv u+v = u_{(0,n-2)} + v_{(1,n-1)}.
 \end{equation}
 %
 Finally, we denote arithmetic modulo $m$ with square brackets.
-
+%
 \begin{equation}
 x_{(j,k)} \bmod m = x_{(j,k)}[m]
 \end{equation}
-
+%
 \begin{center}
-\begin{figure*}[tb!]
+\begin{figure*}[hbt!]
 \begin{displaymath}
 x = 30 = u+v = 8 + 22 = \left\{
 \begin{array}{ccccc}
@@ -88,7 +90,7 @@ x_4 & x_3 & x_2 & x_1 & x_0
 \end{center}
 %
 
-\begin{figure}[tb!]
+\begin{figure}[htb!]
 \begin{center}
 \begin{displaymath}
 \centerline{
@@ -100,7 +102,8 @@ x_4 & x_3 & x_2 & x_1 & x_0
 \lstick{\ket{0}}   & \targfix & \qw & \qw_{\ket{b_i \wedge c_i}} & \qw & \qw                        & \qw       & \qw & \qw                                     & \ctrl{-4} & \qw       & \qw       & \targfix                                                        & \qw & \qswap \qwx & \qw         & \qw & \rstick{\ket{v_{i+1}}}}
 }
 \end{displaymath}
-\caption{Carry-save adder circuit for a single bit position $i$: $a_i+b_i+c_i = u_i + v_{i+1}$.
+\caption[Carry-save adder circuit for a single bit position $i$: $a_i+b_i+c_i = u_i + v_{i+1}$.]
+{Carry-save adder circuit for a single bit position $i$: $a_i+b_i+c_i = u_i + v_{i+1}$.
 The Toffoli gate is further decomposed into the circuit of Figure \ref{fig:toffoli}.}
 \label{fig:csa-circuit}
 \end{center}\end{figure}
@@ -161,7 +164,9 @@ the resources for the Toffoli gate (in the same table) based on
 that a more efficient decomposition for the Toffoli is possible using a
 distillation approach described in \cite{Jones2013a}.
 
-We must lay out the circuit to satisfy a 2D NTC model.
+We must lay out the circuit to satisfy a 2D NTC model.\footnote{
+Currently, we do not need to make use of the more general features of
+\textsf{CCNTC} or \text{CCNTCM} until we construct a modular multiplier.}
 The Toffoli gate decomposition in \cite{Amy2012}, duplicated in
 Figure \ref{fig:toffoli}, requires two control
 qubits and a single target qubit to be
@@ -192,7 +197,7 @@ It will be useful in the next section.
 At the level of numbers, the sum of three $n$-bit numbers can be converted into
 the sum of two $n$-bit numbers by applying a \emph{CSA layer} of
 $n$ parallel, single-bit
-CSA circuits (Fig.~\ref{fig:csa-circuit}). Since each CSA operates in constant depth, the entire layer also
+CSA circuits. Since each CSA operates in constant depth, the entire layer also
 operates in constant depth, and we have achieved (non-modular) addition.
 %
 %An important consideration is the circuit width. The circuit above

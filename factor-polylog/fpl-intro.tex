@@ -1,22 +1,21 @@
 This is the first of two chapters which contribute a low-depth
 implementation of Shor's factoring algorithm on our hybrid nearest-neighbor
 architecture, \textsf{2D CCNTCM}. In support of our thesis,
-we are studying the depth of factoring architectures by minimizing
+here we are studying the depth of factoring architectures by minimizing
 their depth, and therefore decreasing the running time of this
 particular algorithm. Our main result is the
 factoring of an
 $n$-bit number in circuit depth $O(\log^2(n))$
 with a circuit size and width of $O(n^4)$.
 This is an exponential improvement in circuit depth
-over all previous implementations
+over all previous nearest-neighbor implementations
 \cite{Beauregard2002,Kutin2006,VanMeter2006,VanMeter2005,VanMeterIL2005}
 at the cost of a polynomial increase in circuit size and width.
-
 We use the
 following three key techniques:
 parallel phase estimation due to Kitaev-Shen-Vyalyi \cite{Kitaev2002};
 constant-depth communication introduced in Section \ref{sec:intro-cdc}
-including our circuit for quantum unfanout,
+including our circuit for quantum unfanout;
 and 
 constant-depth carry-save modular addition due to Gossett \cite{Gossett1998}.
 
@@ -24,15 +23,17 @@ Section \ref{sec:fpl-related} places our work in the context of existing
 results.
 In Section \ref{sec:csa}, we provide a self-contained pedagogical review
 of the carry-save technique and encoding.
-We use this foundation to construct building blocks of increasing complexity,
+We use this foundation to construct building blocks for quantum modular
+arithmetic increasing complexity,
 deriving numerical upper bounds on circuit and module resources
 on \textsf{2D CCNTCM} as we go along.
-In Section \ref{sec:csa-mod-add} we modify and extend the carry-save technique to a 2D
-modular adder,
-which we then use as a basis for a modular multiplier
-(Section \ref{sec:csa-mod-mult}) and a modular exponentiator
-(Section \ref{sec:modexp}), which contains our
-main result of polylogarithmic-depth factoring.
+We apply the carry-save technique to construct a 2D
+nearest-neighbor modular adder (in Section \ref{sec:csa-mod-add}),
+which we then use as a basis for a hybrid nearest-neighbor modular multiplier
+(in Section \ref{sec:csa-mod-mult}). This in turn is used to
+construct a hybrid nearest-neighbor modular exponentiator
+(in Section \ref{sec:modexp}), which contains our
+main result of poly-logarithmic-depth factoring.
 
 
 In Section \ref{sec:fpl-results}, we provide a comparison of our \textsf{2D CCNTCM}
