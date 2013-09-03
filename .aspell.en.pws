@@ -1,4 +1,4 @@
-personal_ws-1.1 en 325 
+personal_ws-1.1 en 328 
 Mata
 Takahashi
 derandomized
@@ -32,6 +32,7 @@ vibrational
 Watrous
 Devitt
 QACC
+buildable
 uncomputation
 Roetteler
 braket
@@ -58,8 +59,8 @@ boolean
 FET
 Bruck
 diagonalized
-timestep's
 timesteps
+timestep's
 unentangled
 parallelize
 encodings
@@ -111,6 +112,7 @@ lmer
 Varvarigos
 QCLA
 iff
+runnable
 preprocessing
 uncomputing
 CNOTs
@@ -138,10 +140,10 @@ multilinear
 infeasible
 qudits
 multi
+millijoules
 reachability
 subspaces
 motional
-sub-logarithmic
 cryptosystem
 Polylog
 ccccccll
@@ -232,10 +234,9 @@ Krysta
 Miquel
 Zalka
 Lubotsky
-poly-logarithmic
 fanin
-LTEs
 LTE's
+LTEs
 truein
 th
 ACC
@@ -279,6 +280,7 @@ Shallit
 Ambainis
 eigenstate
 Friedrich
+arXiv
 xy
 Aho
 Bennett's
@@ -312,6 +314,7 @@ PTE
 monomials
 Stickles
 BKP
+quintillion
 QPF
 subgraph
 invariants

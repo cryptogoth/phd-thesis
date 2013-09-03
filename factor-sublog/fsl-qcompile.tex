@@ -18,7 +18,7 @@ of any circuit.
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Controlled-$R_Z$ Rotations}
 
-In our polylogarithmic factoring implementation, we were able to reduce
+In our poly-logarithmic factoring implementation, we were able to reduce
 all our arithmetic circuits to such a fixed, discrete universal set.
 These arithmetic circuits are discrete and classical and nature, so it is
 not surprising that we can implement them in a discrete way.
@@ -141,7 +141,7 @@ As we will discover later, the fanin of each majority gate is
 linear in the size of the modulus to factor: $n' = O(n)$.
 Therefore, if we are not allowed PAR qubits for free in our model,
 our construction will actually have minimum depth $O((\log\log n)^2)$,
-which is not constant, but is still sublogarithmic. This relationship still
+which is not constant, but is still sub-logarithmic. This relationship still
 holds if the fanin is merely $n' = poly(n)$. It is still an
 open question \cite{Hoyer2002} whether a constant-depth
 quantum majority gate exists even on $\textsf{AC}$ with a fixed finite basis,

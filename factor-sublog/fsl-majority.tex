@@ -13,7 +13,7 @@ bounded above by the circuit size, since in the worst case, one
 gate receives an output from every other gate as input. As long
 as we restrict ourselves to polynomial-size circuits, we are
 assured that our circuit fanin is also polynomial. This is the
-primary consideration in achieving sublogarithmic depth for
+primary consideration in achieving sub-logarithmic depth for
 quantum compiling single-qubit rotations, and therefore for
 factoring.
 
@@ -258,13 +258,13 @@ angle $\pi / 2^{n-1}$ which can be done in expected depth of $O(1)$,
 \end{figure}
 
 %%%%%%%%%%%
-\subsection{A Majority Gate in \textsf{2D CCNTCM} in Sublogarithmic Depth}
+\subsection{A Majority Gate in \textsf{2D CCNTCM} in Sub-logarithmic Depth}
 \label{subsec:maj-gate}
 
 Now we have all the building blocks needed to construct a
-$\text{MAJ}_n$ gate in sublogarithmic depth. Using the constant-depth
+$\text{MAJ}_n$ gate in sub-logarithmic depth. Using the constant-depth
 majority circuits of $O(n)$ fanin from \cite{Yeh1996} mentioned at
-the beginning of this section, we will then have a sublogarithmic
+the beginning of this section, we will then have a sub-logarithmic
 quantum circuit for modular exponentiation, and therefore for
 Shor's factoring algorithm.
 
