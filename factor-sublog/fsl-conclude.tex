@@ -12,7 +12,8 @@ for factoring. Table \ref{tab:sublog-resources} summarizes the final $\textsf{2D
 factoring architecture, combining Theorems \ref{thm:mult-prod}, \ref{thm:mod-reduce}, and \ref{thm:maj-gate}.
 
 \begin{table}[htb!]
-\begin{tabular}{c|c|}
+\begin{center}
+\begin{tabular}{|c|c|}
 \hline
 $\langle D \rangle$ & $O(\frac{1}{\epsilon}(\log\log n)^2)$ \\
 \hline
@@ -27,21 +28,36 @@ $\langle \overline{S} \rangle$ & $O(\frac{1}{\epsilon}n^{4+2\epsilon}\log n)$ \\
 $\langle \overline{W} \rangle$ & $O(\frac{1}{\epsilon}n^{4+2\epsilon}\log n)$ \\
 \hline
 \end{tabular}
-\caption{Expected circuit resources for a sub-logarithmic factoring architecture with time-space tradeoff $\epsilon = (0,1]$.}
+\caption[Expected circuit resources for a sub-logarithmic factoring architecture.]
+{Expected circuit resources for a sub-logarithmic factoring architecture with
+the time-space tradeoff parameter $\epsilon = (0,1]$.
+The angle bracket notation $\langle \cdot \rangle$ indicates an average
+or expected circuit resource for a circuit with probabilistic portions.}
 \label{tab:sublog-resources}
+\end{center}
 \end{table}
-
+%
 Now we conclude with some interesting open questions.
-Although we are able to compile arbitrary rotations down to \textsf{CCNTC} in $O((\log \log n)^2)$-depth
-for the resolution needed for factoring, can we reduce this to $O(1)$ depth if we relax our
-requirements? For example, if we have a finite basis which is fault-tolerant, but which is not fixed;
-it may vary based on the input size. quantum compiling makes truly constant-depth factoring architecture a challenging
-open problem. Perhaps we will solve this in Chapter \ref{chap:qcompile}, when we discuss quantum compiling on
-nearest-neighbor architectures.
+Although we are able to compile arbitrary rotations down to \textsf{CCNTC} in
+$O((\log \log n)^2)$-depth
+for the resolution needed for factoring, can we reduce this to $O(1)$ depth
+if we relax our
+requirements? For example, if we have a finite basis which is fault-tolerant,
+but which is not fixed;
+it may vary based on the input size. Quantum compiling makes truly
+constant-depth factoring architecture a challenging
+open problem. We will examine this problem further
+in Chapter \ref{chap:qcompile},
+when we discuss quantum compiling on
+hybrid nearest-neighbor architectures.
 Another open question is: is our factoring architectures now optimal?
-What is the lower-bound for factoring on \textsf{CCNTC}, versus the $\Theta(1)$ bound for factoring on \textsf{CCAC}?
-Can we determine the optimality of our factoring architectures using some other time-space product?
-Perhaps we will this in Chapter \ref{chap:coherence}, when we discuss quantum circuit coherence. 
+What is the lower-bound for factoring depth on \textsf{CCNTC}, versus the
+$\Theta(1)$ bound for factoring on \textsf{CCAC}?
+Can we determine the quality of our factoring architectures using something
+other than the depth-width product?
+We will answer this question in Chapter \ref{chap:coherence}, when we discuss
+a new resource called
+circuit coherence. 
 
 %We've also discussed an alternative
 %approach to sub-logarithmic factor called iterated carry-save, which could

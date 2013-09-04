@@ -58,7 +58,7 @@ S' = 15 \\
 \end{array}
 \end{displaymath}
 
-\caption{An arbitrary quantum circuit being compiled into single-qubit gates and $CNOT$.}
+\caption{An arbitrary quantum circuit being compiled into single-qubit gates and CNOT.}
 \label{fig:qcompile}
 \end{center}
 \end{figure}
@@ -158,7 +158,7 @@ approximation. And of course, some single-qubit quantum compilers can be general
 into multi-qubit algorithms.
 
 A fifth axis could be formed, which is whether the compiled circuit requires
-arbitrarily long interactions for $CNOT$ or is nearest-neighbor. Such a
+arbitrarily long interactions for CNOT or is nearest-neighbor. Such a
 quantum compiler could also divide up a compiled circuit into an optimal
 number of modules on \textsf{2D CCNTCM} to also minimize module depth and
 module size (inter-module teleportations). This is an interesting direction
@@ -240,7 +240,7 @@ polynomial in $d = 2^n$.
 This is an example of task modularity which allows us
 to divide the effort of quantum compiling between the
 single-qubit case and then decomposition to single-qubit gates and
-$CNOT$. It is a heuristic which often results
+CNOT. It is a heuristic which often results
 in simple decompositions to implement in (classical) software.
 It may not be asymptotically optimal compared to generic 
 multi-qubit protocols. However, for small input sizes, it is often
@@ -257,7 +257,7 @@ upper and lower bounds for this task are given in Table \ref{tab:multi}.
 A standard two-level decomposition, such as provided on page 70 of \cite{Kitaev2002},
 decomposes a general $U(d=2^n)$ matrix down to $O(d^2)$ ``two-level'' matrices which can
 be implemented with multiply-controlled single qubit gates $\Lambda^{n-1}(U)$
-for $U \in U(2)$. These gates are implementable with $O(n)$ $CNOT$ gates each.
+for $U \in U(2)$. These gates are implementable with $O(n)$ CNOT gates each.
 
 The recent Giles-Selinger proves a conjecture by Kliuchnikov-Mosca-Maslov \cite{Kliuchnikov2012e}
 that $n$-qubit circuits implementable by the basis $\mathcal{C}_2 \cup \{ T \}$ is
@@ -265,7 +265,7 @@ equivalent to all $U(2^n)$ matrices with elements from the ring $\mathbb{Z}\left
 Their construction to find this exact synthesis of an $n$-qubit gate is meant to
 prove this equivalent, and is not optimal.
 
-The optimal bound needed for this in terms of $CNOT$ gates in
+The optimal bound needed for this in terms of CNOT gates in
 the compiled output (the dominant cost) is still exponential
 $O(4^n)$ \cite{Shende2004}.
 
@@ -273,7 +273,7 @@ $O(4^n)$ \cite{Shende2004}.
 \centerline{
 \begin{tabular}{|c|c|}
 \hline
-Decomposition Method & $CNOT$ Cost \\
+Decomposition Method & CNOT Cost \\
 \hline
 Giles-Selinger \cite{Giles2013} & $O(9^n nk)$\\
 Two-level \cite{Kitaev2002} & $O(4^n n)$ \\
@@ -286,6 +286,6 @@ BBC+ \cite{Barenco1995a} & $\omega(0.10\cdot 4^n - 0.34n - 0.12)$ \\
 \end{tabular}
 }
 \label{tab:multi}
-\caption{Comparison of multi-qubit circuit synthesizers in $CNOT$ cost, both upper and lower bounds.
+\caption{Comparison of multi-qubit circuit synthesizers in CNOT cost, both upper and lower bounds.
 The $o(\cdot)$ and $\omega(\cdot)$ notation are used to indicate when multiplicative constants are known.}
 \end{table}

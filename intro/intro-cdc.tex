@@ -174,7 +174,7 @@ target product state $(\alpha\ket{0} + \beta\ket{1})\otimes\ket{0}^{\otimes 6}$.
 
 The initial fanned out state lives in a $2$-dimensional subspace. The
 round of Hadamard gates increases its dimension to $2^n$, and the two
-interleaved layers of $CNOT$s in a sense ``disentangle'' the qubits from
+interleaved layers of CNOTs in a sense ``disentangle'' the qubits from
 one another, up to a Pauli $Z$ correction. This correction, on the
 final target qubit, is controlled by the parity of the classical measurements
 on every ``even'' qubit ($j_2$ and $j_4$ in the figure), excluding the 
@@ -185,7 +185,7 @@ the target qubit into a final $2$-dimensional subspace, which is the
 qubit $\alpha\ket{0} + \beta\ket{1}$.
 
 Although the circuit shown works for odd $n$, we can easily take into
-account even $n$ with an initial $CNOT$ to ``uncopy'' one qubit from its
+account even $n$ with an initial CNOT to ``uncopy'' one qubit from its
 neighbors. The unfanout circuit in Figure \ref{fig:cdu} is the
 functional inverse of the fanout circuit in 
 Figure \ref{fig:cdf}, which by itself only requires a \textsc{1D} layout.

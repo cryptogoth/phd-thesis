@@ -1,7 +1,8 @@
 \section{Controlled Rotations for Factoring}
 \label{sec:fsl-qcompile}
 
-In Section \ref{sec:fpl-related} of Chapter \ref{chap:factor-polylog}, we stated that we wished to avoid
+In Section \ref{sec:fpl-related} of Chapter \ref{chap:factor-polylog},
+we stated that we wished to avoid
 factoring implementations that used a QFT due to the fine
 single-qubit rotations involved. Due to the requirements of
 fault-tolerance on a particular physical implementation,
@@ -25,21 +26,33 @@ not surprising that we can implement them in a discrete way.
 However, to reduce the depth further, we need to introduce the idea of
 a quantum threshold gate, which requires controlled-rotations similar to
 the QFT. This controlled-rotation gate is shown in Figure \ref{fig:crz}
-along with its decomposition into CNOTs and single-qubit $R_Z(\phi)$
-rotations.
-These rotations depend on the input size.
+along with its decomposition into CNOTs and three single-qubit $R_Z(\phi)$
+rotations. An alternative decomposition using only one single-qubit
+$R_Z(\phi)$ and controlled-SWAPs is given in Figure \ref{fig:crz2} which
+is often preferred, but asymptotically has the same resources as
+Figure \ref{fig:crz}.
+These rotations depend on the input size to a particular gate called
+BIAS which we introduce in Theorem \ref{thm:bias}.
 
 If we were given pre-generated ancillae of the form
-$\ket{0} + e^{i\phi}\ket{1}$, we could use the method of programmable ancillae rotation (PAR) from
+$\normtwo (\ket{0} + e^{i\phi}\ket{1})$,
+we could use the method of programmable ancillae rotation (PAR) from
 \cite{Jones2012}
 to apply the gate $R_Z(\phi)$ probabilistically
-using the circuit from Figure \ref{fig:par}. Note that we have a $50\%$
+using the circuit from Figure \ref{fig:par}.
+We will call ancilla qubits in this form \emph{PAR qubits} from now on.
+Note that we have a $50\%$
 chance
 of applying the opposite rotation $-\phi$, and so we must chain
 several rounds of the given circuit. In expectation, we achieve the
-desired rotation in a constant depth of $2$, and now we must consider
-all circuit resources in terms of expected (average) values. The 
-probability of $k$ PAR rounds all failing (and the need to run a
+desired rotation in two rounds, which has constant depth.
+Consequently, we must now consider
+all circuit resources in terms of expected (average) values, which we will
+write in between angle brackets such as $\rangle D \langle$ for expected
+depth, rather than just $D$.
+
+The 
+probability of $k$ consecutive PAR rounds all failing (and the need to run a
 more expensive KSV quantum compiling procedure) is $2^{-k}$, giving
 the following expected depth. For $k = O(1)$, one can make the
 expected depth of both PAR and quantum compiling grow with an arbitrarily small multiplicative constant.
@@ -49,7 +62,7 @@ the expected depth of quantum compiling constant; unfortunately, now
 the expected depth of PAR rounds is no longer constant. This is an
 inherent tradeoff in using PAR.
 An analogous calculation can be done
-for the size.
+for the circuit size.
 
 \begin{equation}
 \left( \sum_{m=1}^k \frac{1}{2^m} O(1) \right) + 2^{-k}O((\log\log n)^2)
@@ -57,13 +70,27 @@ for the size.
 
 \begin{figure}[tbp!]
 \begin{displaymath}
+\begin{array}{ccc}
 \Qcircuit @C=1.5em @R=1.5em {
 \lstick{\ket{\psi}}                  & \qw & \targfix  & \qw & \gate{X^j} & \qw & \rstick{R_Z((-1)^j \phi)\ket{\psi}} \\
  %\normtwo \left( \ket{0} + e^{i\phi}\ket{1} \right) & \qw & \ctrl{-1} & \qw & \measureD  & \cw & \rstick{j}
 \lstick{ \normtwo \left( \ket{0} + e^{i\phi}\ket{1} \right) } & \qw & \ctrl{-1} & \qw & \measureD{Z}  & \cw & \rstick{j}
  }
+ &
+\begin{array}{c}
+\\
+\\
+\\
+= \\
+\end{array}
+&
+\Qcircuit @C=1.5em @R=1.5em {
+   & \qw & \gate{\frac{\pi}{2^{d}}} & \qw \\
+   & \qw & \qw                      & \qw \\
+ }
+\end{array}
  \end{displaymath}
-\caption{One round of programmable ancillae rotation (PAR) to probabilistically achieve arbitrary single-qubit rotations \cite{Jones2012}}
+\caption{One round of programmable ancillae rotation (PAR) to probabilistically achieve arbitrary single-qubit rotations \cite{Jones2012}.}
 \label{fig:par}
 \end{figure}
 
@@ -89,17 +116,44 @@ for the size.
 }
 \end{array}
 \end{displaymath}
-\caption{Decomposition of a controlled-$R_z$ rotation}
+\caption{Decomposition of a controlled-$Z$ ($\Lambda(R_Z(\phi))$) rotation using three single-qubit rotations and CNOTs.}
 \label{fig:crz}
 \end{center}\end{figure}
 
+\begin{figure}[tb!]
+\begin{center}
+\begin{displaymath}
+\begin{array}{ccc}
+\Qcircuit @C=1.5em @R=1.5em {
+   & \ctrl{1}                 & \qw \\
+   & \gate{\frac{\pi}{2^{d}}} & \qw \\
+   & \qw                      & \qw \\
+ }
+&
+\begin{array}{c}
+\\
+\\
+\\
+= \\
+\end{array}
+&
+\Qcircuit @C=0.75em @R=1.5em {
+& \qw & \ctrl{1} & \qw & \qw                        & \qw & \ctrl{1} & \qw\\
+& \qw & \qswap   & \qw & \qw                        & \qw & \qswap   & \qw\\
+& \qw & \qswap \qwx     & \qw & \gate{\frac{\pi}{2^{d}}} & \qw & \qswap \qwx     & \qw
+}
+\end{array}
+\end{displaymath}
+\caption{Decomposition of a controlled-$Z$ ($\Lambda(R_Z(\phi))$) rotation using one single-qubit rotation controlled-SWAPs, and an ancilla.}
+\label{fig:crz2}
+\end{center}\end{figure}
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Quantum Compiler Module}
+\subsection{Quantum Compiler Modules}
 
 We can augment any \textsf{2D CCNTCM} circuit $\mathcal{C}$ with a set of modules that run a
-separate quantum compiler procedure. This quantum compiler is a source
-of ancillary qubits of the form 
-$\ket{0} + e^{i\phi}\ket{1}$. The angles $\phi$ are determined by
+separate quantum compiler procedure, which is a source of PAR qubits.
+The angles $\phi$ are determined by
 the original $\mathcal{C}$ and are known in advance (classically-precomputed,
 or non-adaptive). In the case of majority gates for factoring,
 as described in Section \ref{sec:fsl-majority}, the angles are of the
@@ -108,14 +162,14 @@ gate with fanin $n'$. Since this represents the most fine-grained resolution of
 rotation, our allowable error is $2^{-(k+1)} = 2^{-(\log_2 n' + 3)}$.
 
 This quantum compiler resource has a parameter $\epsilon$ which is the
-allowable error in the angles of the return PAR qubits.
+allowable error in the angles of the returned PAR qubits.
 We assume they have some precision $\epsilon = 2^{-k}$ from the
 true desired angle $\tilde{\phi}$.
-
+%
 \begin{equation}
 | \phi - \tilde{\phi} | \le \epsilon = 2^{-(k+1)} = 2^{-(\log_2 n' + 3)}
 \end{equation}.
-
+%
 Often, quantum compiler resources are given in terms of the quantity
 $(1/\epsilon)$, which we can re-express in terms of the
 majority gate fanin as $O(1/n')$. 
@@ -126,6 +180,7 @@ using parallel phase estimation from Section 13 of \cite{Kitaev2002}.
 This has the resources given in Table \ref{tab:fsl-ksv}.
 
 \begin{table}[tbp!]
+\begin{center}
 \begin{tabular}{|c|c|c|}
 \hline
 Circuit Size & $O((\log n')^2\log\log n')$ \\
@@ -135,6 +190,7 @@ Circuit Depth & $O((\log\log n')^2)$\\
 \end{tabular}
 \caption{KSV quantum compiling resources for single-qubit rotations in majority gates of fanin $n'$.}
 \label{tab:fsl-ksv}
+\end{center}
 \end{table}
 
 As we will discover later, the fanin of each majority gate is
@@ -144,9 +200,8 @@ our construction will actually have minimum depth $O((\log\log n)^2)$,
 which is not constant, but is still sub-logarithmic. This relationship still
 holds if the fanin is merely $n' = poly(n)$. It is still an
 open question \cite{Hoyer2002} whether a constant-depth
-quantum majority gate exists even on $\textsf{AC}$ with a fixed finite basis,
-let alone
-${NTC}$ architectures and their sub-models.
+quantum majority gate exists even on \textsf{AC} with a fixed finite basis,
+let alone \textsf{NTC} models such as \textsf{CCNTC} or \textsf{CCNTCM}.
 
 From the argument in the previous section: even though the PAR procedure is
 probabilistic, the asymptotic circuit resources required can be
