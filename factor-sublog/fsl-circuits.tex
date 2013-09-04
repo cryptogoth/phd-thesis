@@ -89,7 +89,8 @@ In classical circuits, we take unbounded fanout
 for granted (any node can have arbitrary out-degree). These are common
 in the literature of classical circuits. We will list them in order
 of the size of their universal set, where each subsequent class adds
-more gates.
+more gates. Note that each class must include polynomial-sized circuits
+in order to be complete.
 %
 \begin{description}
 \item[\textsf{NC}:]
@@ -171,7 +172,7 @@ is the definition of $\text{MAJ}_n$ given above \cite{Goldmann1994}.
 In fact, where many arithmetic functions above have been shown to
 be implementable in majority circuits \cite{Reif1992,Yeh1996}.
 Therefore, without loss of generality, we can concentrate on
-majority circuits for the remainder of this paper.
+majority circuits for the remainder of this chapter.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Quantum Gates}
@@ -238,7 +239,7 @@ Moore shows that parity is equivalent to fanout in a quantum setting \cite{Moore
 \textsf{QAC}^0_f = \textsf{QAC}[2]^0_f
 \end{equation}
 %
-Furthermore, it is has been discovered by Green et al. that including any $\text{MOD}[q]^0_f$
+Furthermore, it is has been discovered by Green et al. \cite{Green2001} that including any $\text{MOD}[q]^0_f$
 leads to the same complexity class in constant depth.
 
 \begin{equation}

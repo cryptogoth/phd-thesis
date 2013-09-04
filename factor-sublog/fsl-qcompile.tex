@@ -21,7 +21,7 @@ of any circuit.
 
 In our poly-logarithmic factoring implementation, we were able to reduce
 all our arithmetic circuits to such a fixed, discrete universal set.
-These arithmetic circuits are discrete and classical and nature, so it is
+These arithmetic circuits are discrete and classical in nature, so it is
 not surprising that we can implement them in a discrete way.
 However, to reduce the depth further, we need to introduce the idea of
 a quantum threshold gate, which requires controlled-rotations similar to
@@ -48,12 +48,13 @@ several rounds of the given circuit. In expectation, we achieve the
 desired rotation in two rounds, which has constant depth.
 Consequently, we must now consider
 all circuit resources in terms of expected (average) values, which we will
-write in between angle brackets such as $\rangle D \langle$ for expected
+write in between angle brackets such as $\langle D \rangle$ for expected
 depth, rather than just $D$.
 
 The 
 probability of $k$ consecutive PAR rounds all failing (and the need to run a
-more expensive KSV quantum compiling procedure) is $2^{-k}$, giving
+more expensive Kitaev-Shen-Vyalyi quantum compiling procedure described in
+Chapter \ref{chap:qcompile}) is $2^{-k}$, giving
 the following expected depth. For $k = O(1)$, one can make the
 expected depth of both PAR and quantum compiling grow with an arbitrarily small multiplicative constant.
 However the asymptotic cost will still track that of whatever
@@ -70,12 +71,14 @@ for the circuit size.
 
 \begin{figure}[tbp!]
 \begin{displaymath}
-\begin{array}{ccc}
+\begin{array}{cccc}
 \Qcircuit @C=1.5em @R=1.5em {
 \lstick{\ket{\psi}}                  & \qw & \targfix  & \qw & \gate{X^j} & \qw & \rstick{R_Z((-1)^j \phi)\ket{\psi}} \\
  %\normtwo \left( \ket{0} + e^{i\phi}\ket{1} \right) & \qw & \ctrl{-1} & \qw & \measureD  & \cw & \rstick{j}
 \lstick{ \normtwo \left( \ket{0} + e^{i\phi}\ket{1} \right) } & \qw & \ctrl{-1} & \qw & \measureD{Z}  & \cw & \rstick{j}
  }
+ &
+ \qquad \qquad \qquad \qquad \qquad
  &
 \begin{array}{c}
 \\

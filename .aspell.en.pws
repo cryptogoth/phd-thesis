@@ -1,4 +1,4 @@
-personal_ws-1.1 en 328 
+personal_ws-1.1 en 329 
 Mata
 Takahashi
 derandomized
@@ -59,8 +59,8 @@ boolean
 FET
 Bruck
 diagonalized
-timesteps
 timestep's
+timesteps
 unentangled
 parallelize
 encodings
@@ -235,8 +235,8 @@ Miquel
 Zalka
 Lubotsky
 fanin
-LTE's
 LTEs
+LTE's
 truein
 th
 ACC
@@ -321,6 +321,7 @@ invariants
 invertible
 approximativeness
 PSU
+SWAPs
 bitwise
 quaternions
 adjoint
