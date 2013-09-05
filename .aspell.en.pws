@@ -59,8 +59,8 @@ boolean
 FET
 Bruck
 diagonalized
-timestep's
 timesteps
+timestep's
 unentangled
 parallelize
 encodings
@@ -235,8 +235,8 @@ Miquel
 Zalka
 Lubotsky
 fanin
-LTEs
 LTE's
+LTEs
 truein
 th
 ACC
