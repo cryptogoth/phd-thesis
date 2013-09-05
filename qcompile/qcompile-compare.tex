@@ -4,29 +4,35 @@
 \begin{landscape}
 
 \begin{table}[hbt!]
+\begin{center}
 \begin{tabular}{|c|c|c|c|c|c|c|c|c|}
 \hline
 Algorithm                  & A/E & D/R & P/C & Multi? & $R$                             & $D'$                    & $S'$                  & $W'$ \\
 \hline
 Fowler\cite{Fowler2011}     & A   & D   & P  & Y    & $O(\ell |\mathcal{B}|^{\ell})$    &                         &                       &     \\
 Booth \cite{Booth2012}      & A   & D   & P  & Y    & $O(\ell |\mathcal{B}|^{\ell/2})$  &                         &                       & 1    \\
+\hline
 AMMR \cite{Amy2012}         & E   & D   & P  & Y    & $O(\ell |\mathcal{B}|^{\ell/2})$  &                         &                       & 1    \\
 BS \cite{Bocharov2012}      & E   & D   & P  & N    & $O(\ell |\mathcal{B}|^{\ell/4})$  &                         &                       & 1    \\
 %BSG \cite{Bocharov2013}     & A   & D   & N    & $O(\ell |\mathcal{B}|^{\ell/4})$ & $\ell$           & $D'$ & 1    \\
 KMM-e\cite{Kliuchnikov2012e} & E   & D   & P  & ?    & $\ell^2$                          &                         &                       & 1    \\
-SK-DN\cite{Dawson2005}      & A   & D   & P  & Y    & $O(n^{2.71} + \mathcal{B}^{l_0})$ & $O(D n^{3.97})$         &                       & 1    \\
-SK-KSV\cite{Kitaev2002}     & A   & D   & P  & N    & $O(n^{3+o(1)})$                   & $O(D n^{3+\nu})$        &                       & 1    \\
-SK-BS \cite{Bocharov2012}   & A   & D   & C  & N    & $O(n^{2.71} + \mathcal{B}^{l_0})$ & $O(Dn^{3.4})$           &                       & 1    \\
-KMM-a\cite{Kliuchnikov2012a}& A   & P   & C  & N    & $O(n^2\log n)$                    & $O(Dn)$                 &                       & 1    \\
-Selinger\cite{Selinger2012} & A   & P   & C  & N    & $O(n^4)$                          & $D(48n + 44)$           &                       & 1    \\
-PK-KSV \cite{Kitaev2002,Cleve2000} & E & D & P & N  & $O(1)$                            & $O(D\log n + \log^2 n)$ & $O(S n + n^2 \log n)$ & $O(n^2)$ \\
-PK-Jones \cite{Jones2013}   & E  & D    & P  & N     & $O(1)$                           & $O(D\log n + n \log n)$ & $O(S n + n \log n)$   & $2n + O(1)$ \\
+\hline
+SK-DN\cite{Dawson2005}      & A   & D   & P  & Y    & $O(\eta^{2.71} + \mathcal{B}^{l_0})$ & $O(D \eta^{3.97})$         &                       & 1    \\
+SK-KSV\cite{Kitaev2002}     & A   & D   & P  & N    & $O(\eta^{3+o(1)})$                   & $O(D \eta^{3+o(1)})$        &                       & 1    \\
+SK-BS \cite{Bocharov2012}   & A   & D   & C  & N    & $O(\eta^{2.71} + \mathcal{B}^{l_0})$ & $O(D\eta^{3.4})$           &                       & 1    \\
+KMM-a\cite{Kliuchnikov2012a}& A   & P   & C  & N    & $O(\eta^2\log n)$                    & $O(D\eta)$                 &                       & 1    \\
+Selinger\cite{Selinger2012} & A   & P   & C  & N    & $O(\eta^4)$                          & $D(48\eta + 44)$           &                       & 1    \\
+\hline
+PK-KSV \cite{Kitaev2002,Cleve2000} & E & D & P & N  & $O(1)$                            & $O(D\log \eta + \log^2 \eta)$ & $O(S \eta + \eta^2 \log \eta)$ & $O(\eta^2)$ \\
+PK-Jones \cite{Jones2013}   & E  & D    & P  & N     & $O(1)$                           & $O(D\log \eta + \eta \log \eta)$ & $O(S \eta + \eta \log \eta)$   & $2\eta + O(1)$ \\
+\hline
 \end{tabular}
-\caption{A comparison of single-qubit quantum compilers, where $n = \log_2(1/\epsilon)$, for a desired error $\epsilon$.
-Blank depths $D'$ are $\ell$. Blank sizes $S'$ are equal to $D'$. Blank widths $W'$ are equal to $1$.
-A/E: Approximate versus exact-synthesis. D/R: Deterministic versus randomized. P/C: provable bounds versus conjecture + numerical verification.
+\caption[A comparison of single-qubit quantum compilers]{A comparison of single-qubit quantum compilers, where $\eta = \log_2(1/\epsilon)$, for a desired error $\epsilon$.
+Blank depths $D'$ are $\ell$. The maximum basic approximation length is $\ell_0$ \cite{Dawson2005}. Blank sizes $S'$ are equal to $D'$. Blank widths $W'$ are equal to $1$.
+A/E: Approximate versus exact-synthesis. D/R: Deterministic versus randomized. P/C: provable bounds versus conjectured bounds + numerical verification.
 Multi?: Y if it can be generalized to a multi-qubit compiler.}
 \label{tab:qcompile-compare}
+\end{center}
 \end{table}
 
 \end{landscape}

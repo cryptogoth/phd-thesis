@@ -45,16 +45,16 @@ tradeoff between circuit depth and circuit size. They apply to \emph{classical m
 Therefore, we must scale all their circuit resources by those for a quantum majority
 gate, calculated in Section \ref{subsec:maj-gate}.
 
-\begin{theorem}{\textbf{(Yeh-Varvarigos) Multiple product in constant depth
+\begin{proposition}{\textbf{(Yeh-Varvarigos) Multiple product in constant depth
 and polynomial size: \cite{Yeh1996}.}}
 The $n^2$-bit product of $n\times n$-bit numbers can be computed by a
 majority circuit of depth $O(\frac{1}{\epsilon})$,
 size and width $O(\frac{1}{\epsilon}n^{3+2\epsilon})$, and
 fanin $O(n)$.
 \label{thm:mult-prod}
-\end{theorem}
+\end{proposition}
 
-\begin{theorem}{\textbf{(Yeh-Varvarigos) Modular reduction in constant depth
+\begin{proposition}{\textbf{(Yeh-Varvarigos) Modular reduction in constant depth
 and polynomial size \cite{Yeh1996}.}}
 The $n$-bit binary representation of the modular residue $x \bmod m$, where
 $x$ is an $n^2$-bit number and $m$ is an $n$-bit modulus, can be computed
@@ -62,7 +62,7 @@ by a majority circuit of depth $O(\frac{1}{\epsilon})$,
 size and width $O(\frac{1}{\epsilon}n^{1 + 2\epsilon})$, and
 fanin $O(n^2)$.
 \label{thm:mod-reduce}
-\end{theorem}
+\end{proposition}
 
 Both of these theorems rely on a Chinese Remainder representation for
 an $n$-bit number. A conventional binary representation of a number

@@ -7,7 +7,7 @@ approximation of $SU(d)$ gates by a fixed, finite basis $\mathcal{B}$.
 Although many recent results have surpassed SK in terms of efficiency,
 they often do so by improving the base-level approximation of the
 original SK algorithm. Moreover, many techniques for analyzing
-and understanding quantum compilers were developed for SK, which
+and understanding quantum compilers were first developed for SK, which
 continues to be the best way to learn them. Finally, the overall
 structure of the original SK algorithm is so simple, it is surprising
 that it works so well. Therefore, it is worth
@@ -17,11 +17,15 @@ The essential structure of SK is to recursively generate nets of unitary
 operators with
 successively finer precision. At any given level of recursion, the input 
 gate is divided up into two halves which can be
-approximated with less precision. Our pseudo-code and explanation
-follows the exposition in \cite{Dawson2005} and \cite{Harrow2001}
+approximated with less precision, but whose errors cancel out
+when the approximated halves are recombined. Our pseudo-code 
+in Figure \ref{fig:sk-code} and explanation
+follows the exposition in \cite{Dawson2005} and \cite{Harrow2001}.
 
+\begin{figure}[hbt!]
+\begin{center}
 \begin{algorithmic}[1]
-\STATE \textsc{function} $\tilde{U}_i \leftarrow$ SK$(U,n)$
+\STATE \textsc{function} $\tilde{U}_i \leftarrow$ SK$(U,i)$
 \IF{$i = 0$}
 \STATE $\tilde{U}_i \leftarrow $ BASIC-APPROX$(U)$
 \ELSE
@@ -33,6 +37,10 @@ follows the exposition in \cite{Dawson2005} and \cite{Harrow2001}
 \ENDIF
 \STATE return $\tilde{U}_i$
 \end{algorithmic}
+\caption{Pseudo-code for the Solovay-Kitaev algorithm \cite{Dawson2005}.}
+\label{fig:sk-code}
+\end{center}
+\end{figure}
 
 Since the recursion must eventually bottom out, we must precompute some sequences
 of gates from $\mathcal{B}$ up to length $l_0$. This is the classical
@@ -48,11 +56,11 @@ $\mathcal{B}$ for your quantum computer doesn't change.
 The BASIC-APPROX function above does a lookup (e.g. using some kd-tree search
 maneuvers through higher-dimensional vector spaces) using this $\epsilon_0$-net,
 and all higher recursive calls to SK are effectively constructing
-finer $\epsilon$-nets on the fly as needed.
+finer $\epsilon$-nets ``on the fly'' as needed.
 
 The FACTOR function performs a balanced group commutator decomposition,
 $U = ABA^\dagger B^\dagger$, and then recursively approximates the $A$ and $B$
-operators, again using SK. We denote by $\tilde{U}_i$ as the approximation
+operators, again using SK. We denote by $\tilde{U}_i$ the approximation
 of $U$ using $i$ levels of SK recursion. When they are multiplied
 together again, along with their inverses, their errors (which go like
 $\epsilon$) are symmetric and cancel out in such a way that the resulting
@@ -61,7 +69,8 @@ the balanced group commutator. In this manner, we can
 eventually sharpen our desired error down to any value. A
 geometric decomposition is used in the Dawson-Nielsen implementation \cite{Dawson2005},
 while one based on a Baker-Campbell-Hausdorff approximation is used in the
-Harrow implementation \cite{Harrow2001}. It is not
+Harrow implementation \cite{Harrow2001} following
+Nielsen and Chuang \cite{Nielsen2000}. It is not
 known which method converges more quickly to a desired gate in general.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -70,7 +79,7 @@ known which method converges more quickly to a desired gate in general.
 % this is an evernote item, maybe it is already reconciled
 
 Each level $i$ of recursion solves the problem of compiling 
-$U_i$ by combining five gates compiled at the lower $i-1$ level.
+$U_n$ by combining five gates compiled at the lower $i-1$ level.
 Therefore, the compiled circuit size at the top-level is upper-bounded by $5^n$,
 and
 this is in general the same as the circuit depth (since not all gates in

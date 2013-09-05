@@ -1,13 +1,58 @@
 \section{Conclusion}
 \label{sec:qcompile-conclude}
 
-In conclusion, we note the following interesting open problems in
-quantum compiling.
+In this chapter, we examined quantum compiling as a necessary
+puzzle piece to complete our previous factoring architectures
+as well as
+an active field of research in its own right. This chapter
+combined a pedagogical review at the beginning of quantum
+compiling in general and phase kickback quantum compiling
+using quantum Fourier states (QFS) in particular. It then ended
+with new, more depth-efficient results in QFS generation.
 
-\begin{itemize}
+Expanding beyond single-qubit gates and circuit bases, we
+studied the main themes of quantum compiler research,
+including multi-qubit compiling, exact versus approximative,
+deterministic versus randomized, and provably-efficient versus
+conjectured-efficient. We provided a wide-ranging resource
+comparison
+of the current state-of-the-art in single-qubit
+compiling. We then explicated in detail QFS generation
+using the Kitaev-Shen-Vyalyi (KSV) method of parallelized
+phase estimation with classical postprocessing. We called
+this method PK-KSV.
 
-\item Problem 1
+In our main contribution, we presented
+an optimized version of PK-KSV using early measurement
+which we called PK-KSVe. We contributed depth-efficient
+adders on \textsf{2D CCNTCM} for any phase kickback
+compiler in Lemma \ref{lem:w}. Then we compared the resources required
+for three different phase kick compilers,
+PK-KSV, PK-KSVe, and a method by Jones \cite{Jones2013}
+which we call PK-Jones. Our optimized approach
+PK-KSVe has the lowest depth of these approaches.
+Finally, we contribute a method for completing
+our factoring architecture from the previous chapter
+while maintaining sub-logarithmic depth in
+Theorem \ref{thm:qcompile}.
 
-\item Problem 2
-
-\end{itemize}
+This chapter has also raised interesting open question for
+future research.
+Among the quantum compiling themes of Section \ref{sec:qcompile-bg},
+we could form a
+fifth axis which is whether the compiled circuit obeys (hybrid) nearest-neighbor
+constraints or not. Such compilers would be judged based on how well
+they partitioned an input circuit to have an optimal
+number of modules on \textsf{2D CCNTCM} to also minimize module depth and
+module size (inter-module teleportations).
+When comparing existing related works in Section \ref{sec:qcompile-review},
+we did not measure classical space requirements, although these may be
+exponential. This would be a useful metric for future comparison.
+To extend
+the comparison of PK-KSV(e) and PK-Jones in Section \ref{sec:qcompile-ksv},
+one could calculate numerical upper bounds
+for performing QFT rotations sufficient for
+Shor's factoring algorithm on realistic key sizes of
+2048-4096 bits. Finally, in Section \ref{sec:qcompile-maj},
+we presented two conjectures which have deep implications for
+depth-efficient fault-tolerance.

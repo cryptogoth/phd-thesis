@@ -5,45 +5,58 @@ We now present a result delayed from Chapter \ref{chap:factor-sublog},
 the quantum compiling procedure which completes the quantum majority gate.
 Recall from that chapter that within each quantum majority gate, we
 needed to implement single-qubit rotations of the form
-$2\pi / m$, where $m = poly(n)$, where $n$ is the input size of the
+$2\pi / k$, where $k = poly(n)$, where $n$ is the input size of the
 number for factoring. We can augment any quantum
 majority circuit with quantum compiler modules that produce
-rotated ancillae of the form $\ket{0} + e^{i\phi}\ket{1}$.
+rotated ancillae of the form $\normtwo(\ket{0} + e^{i\phi}\ket{1})$.
 
 To maintain our sub-logarithmic depth, we choose the KSV method for
 generating quantum Fourier states and combine it with phase kickback
 (PK-KSV).
-The precision for quantum compiling is $m = 2^{-n'}$, and the
+The precision for quantum compiling is $k = 2^{-\eta}$, and the
 resulting resources for applying PK-KSV on \textsf{2D CCNTCM}
 in this case are
 given in Table \ref{tab:pk-ksv-resources}, based on calculations
 from Section \ref{sec:qcompile-ksv}. Note that these resources
 are deterministic, since they represent the worst case for any
-single rotation $R_Z(e^{i\phi})$. To convert from $n'$ to $n$,
-we use the relationship $n' = O(\log m) = O(\log n)$.
-However, we note that it is possible to modify the Jones method of
-Fourier state distillation to have similar performance.
+single rotation $R_Z(e^{i\phi})$. To convert from $\eta$ to $n$,
+we use the relationship $\eta = O(\log k) = O(\log n)$.
+These resources are for the generation of a single QFS, which is
+reusable for creating PAR qubits one-at-a-time. To create
+$m = poly(n)$ $R_Z(e^{i\phi})$ rotations for an entire
+quantum majority circuit, we would need to copy the first
+QFS $m$ times using the $W$ operator from Lemma \ref{lem:w}.
+This would take depth $O(\log m) = O(\log n)$,
+which is not sub-logarithmic. Therefore, it is more
+depth-efficient to create a new QFS from scratch for each
+PAR qubit needed, in parallel.
+
+We note that it is possible to modify PK-Jones to have
+similar sub-logarithmic depth for QFS generation if a
+constant-depth adder were used.
 
 \begin{table}[hbt!]
+\begin{center}
 \begin{tabular}{|c|c|}
 \hline
 $D'$ & $O((\log \log n)^2)$ \\
-$S'$ & $O()$ \\
-$W'$ & $O()$ \\
+$S'$ & $O(\log^2 n)$ \\
+$W'$ & $O(\log^2 n)$ \\
 \hline
 \end{tabular}
 \caption{Quantum compiling resources for PK-KSV for quantum majority gates
 in factoring an $n$-bit number.}
 \label{tab:pk-ksv-resources}
+\end{center}
 \end{table}
 
 Given such a factory for producing such ancillae, we can compile the
 rotations $R_Z(2\pi / m)$, for $m = poly(n)$ as in Theorem \ref{thm:maj-gate},
-by directly using the KSV compiler with parameters $n' = \log n$ as in the
+by directly using the KSV compiler with parameters $\eta = \log n$ as in the
 previous table.
 
 We now present a more general result for
-producing rotations which are rational multiples of $2\pi / m$ 
+producing rotations which are integer multiples of $2\pi / m$ 
 using a \emph{finite}
 basis in constant depth and polynomial size.
 This is not necessary for our sub-logarithmic factoring implementation,
@@ -53,7 +66,7 @@ In fact, no polynomial-size quantum circuit will require more than
 polynomial precision for compiling single-qubit rotations. However, we
 present our result in the hopes that it will be useful for other
 quantum algorithms, perhaps one where we must produce the
-PAR qubit $\ket{0} + e^{2\pi / m}\ket{1}$ ``offline'' and then produce
+PAR qubit $\normtwo ( \ket{0} + e^{2\pi / m}\ket{1} )$ ``offline'' and then produce
 the rotation $R_Z(2\pi k / m)$ ``online.''
 
 \begin{theorem}{\textbf{Compiling a single-qubit rotation over a non-fixed, finite basis.}}
@@ -62,6 +75,7 @@ $k \in \mathbb{Z}_m$,
 can be implemented in expected depth $O(1)$ and expected size and width $O(k)$ on
 \textsf{2D CCNTCM} over the finite
 (but not fixed) basis $\mathcal{G} \cup \{R_Z(2\pi / m)\}$.
+\label{thm:qcompile}
 \end{theorem}
 
 \begin{proof}
@@ -69,13 +83,14 @@ We use the quantum parallelism method of Hoyer-Spalek \cite{Hoyer2002},
 which relies on quantum fanout and unfanout on \textsf{2D CCNTCM}.
 Our use of the basis $\mathcal{G} \cup \{R_Z(2\pi / m)\}$ implies that
 we have access to quantum compiler modules for producing the
-PAR qubits $\ket{0} + e^{2\pi / m}\ket{1}$. Teleport $O(k)$ such qubits
+PAR qubits $\normtwo ( \ket{0} + e^{2\pi / m}\ket{1} )$. Teleport $O(k)$ such qubits
 into our current circuit.
 Our desired rotation of $R_Z(2\pi k / m)$ on a target qubit $\ket{\psi}$
 can be produced as $k$
 parallel applications of $R_Z(2\pi / m)$, which are already diagonal in
 the same (computational) basis. Fan out the qubit $\ket{\psi}$ $k$ times,
-apply the rotation $R_Z(2\pi /m)$ using the PAR procedure, then unfanout the
+apply the rotations $R_Z(2\pi /m)$ to each fanned out qubit in parallel
+using the PAR procedure, then unfanout the
 qubits.
 This requires expected $O(k)$ PAR qubits.
 \end{proof}
@@ -88,6 +103,10 @@ compile arbitrary rotations to a basis that is both fixed and finite
 in constant depth.
 
 \begin{conjecture}{\textbf{Logarithmic Reduction of Compiling Circuit Size and Width.}}
+Theorem \ref{thm:qcompile} can be accomplished in expected size
+and width $O(\log n)$ rather than $O(n)$.
+\end{conjecture}
+
 The size and width of the above circuit depend on whatever additional,
 finite, set of 
 gates
@@ -107,9 +126,12 @@ $x_i = k \bmod m_i$.
 Then we conjecture that
 the finite basis $\mathcal{G} \cup \{R_Z(2\pi x_i / m\}$ satisfies the
 properties above.
-\end{conjecture}
 
 \begin{conjecture}{\textbf{Constant Reduction of Compiling Depth.}}
+Theorem \ref{thm:qcompile} can be accomplished using a fixed,
+finite basis in constant depth.
+\end{conjecture}
+
 The above bases are finite but still depend on the problem input
 size $n$. It may be possible to find a basis that
 is both fixed and finite that would allow for compiling
@@ -120,4 +142,3 @@ the same for all inputs of any size.
 We conjecture that products of single-qubit gates in
 $\mathcal{G}$ which, when diagonalized, represent $R_Z$ rotations
 of irrational multiples of $\pi$, would form such a basis.
-\end{conjecture}

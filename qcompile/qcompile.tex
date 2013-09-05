@@ -2,33 +2,37 @@
 \label{chap:qcompile}
 
 Quantum compiling is the approximation of an $n$-qubit
-unitary operation using a fixed, finite, universal set
-of simpler gates. Like quantum architecture, quantum
-compiling plays an intermediate role between quantum
-algorithms (which determine the high-level gates in a circuit),
-and quantum error correction (which determines the
-fault-tolerant gate set).
+unitary operation, determined by a high-level algorithm,
+using a fixed, finite, universal set
+of fault-tolerant gates. Like quantum architecture, quantum
+compiling plays an intermediate role between theory and experiment.
 Quantum compiling helps mitigate one source of error,
 the difference $\epsilon$ between a desired gate and its
 finite approximation,
-and consumes its own circuit resources, usually measured in
+and consumes its own circuit resources as a function of
 $(1 / \epsilon)$.
-Therefore, it is important to study efficient quantum 
-compiling so that we don't lose any quantum algorithmic speedups.
-Most interestingly to this dissertation, quantum compiling itself
-is an algorithm and can be mapped to a low-depth, nearest-neighbor
-architecture. That is the subject of this chapter.
 
-In Section \ref{sec:qcompile-bg}, we build upon the background
-of Section \ref{sec:intro-basis} to rigorously define the problem of
-quantum compiling and define useful notation and circuit resources,
+In a larger context, efficient quantum 
+compiling ensures we don't lose any super-polynomial speedups
+while implementing a quantum algorithm such as Shor's algorithm.
+In this dissertation, we are particularly interested in
+quantum compiling as a means of completing the
+factoring architecture in Chapter \ref{chap:factor-sublog}.
+Most interestingly, quantum compiling itself
+is an algorithm and can be mapped to a hybrid nearest-neighbor
+architecture with low depth. That is the subject of this chapter:
+we combine a general pedagogical review of quantum compiling,
+we describe a particular low-depth approach called phase kickback,
+and then we present our main results: optimizing phase kickback
+to \textsf{2D CCNTCM} and applying it to sub-logarithmic factoring.
+
+In Section \ref{sec:qcompile-bg}, we notation and circuit resources,
 building upon the primer on circuit bases in Section \ref{sec:intro-basis}.
 We also discuss
-variations and subtasks of quantum compiling that are common themes
-in the literature, as well as their inter-relationships.
-These themes include exact synthesis versus approximation,
-single-qubit gates versus multi-qubit gates, and deterministic
-versus randomized compiling procedures.
+variations and subtasks of quantum compiling that are cross-cutting themes
+in the literature as well as their inter-relationships. This
+provides a framework to understand the next two sections, which
+survey existing related works.
 
 In Section \ref{sec:qcompile-sk}, we review the foundational
 result in this field, the Solovay-Kitaev algorithm, and how it
@@ -36,35 +40,35 @@ continues to shape quantum compiler research. We also discuss
 lower bounds on any SK-style approach to quantum compiling.
 Building upon this,
 in Section \ref{sec:qcompile-review}, we review the large
-amount of recent literature on single-qubit quantum compiling with
-constant width. We present
-the cross-cutting themes of this research and provide an
-at-a-glance comparison of all known single-qubit quantum compiling methods
+amount of recent literature on single-qubit quantum compiling,
+almost all of which has a logarithmic depth lower bound.
+We then provide an
+at-a-glance resource comparison of all known single-qubit quantum compiling methods
 to date in Section \ref{sec:qcompile-compare}.
 
-As an alternative method of single-qubit quantum compiling,
-in Section \ref{sec:qcompile-qfs}, we
-discuss a popular method of trading low depth for increased
-width: combining phase kickback with a quantum Fourier state.
+We then turn to the lowest-depth alternative to
+the single-qubit quantum compilers discussed previously
+in Section \ref{sec:qcompile-qfs}. This new approach
+trades increased width for low depth by combining \emph{phase kickback}
+with a quantum Fourier state.
 
 In Section \ref{sec:qcompile-ksv}, we contribute an improved
 algorithm for generating quantum Fourier states based on
-Kitaev-Shen-Vyalyi \cite{Kitaev2002}. We also provide the calculation of
+Kitaev-Shen-Vyalyi \cite{Kitaev2002}. We also calculate the
 parameters necessary for any practical implementation as well as
 the particular circuit resources consumed on \textsf{2D CCNTCM}.
 We then compare the KSV approach to a recent alternative
 by Jones which distills quantum Fourier states recursively \cite{Jones2013}.
-Finally, in Section \ref{sec:qcompile-maj}, we contribute a method for
-quantum compiling the single-qubit rotations needed for a
-sub-logarithmic depth quantum majority gate from Chapter \ref{chap:factor-sublog}.
+Finally, in Section \ref{sec:qcompile-maj}, we contribute the
+missing piece from our sub-logarithmic factoring architecture
+from Chapter \ref{chap:factor-sublog}: single-qubit rotations
+compiled in sub-logarithmic depth.
 
-The last two sections represent the main contributions of this chapter.
+These last two sections represent the main contributions of this chapter.
 
 %Finally, in Section \ref{sec:qcompile-conclude}, we conclude by summarizing
 %the overall themes of quantum compiling and presenting interesting
 %directions for future research.
-
-%\input{qcompile/qcompile-basis.tex}
 
 \input{qcompile/qcompile-bg.tex}
 
@@ -80,10 +84,4 @@ The last two sections represent the main contributions of this chapter.
 
 \input{qcompile/qcompile-maj.tex}
 
-% Old stuff, from old intro, maybe we can fit it into here to add color
-In digital computing, the boundary between architecture and compilers is quite porous and is determined by a processor's instruction set. Architecture studies processor resources to solve an algorithm given a particular instruction set which is fixed in hardware. This instruction set is produced by a compiler, a piece of (low-level) software which transforms over pieces of (high-level) software. This instruction set can change based on which algorithms it allows to solve efficiently as well as which processors it allows to manufacture efficiently as well as which operations it allows humans to understand easily. All of these factors combine to make architecture an art and an engineering discipline rather than merely a science.
-
-Quantum computers make this problem even more difficult due to the nature of a quantum bit. Because transformations between quantum states vary continuously over the space of unitary matrices with complex coefficients, we can only approximate desired quantum logic gates using a fixed set, given to us by fault-tolerance.
-
-
-%\input{qcompile/qcompile-conclude.tex}
+\input{qcompile/qcompile-conclude.tex}

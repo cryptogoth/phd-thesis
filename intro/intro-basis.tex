@@ -204,7 +204,7 @@ $U \in U(2)$. An important multiply-controlled gate, which is universal
 for classical reversible circuits, is the Toffoli gate, or controlled-controlled-$NOT$.
 
 \begin{equation}
-Toffoli = \Lambda^2(X) = 
+\text{Toffoli} = \Lambda^2(X) = 
  \left[
   \begin{array}{cccccccc}
     1 & 0 & 0 & 0 & 0 & 0 & 0 & 0 \\
@@ -383,18 +383,18 @@ error $\epsilon$.
 
 Often $\epsilon$ will be small, and we will upper bound it by some
 power of $\frac{1}{2}$. Therefore, we define a
-new parameter which is the number of bits needed to encode the exponent
+new parameter $\nu$ which is the number of bits needed to encode the exponent
 of this increasingly small fraction.
 
 \begin{equation}
-\epsilon = \frac{1}{2^k} \qquad
-k = \log(1/\epsilon)
+\epsilon = \frac{1}{2^\nu} \qquad
+\nu = \log(1/\epsilon)
 \end{equation}
 
 It is natural to suppose that compiling better approximations requires
 more resources, and these resources are expressed as functions of
 these
-parameters, increasing with decreasing $\epsilon$ and increasing $k$.
+parameters, increasing with decreasing $\epsilon$ and increasing $\nu$.
 In fact, often the efficiency and the
 capabilities of a quantum
 compiler depend on its basis. Therefore, we conclude this section by
@@ -445,28 +445,28 @@ our circuit basis in Chapters \ref{chap:factor-polylog} and
 \ref{chap:factor-sublog}.
 
 \begin{equation}
-\mathcal{G} = \{X, Z, H, Toffoli, CNOT\}
+\mathcal{G} = \{X, Z, H, \text{Toffoli}, \text{CNOT}\}
 \end{equation}
 
 It is important to note that the only non-Clifford gate in the above basis
-is $Toffoli$.
+is Toffoli.
 The Clifford group $\mathcal{C}_n$ by itself is \emph{not}
 universal.
 In fact, it is provable
 that \emph{any} universal gateset must possess at least one
 non-Clifford gate \cite{Zeng2011}.
 Two popular choices for the non-Clifford gate in a basis are the $T = R_Z(\pi/4)$
-gate and the $Toffoli = \Lambda^2(X)$ gate. Since these are not ``natively''
+gate and the $\text{Toffoli} = \Lambda^2(X)$ gate. Since these are not ``natively''
 supported (non-transversal) in many codes, they must often be implemented
 probabilistically using only Clifford operations and $MeasureZ$, usually
 by way of a so-called ``magic'' state.
 Therefore, many quantum compilers
 use the Clifford+$T$ basis ($\mathcal{C}_2 \cup \{ T \}$)
-or the Clifford+$Toffoli$ basis ($\mathcal{C}_2 \cup \{ Toffoli \}$),
+or the Clifford+Toffoli basis ($\mathcal{C}_2 \cup \{ \text{Toffoli} \}$),
 and measure
 the non-Clifford gate as the most expensive resource. It is an area of
 active research
-whether $T$ or $Toffoli$ is more efficient to implement
+whether $T$ or Toffoli is more efficient to implement
 \cite{Jones2013a,Eastin2012}.
 
 For single-qubit compilation, the $\{H,T, T^{\dagger}\}$ gateset is universal and

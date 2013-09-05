@@ -4,7 +4,7 @@
 This section gives a pedagogical review of the quantum compiling method
 that combines phase kickback and QFS generation due to
 Kitaev-Shen-Vyalyi \cite{Kitaev2002}. In this form, it compiles single-qubit
-of the form $R_Z(\phi)$. Using a multi-qubit
+rotations of the form $R_Z(\phi)$. Using a multi-qubit
 decomposition such as those presented in Section \ref{subsec:qcompile-multi},
 it can be extended to compile multi-qubit gates.
 Furthermore, we present an
@@ -14,9 +14,12 @@ our compilation resources (see Appendix \ref{app:ksv-error}). We refer to
 our optimized method as PK-KSVe, which still shares much in common with
 PK-KSV up to the phase estimation step.
 Finally, we contribute the architectural resources on $\textsf{2D CCNTCM}$ for running 
-three different QFS generation.
+three different QFS generation procedures
 
-First, in Section \ref{subsec:ksv-diff} we discuss our optimization of early measurement, which distinguished
+First, in Section \ref{subsec:qfs-adder} we contribute depth-efficient
+adders for any version of phase kickback.
+Then in Section \ref{subsec:ksv-diff} we discuss our optimization of early
+measurement, which distinguishes
 PK-KSVe from the original PK-KSV algorithm.
 Next,
 in Section \ref{subsec:ksv-steps} we present the high-level overview
@@ -32,62 +35,204 @@ PK-KSVe, and PK-Jones to \textsf{2D CCNTCM} and compare their
 asymptotic resource usage in Section \ref{subsec:ksv-compare}.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\subsection{Circuit Resources for Adders on Quantum Fourier States}
+\label{subsec:qfs-adder}
+
+We need two kinds of adders, both mapped to \textsf{2D CCNTCM} in order to
+create an $\eta$-qubit QFS.
+The first adder is a version of the QCLA from Section \ref{sec:modexp}
+on multiple modules instead of a single module. It sums two
+conventional numbers into one conventional number modulo $2^{\eta}$;
+call this adder $F$.
+%
+\begin{equation}
+F\ket{a}\ket{b} \rightarrow \ket{a}\ket{a+b \bmod 2^{\eta}}
+\end{equation}
+%
+The second adder is an optimized version of modular multipler addition
+from
+Chapter \ref{chap:factor-polylog},
+from Sections \ref{sec:csa-mod-add} and \ref{subsec:mma}.
+After modular multiple addition in carry-save encoding,
+it uses the first adder $F$ to combine the last two numbers
+into a conventional number. Then it uncomputes the intermediate stages.
+You will recognize this adder as $W$ from the previous section.
+
+First we prove a general result for mapping any \textsf{AC} circuit
+to a \textsf{2D CCNTCM} circuit.
+Then we use it to construct architectures for $F$ and $W$.
+
+\begin{lemma}
+Suppose an \textsf{AC} circuit $\mathcal{C}$ has
+depth $D(\eta)$, size $S(\eta)$, and width $W(\eta)$. Then it can be mapped
+onto a \textsf{2D CCNTCM} circuit $\mathcal{C'}$ with circuit depth
+$D(\eta)$, circuit size $S(\eta)$, circuit width $D(\eta)\cdot W(\eta)$,
+module depth $D(\eta)$, module size $D(\eta)\cdot W(\eta)$, and module width
+$D(\eta)$.
+\label{lem:ac-ccntcm}
+\end{lemma}
+
+\begin{proof}
+Each of $D(\eta)$ layers in $\mathcal{C}$ could operate on non-nearest-neighbors.
+We teleport all
+$W(\eta)$ qubits from the first module to the last module in sequence,
+reordering them at each module so that we can execute the gates of that
+layer only on nearest-neighbor qubits.
+This gives the desired circuit and module resources on
+\textsf{2D CCNTCM}.
+\end{proof}
+
+\begin{lemma}
+The operator $F$ on
+two $\eta$-qubit registers can be
+implemented in circuit/module depth $O(\log \eta)$, circuit size $O(\eta)$, 
+circuit width $O(\eta\log \eta)$, module size of $O(\eta \log \eta)$, and
+module width of $O(\log \eta)$ on
+\textsf{2D CCNTCM}.
+\label{lem:f}
+\end{lemma}
+
+\begin{proof}
+We modify the QCLA adder from
+Section \ref{subsec:qcla} by mapping it to multiple \textsf{2D CCNTCM} modules
+using
+Lemma \ref{lem:ac-ccntcm}.
+This is an alternative to the version in Section \ref{subsec:qcla} which
+contained the entire adder in a single module.
+To add $2 \times \eta$-bit numbers, the original QCLA on \textsf{AC} had
+depth $O(\log \eta)$ and size and width of $O(\eta)$ \cite{Draper2004}.
+Therefore, we have the desired resources for a \textsf{2D CCNTCM} circuit.
+\end{proof}
+
+\begin{lemma}
+The operator $W\ket{x_1}\ket{x_2}\cdots\ket{x_{m-1}}\ket{x_m} \rightarrow
+\ket{x_1}\ket{x_2}\cdots\ket{x_{m-1}}\ket{x_1 + x_2 + \ldots + x_m \bmod 2^{\eta}}$,
+which operates on $m \times \eta$-qubit registers, can be
+implemented in circuit/module depth $O(\log nm)$, circuit size $O(m\eta)$, 
+circuit width $O(m\eta + \eta\log \eta)$, module size of $O(m\eta + \eta \log \eta)$, and
+module width of $O(m + \log \eta)$ on
+\textsf{2D CCNTCM}.
+\label{lem:w}
+\end{lemma}
+
+\begin{proof}
+This reduces to the problem of modular multiple addition from
+Section \ref{subsec:mma}, with the following variation. Instead of
+addition modulo $m < 2^{\eta}$, we perform addition modulo $2^{\eta}$
+exactly, which is
+much simpler. It does not involve any truncation and adding back of
+modular residues. Namely, we just perform one round of constant-depth
+$3 \rightarrow 2$ addition, then we redo the computation of the
+highest-order bit $v_n$ to uncompute it. Call this simpler
+adder $J$:
+%
+\begin{equation}
+J\ket{a}\ket{b} \rightarrow \ket{a}\ket{a+b \bmod 2^n}
+\end{equation}
+%
+Therefore, we have a $O(\log m)$-depth binary tree of $O(m)$ modules,
+each containing a $J$ adder,
+which requires a total of $O(mn)$ teleportation of qubits between them.
+Within each module, the addition takes depth $O(1)$ and size and width
+of $O(\eta)$. Combine this in series with the circuit for $A$ in
+Lemma \ref{lem:f} and we have the desired resource bounds.
+\end{proof}
+
+In fact, we also provide numerical upper bounds for circuit resources
+of both $A$ and $W$ in Table \ref{tab:qfs-adder}.
+
+\begin{table}[hbt!]
+\begin{center}
+\begin{tabular}{|c|c|c|c|}
+\hline
+Operation & $D$ & $S$ & $W$ \\
+\hline
+$J$ from Lemma \ref{lem:w} & $66$ & $56\eta$ & $5\eta$ \\
+$F$ from Lemma \ref{lem:f} & $4\log_2 \eta + 6$ & $10\eta - 48\log_2 \eta - 78$ & $8\eta \log_2 \eta + 12\eta$ \\
+$W$ from Lemma \ref{lem:w} & $57\log_2 m$ & $100\eta m - 200\eta$ & $5\eta m - 10\eta$ \\
+\hline
+                           & $\overline{D}$ & $\overline{S}$ & $\overline{W}$ \\
+\hline
+ $J$                       & 0 & 0 & 1 \\
+ $F$                          & $4\log_2 \eta + 2$ & $12\eta \log_2 \eta + 4\eta$ & $4\log_2 \eta + 2$  \\
+ $W$                          & $1.71\log_2 m$ & $2\eta m + 3m - 4\eta - 6$ & $m-2$\\
+\hline
+\end{tabular}
+\caption[Circuit resources for adders used in generating an $\eta$ QFS generation on \textsf{2D CCNTCM}.]{Circuit resources for adders used in generating an $\eta$ QFS generation on \textsf{2D CCNTCM}.
+Resources for $W$ are for adding $m\times \eta$-bit numbers.}
+\label{tab:qfs-adder}
+\end{center}
+\end{table}
+
+Armed with these properties, we're now ready to describe our version of the
+KSV phase estimation procedure to produce quantum Fourier states.
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{The Optimization of Early Measurement}
 \label{subsec:ksv-diff}
 
 In this section, we describe the differences between PK-KSV, as originally
-presented in Section 13 of \cite{Kitaev2002} and PK-KSVe, which includes our
+presented in Section 13 of \cite{Kitaev2002}, and PK-KSVe, which includes our
 novel contribution of early measurement.
 
 Given a circuit $C$ to compile, we
-precompile it into gates from $\mathcal{G} \cup \{R_Z(2\pi x / 2^n)\}$
+precompile it into gates from $\mathcal{G} \cup \{R_Z(2\pi x / 2^{\eta})\}$
 using the results from Sections \ref{subsec:qcompile-single} and
-\ref{subsec:qcompile-multi} in $O(1)$ time, depth, and size.
+in $R = O(1)$ classical time and $D'=S'=O(1)$ compiled depth and size.
 Now we are done with the single-qubit gates and CNOT, and we have computed
 the values $\{x_1, \ldots , x_m\}$ that allow us to approximate our
-desired $m$
-$R_Z(\phi)$ gates as $\phi \approx \frac{\pi l}{2^n}$ to within precision
-$2^{-n}$. We now need to generate the QFS $\ket{\psi^{(k)}}$ to use with
+desired $m\times R_Z(\phi)$ gates as $\phi \approx \frac{\pi x_i}{2^{\eta}}$
+to within precision
+$2^{-(\eta+2)}$. We now need to generate the QFS $\ket{\psi_{\eta}^{(k)}}$ to use with
 phase kickback to either approximate $R_Z(\phi)$ directly, or to generate
 PAR qubits as intermediaries for later enacting $R_Z(\phi)$ probabilistically.
 
-The original PK-KSV procedure first created the state $\ket{\psi^{(0)}}$
-and applied phase estimation to it to enact the operator $\Upsilon(e^{-2\pi i / 2^n})$
-and get $\ket{\psi^{(1)}}$ as a result. This state can be copied using
-$W$: multiple addition modulo $2^n$. However, it involves using coherent measurement
-in order to enact a phase $\ket{x} \rightarrow e^{2\pi i x / 2^n}\ket{x}$ on
-all the components of $\ket{\psi^{(0)}} = \sum_{x = 0}^{2^n} \ket{x}$.
-
-The PK-KSVe does not enact the operator $\Upsilon(e^{-2\pi i / 2^n})$ but instead
-yields a QFS $\ket{\psi{(k)}}$ for random odd $k$, as well as the index $k$ itself.
-This can be used to solve the modular inverse equation classically:
-
+The original PK-KSV procedure first created the state $\ket{\psi_{\eta}^{(0)}}$
+and applied phase estimation to it to enact the operator
+$\Upsilon(e^{-2\pi i / 2^\eta})$
+%
 \begin{equation}
-kp \equiv x \bmod 2^n
+\Upsilon(e^{-2i \pi / 2^{\eta}})\ket{x} \rightarrow e^{-2i\pi x / 2^{\eta}}\ket{x}
 \end{equation}
+%
+and get $\ket{\psi_{\eta}^{(1)}}$ as a result. This state can be copied using
+$W$, multiple addition modulo $2^{\eta}$, from Lemma \ref{lem:w}.
+However, it involves using coherent measurement
+in order to enact a phase $\ket{x} \rightarrow e^{2\pi i x / 2^{\eta}}\ket{x}$ on
+all the components of $\ket{\psi_{\eta}^{(0)}} = \sum_{x = 0}^{2^{\eta-1}} \ket{x}$.
 
+The PK-KSVe does not enact the operator $\Upsilon(e^{-2\pi i / 2^{\eta}})$ but instead
+yields a QFS $\ket{\psi_{\eta}^{(k)}}$ for random odd $k$, as well as the index $k$ itself.
+This can be used to solve the modular inverse equation classically:
+%
+\begin{equation}
+kp \equiv x \bmod 2^{\eta}
+\end{equation}
+%
 to get the solution $p = p(k,x)$.
  This integer 
-$p$ is added to $\ket{\psi^{(k)}}$, controlled on some qubit $\ket{phi}$
-to get the desired phase shift: $R_Z(2\pi x / 2^n)\ket{\phi}$.
-To copy $\ket{\psi^{(k)}}$, consider the controlled addition operator $\Upsilon(A)_n$
-on two $n$-qubit registers.
+$p$ is added to $\ket{\psi_{\eta}^{(k)}}$, controlled on some qubit $\ket{\phi}$
+to get the desired phase shift: $R_Z(2\pi x / 2^{\eta})\ket{\phi}$.
+To copy $\ket{\psi_{\eta}^{(k)}}$, consider the controlled addition operator $\Upsilon(A)_n$
+on two ${\eta}$-qubit registers.
 
 \begin{equation}
-\Upsilon(A)_n \ket{x}\ket{y} \rightarrow \ket{x}\ket{y + x \bmod 2^n}
+\Upsilon(A)_n \ket{x}\ket{y} \rightarrow \ket{x}\ket{y + x \bmod 2^{\eta}}
 \end{equation}
 
 Applying this operator to two QFS's has the following interesting property
 as noted in \cite{Jones2013}.
 
 \begin{equation}
-\Upsilon(A)_n \ket{\psi^{(k')}}\ket{\psi^{(k)}} \rightarrow \ket{\psi^{(k'-k)}}\ket{\psi^{(k)}}
+\Upsilon(A)_n \ket{\psi_{\eta}^{(k')}}\ket{\psi_{\eta}^{(k)}} \rightarrow \ket{\psi_{\eta}^{(k'-k)}}\ket{\psi_{\eta}^{(k)}}
 \end{equation}
 
-Therefore, we can copy a state $\ket{\psi^{(k)}}$ in the second register by
-putting $\ket{\psi^{(0)}}$ in the first register to get $\ket{\psi^{(-k)}} = \ket{\psi^{(2^n - k)}}$.
-This is not exactly the same state as $\ket{\psi^{(k)}}$, but it can similarly be used
-with solving modular inverse to get an $x'$ and enact a desired rotation $R_Z(2\pi x' / 2^n)$.
+Therefore, we can copy a state $\ket{\psi_{\eta}^{(k)}}$ in the second register by
+putting $\ket{\psi_{\eta}^{(0)}}$ in the first register to get
+$\ket{\psi_{\eta}^{(-k)}} = \ket{\psi_{\eta}^{(2^{\eta} - k)}}$.
+This is not exactly the same state as $\ket{\psi_{\eta}^{(k)}}$,
+but it can similarly be used
+with solving modular inverse to get an $x'$ and enact a desired rotation $R_Z(2\pi x' / 2^{\eta})$.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{PK-KSVe Steps}
@@ -98,23 +243,23 @@ Here now are the main steps of PK-KSVe.
 The first stage involves QFS generation.
 
 \begin{enumerate}
-\item Create the equal superposition of all $\ket{\psi^{(k)}}$ for odd $k$:
+\item Create the equal superposition of all $\ket{\psi_{\eta}^{(k)}}$ for odd $k$:
 \begin{equation}
-\ket{nu} = \normtwo \left( \ket{2^{n-1}} + \ket{0} \right)
+\ket{\nu} = \normtwo \left( \ket{0} - \ket{2^{{\eta}-1}} \right)
 \end{equation}
 in register 1.
-\item Use phase estimation with error $\epsilon = 2^{-3n}$ and early
+\item Use parallel phase estimation with error $\epsilon = 2^{-3\eta}$ and early
 measurement to get classical Bernoulli series outcomes $y$ in register 2
-and a corresponding QFS $\ket{\psi^{(k)}}$. This takes a circuit of
-depth $O(\log n)$ and size $O(n^2)$ (see Section \ref{subsec:ppe}).
+and a corresponding QFS $\ket{\psi_{\eta}^{(k)}}$. This takes a circuit of
+depth $O(\log {\eta})$ and size $O({\eta}^2)$ (see Section \ref{subsec:ppe}).
 \item Perform classical post-processing from Section \ref{subsec:ksv-classical} to
-recover the phase $k$ by which can identify the state $\ket{\psi^{(k)}}$.
+recover the phase $k$ by which can identify the state $\ket{\psi_{\eta}^{(k)}}$.
 \end{enumerate}
 
-Now we have $\ket{\psi^{(k)}}$, or a state that has high overlap with it
+Now we have $\ket{\psi_{\eta}^{(k)}}$, or a state that has high overlap with it
 (calculated in Section \ref{subsec:ksv-compare}).
 We can copy it $m$ times using multiple addition $W$ in depth
-$O(m \log n)$ and size $O(mn)$. This is part of any complete
+$O(m \log {\eta})$ and size $O(m\eta)$. This is part of any complete
 quantum compiler solution for PK-KSVe, but we omit it here and
 focus on QFS generation.
 
@@ -123,22 +268,28 @@ focus on QFS generation.
 \label{subsec:ppe}
 
 Parallelized phase estimation is the central component of both
-PK-KSV and PK-KSVe which distinguishes it from all other quantum
+PK-KSV and PK-KSVe which distinguishes it from other,
+non-phase-kickback quantum
 compiling approaches. It is used to randomly ``pick'' an
-eigenstate $\ket{\psi_k}$ of a unitary operator $U$ and
+eigenstate $\ket{\psi_{\eta}^{(k)}}$ of a unitary operator $U$ and
 measure its corresponding eigenvalue (phase) $\phi_k$
-with some degree of precision $\delta = 2^{-n}$ and
-error probability $\epsilon = 2^{-l}$. As $n$ increases, the phases
+with some degree of precision $\delta = 2^{-{\eta}}$ and
+error probability $\epsilon = 2^{-l}$. Note that in this
+case $\eta$ is the exponent of the precision we want from
+our QFS, and $\epsilon$ denotes the error probability of
+getting a phase estimate that does not correspond to the
+QFS in the target register.
+ As ${\eta}$ increases, the phases
 generally become closer together, which is why we need exponential precision
 to distinguish between them.
-
-\begin{displaymath}
+%
+\begin{equation}
 U\ket{\psi_k} = e^{2\pi i \phi_k} \ket{\psi_k}
-\end{displaymath}
-
+\end{equation}
+%
 Phase estimation holds some superposition of eigenstates
 $\sum_{i} \alpha_i \ket{\psi_i}$
-in an $n$-qubit target register, to which it applies repeated measuring
+in an ${\eta}$-qubit target register, to which it applies measuring
 operators $\Lambda(U^{2^k})$
 controlled on some $t$-qubit register, which holds an
 approximation $\tilde{\phi}$ to the real phase $\phi$.
@@ -157,72 +308,81 @@ $\delta$ and $\epsilon$.
 It varies according to the exact phase estimation procedure
 used.
 
-The popular version of phase estimation presented in \cite{Nielsen2000},
+The popular version of phase estimation presented in \cite{Nielsen2000}
 requires $t$ repeated controlled applications of some unitary
-$U$ (and its successive powers as $U^{2^k}$, $0<k<2^t$)
+$U$ (and its successive powers as $U^{2^k}$, $0<k<t$)
 to a target state which holds some superposition of its eigenvectors,
 controlled by $t$ bits which will hold the approximation to a corresponding
 eigenvalue (phase).
 This version requires applying an inverse quantum Fourier
 transform (QFT).
 
+The main steps in parallelized phase estimation as applied to PK-KSV
+are as follows. As our most important input parameter, we calculate $t$, the number
+of measurements that we need (and the number of control qubits that we have).
+For QFS generation, it suffices to determine the phase with resolution $\frac{1}{2^{{\eta}+2}}$,
+where each bit of the phase is determined with a series of Bernoulli (biased coin flips)
+of $s=O(l + \log \eta)$ trials each. As in the original PK-KSV, we have two sets of measurements,
+one to measure $\phi$ as a bias projected on the real axis of the unit circle (called
+the cosine measurements), and one to perform the same measurements rotated by $\pi/2$
+(called the sine measurements). These are illustrated below for these
+measuring operators controlled on the first qubit and targeting the remaining
+$\eta$ qubits with the operator whose phase we are trying to measure, $A$:
+%
+\begin{eqnarray}
+\Xi(U) & = & (H\otimes I^{\otimes \eta})\Lambda(A)(H \otimes I^{\otimes \eta})\\
+\Xi(iU) & = & (H\otimes I^{\otimes \eta})\Lambda(A)(SH \otimes I^{\otimes \eta})\\
+\end{eqnarray}
+%
+\begin{equation}
+\Pr(1|k,\Xi(iA)) = \frac{1 + \sin(2\pi\phi_k)}{2} \qquad \Pr(0|k,\Xi(A)) = \frac{1 + \cos(2\pi\phi_k)}{2}
+\end{equation}
+%
+Therefore, we have:
+%
+\begin{equation}
+t = 2({\eta}+2)s
+\end{equation}
+%
 To achieve our desired low-depth, we can ``parallelize'' the application of
 $\Lambda(U)$ by interpreting the
-$t = (n+2)s$ control bits as an $n$-bit number $q$ and
-apply $\Upsilon(A)\ket{q}$ only once.
-Recall that $A$ is the addition operator on an $n$ qubit
-target register containing $\ket{\psi^{(k)}}$, so we can
-only effectively add the lowest $n$ bits of $q$.
+$t = ({\eta}+2)s$ control bits as $s\times O({\eta})$-bit numbers $q_i$,
+adding them into a single $\eta$-bit number $\ket{q}$, and
+applying $\Upsilon(A)\ket{q}$ only once.
+Recall that $A$ is the addition operator on an ${\eta}$ qubit
+target register containing $\ket{\psi_{\eta}^{(k)}}$, so we can
+only effectively add the lowest ${\eta}$ bits of $q$.
 Furthermore, the eigenvalues of $A$ are rational with a fixed
-denominator, $\phi_k = k / 2^n$.
+denominator, $\phi_k = k / 2^{\eta}$.
 To avoid the inverse QFT, which often has small rotations of the form 
 $R_Z(\phi)$, 
 we can do a classical post-processing step as described in Section \ref{subsec:ksv-classical}.
 
-The main steps in parallelized phase estimation as applied to PK-KSV
-are as follows. As our most important input parameter, we calculate $t$, the number
-of measurements that we need (and the number of control qubits that we have).
-For QFS generation, it suffices to determine the phase with resolution $\frac{1}{2^{n+2}}$,
-where each bit of the phase is determined with a series of Bernoulli (biased coin flips)
-of $s$ trials each. As in the original PK-KSV, we have two sets of measurements,
-one to measure $\phi$ as a bias projected on the real axis of the unit circle (called
-the cosine measurements), and one to perform the same measurements rotated by $\pi/2$
-(called the sine measurements). These are illustrated below:
-
-\begin{equation}
-\Pr(1|k) = \frac{1 + \sin(2\pi\phi_k)}{2} \qquad \Pr(0|k) = \frac{1 + \cos(2\pi\phi_k)}{2}
-\end{equation}
-
-Therefore, we have:
-
-\begin{equation}
-t = 2(n+2)s
-\end{equation}
 
 \begin{enumerate}
 
 \item Begin with a $t$-qubit ``phase'' register initialized to $\ket{0}^{\otimes t}$.
-Recall that we have an $n$-qubit ``QFS'' register initialized to $\ket{\nu}$, the
-equal superposition of $\ket{\psi^{(k)}}$ for all odd $0 < k  < 2^n$.
+Recall that we have an ${\eta}$-qubit ``QFS'' register initialized to $\ket{\nu}$, the
+equal superposition of $\ket{\psi_{\eta}^{(k)}}$ for all odd $0 < k  < 2^{\eta}$.
 %\textsc{Resources} $= [0,0,0,0,0,t]$
 
 \item Place the $t$-qubit register into an equal superposition by
-applying $n$ Hadamard gates.
-%\textsc{Resources} $= [0,0,0,n,1,0]$
+applying ${\eta}$ Hadamard gates.
+%\textsc{Resources} $= [0,0,0,{\eta},1,0]$
 
-\item Treat $t$ as $2s$ groups of bits, each encoding an $(n+2)$-bit number
+\item Treat $t$ as $2s$ groups of bits, each encoding an $({\eta}+2)$-bit number
 which we call $\ket{q_i}$.
 This does not involve any addition or other operation, it just determines
 how we interpret its measurement outcome after we projectively measure it later.
-%Sum them up out-of-place, retaining only the lowest $n$-bits,
+%Sum them up out-of-place, retaining only the lowest ${\eta}$-bits,
 %to get the superposition
-%of all $n$-bit numbers, $1/(\sqrt{2^{n}}) \sum_{i=0}^{2^n-1} \ket{q_i}$.
+%of all ${\eta}$-bit numbers, $1/(\sqrt{2^{{\eta}}}) \sum_{i=0}^{2^{\eta}-1} \ket{q_i}$.
 %Call this register $\ket{q_i}$.
-%\textsc{Resources} $= ADD-OUT(2s \times n)$
+%\textsc{Resources} $= ADD-OUT(2s \times {\eta})$
 
-\item Apply the gate $\Upsilon(A)_{n+2}$ to a target ancilla register $\ket{h_i}$ controlled
-on $\ket{q_i}$, which we interpret as an $(n+2)$-bit number. The register
-$\ket{h_1}$ is initialized to all $\ket{0}$'s. This can be done in
+\item Apply the gate $\Upsilon(A)_{{\eta}+2}$ to a target ancilla register $\ket{h_i}$ controlled
+on $\ket{q_i}$, which we interpret as an $({\eta}+2)$-bit number. The register
+$\ket{h_i}$ is initialized to all $\ket{0}$'s. This can be done in
 parallel for all $0 \le i < 2s$ using constant-depth $3\rightarrow 2$ addition.
 Now we have $2s$ quantum integers, plus
 the original register $\ket{\nu}$, that we add down using modular multiple
@@ -230,16 +390,16 @@ addition in logarithmic depth, including the final addition of a CSE number
 down to a conventional number using QCLA \cite{Draper2004}. We use the adders described
 in Section \ref{subsec:qfs-adder} on \textsf{2D CCNTCM}, uncomputing all
 other intermediate adder qubits back to $\ket{0}$
-so that we are only left with $\ket{\nu}$.
-%\textsc{Resources} $= ADD-IN(2 \times n)$
+so that we are only left with $\ket{\nu}$, which we can also uncompute.
+%\textsc{Resources} $= ADD-IN(2 \times {\eta})$
 
-\item Reverse the second step by applying another $n$ Hadamards.
-%\textsc{Resources} $= [0,0,0,n,1,0]$
+\item Reverse the second step by applying another ${\eta}$ Hadamards.
+%\textsc{Resources} $= [0,0,0,{\eta},1,0]$
 
 \item Projectively measure all $t$ control
 qubits in the phase register. These qubits
-now contain classical $0$ or $1$ as outcomes of $(n+2)s$ Bernoulli trials.
-The target $\ket{nu}$ now contains a QFS $\ket{\psi^{(k)}}$ for some
+now contain classical $0$ or $1$ as outcomes of $({\eta}+2)s$ Bernoulli trials.
+The target $\ket{\nu}$ now contains a QFS $\ket{\psi_{\eta}^{(k)}}$ for some
 as yet unknown $k$ with high fidelity.
 
 \item Read out these outcomes into our classical controller
@@ -272,69 +432,63 @@ parameters in the earlier, quantum part of phase estimation are as follows.
 Estimate the phase and its power-of-two multiples
 $2^j \phi_k$ to
 some constant, modest precision $\delta''$, where
-$0 \le j < (n+2)$. For each $j$, we
+$0 \le j < ({\eta}+2)$. For each $j$, we
 apply a series of $s$ measuring operators targeting the state $\ket{\nu}$
-controlled on $s$ qubits in the state $(\ket{0}+\ket{1})/\sqrt{2}$,
+controlled on $s$ qubits in the state $\normtwo(\ket{0}+\ket{1})/\sqrt{2}$,
 essentially encoding the $2^j \phi_k$ as a bias in a coin, and flipping the
 coin $s$ times in a Bernoulli trial, counting the number of $1$ outcomes,
 and using that fraction to approximate the real $2^j \phi_k$.
 \item
-Sharpen our estimate to exponential precision $\frac{1}{2^{n+2}}$ using the
-$(n+2)$ estimates, each for different bits in the binary expansion of
+Sharpen our estimate to exponential precision $\frac{1}{2^{{\eta}+2}}$ using the
+$({\eta}+2)$ estimates, each for different bits in the binary expansion of
 $\phi_k$. Multiplication by successive powers-of-two shift these bits
 up to a fixed position behind the zero in a binary fraction representation,
 where we can use a finite-automata and a constant number of
-bits to refine our $O(n)$-length running approximation.
+bits to refine our $O({\eta})$-length running approximation.
 \end{enumerate}
 
 Three things are worth mentioning about the interrelation of the parameters
-between these two steps. Since our phases all have a denominator of $2^n$,
+between these two steps. Since our phases all have a denominator of $2^{\eta}$,
 there is no need to run the continued fractions algorithm on multiple
 convergents, as is the case with period-finding in Shor's factoring algorithm.
-Furthermore, the phases are $1/2^n$ apart, therefore it suffices to approximate
-the phases to within $1/2^{n+2}$ in order to break ties, which is where
+Furthermore, the phases are $1/2^{\eta}$ apart, therefore it suffices to approximate
+the phases to within $1/2^{{\eta}+2}$ in order to break ties, which is where
 our range for $j$ comes from above.
 
 The number of trials $s$ comes from the Chernoff bound:
-
-\begin{displaymath}
-\Pr \left[ | s^{-1}\sum_{r=1}^s v_r - p_* | \ge \delta'' \right]
+%
+\begin{equation}
+\Pr \left[ | s^{-1}\sum_{r=1}^s v_r - p_* | \ge \delta' \right]
 \le 2e^{-2\delta'^2 s}
-\end{displaymath}
-
+\end{equation}
+%
 Setting this equal to the desired error probability $\epsilon$ we get
-
-\begin{displaymath}
+%
+\begin{equation}
 s = \frac{1}{2\delta''^2}\ln \frac{1}{\epsilon}
-\end{displaymath}
-
+\end{equation}
+%
 We are actually estimating the values $\cos(2\pi \cdot 2^j \phi_k)$ and
 $\sin(2\pi \cdot 2^j \phi_k)$, so if we wish to know $2^j \phi_k$ with
 precision $\delta''$, we actually need to determine the $\cos(\cdot)$ and
-$\sin(\cdot)$ values with a different precision $\delta'$, lower-bounding
+$\sin(\cdot)$ values with a different precision $\delta'$, upper-bounding
 it with the steepest part of the cosine and sine curves.
-
-\begin{displaymath}
-\delta' = 1 + cos(\pi - \delta'')
-\end{displaymath}
-
-It is possible to improve this bound by adding a bias angle of $\pi/4$
-before measurement, and then subtracting it from the recovered phase
-angle after classical post-processing. This bias angle is
-inspired by the SHF phase estimation \cite{Svore2013}. Then we have
-$\delta'' \approx \delta'$.
-
+%
+\begin{equation}
+\delta' = 1 + \cos(\pi - \delta'') = 1 - \cos(\delta'')
+\end{equation}
+%
 The factor $\frac{1}{2\delta''^2}$ depends on the constant precision with
 which we determine our $2^j \phi_k$ values. Since classical time is
 cheap and quantum gates are expensive, it makes sense to minimize the number
 of trials $s$. Table \ref{tab:ksv-parameters} shows the corresponding values of $1/(2\delta''^2)$
-and $\delta'$ as a function of various choices for $\delta'$.
+and $\delta'$ as a function of various choices for $\delta''$.
 
 \begin{table}
 \centerline{
 \begin{tabular}{|c|c|c|c|}
 \hline
-$\delta''$ & $1/(2\delta''^2)$ & $\delta'$ & $1/(2\delta'^2)$ \\
+$\delta''$ & $1/(2\delta''^2)$ & $\delta'(\delta'')$ & $1/(2\delta'^2)$ \\
 \hline
 $1/16$     & $128$             & $0.0019525$ & $131,160$\\
 $1/8$      & $32$              & $0.0078023$ & $  8,213$\\
@@ -342,24 +496,26 @@ $1/4$      & $8$               & $0.0310880$ & $    517$\\
 \hline
 \end{tabular}
 }
-\caption{Parameters for the number of measurements in PK-KSV.}
+\caption[Parameters for the number of measurements in PK-KSV]{Parameters for the number of measurements in PK-KSV. Since
+the number of trials $s \sim 1/(2\delta'^2)$, smaller is better.}
 \label{tab:ksv-parameters}
 \end{table}
 
 By making our $\delta'$
 exponentially worse (doubling it) we are only increasing the range of
-$j$ a linear amount (by one). In general, for $\delta'=\frac{1}{2^l}$, we get
-a final estimate for $\phi = 2^{m-3}$
+$j$ a linear amount (by one).
+% Who knows what the end of the below sentence is now
+%In general, for $\delta'=\frac{1}{2^l}$, we get a final estimate for $\phi = 2^{m-3}$
 
 Projective measurements are irreversible, and it is not so important that
 we are left with (classical, unentangled) garbage in our $t$-qubit ancillae register.
 After all, we only run phase estimation once
-to get our initial $\ket{\psi^{(k)}}$ state.
+to get our initial $\ket{\psi_{\eta}^{(k)}}$ state.
 The reason why
 the authors of \cite{Kitaev2002} go to some care to show that all the classical
 postprocessing steps can be done in polynomial-size and logarithmic-depth
-is that these must be done to a quantum state $\ket{\psi^{(0)}}$ in order
-to turn it into $\ket{\psi^{(1)}}$ in original PK-KSV. However, our new procedure
+is that these must be done coherently to a quantum state $\ket{\psi_{\eta}^{(0)}}$ in order
+to turn it into $\ket{\psi_{\eta}^{(1)}}$ in original PK-KSV. However, our new procedure
 sidesteps this requirement, so we are free to offload this processing to a
 classical controller, which is available in \textsf{2D CCNTCM}.
 
@@ -370,29 +526,29 @@ applying it to QFS generation. The first difference is that a constant
 success probability of $\frac{3}{4}$ is no longer good enough. We would
 like to drive down our error exponentially low as $\epsilon = 2^{-l}$.
 Second, the operator whose phase we are estimating is now
-addition modulo $2^n$, which is more efficient in circuit resources
+addition modulo $2^{\eta}$, which is more efficient in circuit resources
 than modular multiplication (see Section \ref{subsec:qfs-adder}).
 
 In the procedure above, we measured power-of-two multiples of the phase
 $2^{j}\phi_k$ to recover single bits of $\phi_k$ at a time.
 However, a remarkable recent result by Svore-Hasting-Freedman (SHF) shows
 how to use information theoretic and signal processing techniques to
-improve the number of measurements needed from $O(n^2)$ as in conventional
-KSV to $O(n\log^{*}n)$.
+improve the number of measurements needed from $O({\eta}^2)$ as in conventional
+KSV to $O({\eta}\log^{*}{\eta})$.
 Their key technique is to select random measurements of this form:
-
+%
 \begin{equation}
 (2^{j_1}+2^{j_2}+\ldots + 2^{j_S})\phi_k
 \end{equation}
-
+%
 This would allow us to recover multiple bits at a time.
 SHF empirically determines that the number of trials $s$ in
-each Bernoulli series scales as $O(\log n)$ for $n = {1000,10000}$,
+each Bernoulli series scales as $O(\log {\eta})$ for ${\eta} = \{1000,10000\}$,
 on the same order of magnitude for running factoring on
 keys of 2048 to 4096 bits.
 Furthermore, they extend this approach to multiple rounds. Given
 that the number of measurements in the final round is
-$s = O(\log n)$ and that each round requires logarithmically
+$s = O(\log {\eta})$ and that each round requires logarithmically
 fewer measurements than the previous round, they
 achieve the iterated-logarithmic depth above.
 These techniques could be used to improve PK-KSV, but we
@@ -407,62 +563,69 @@ We now map both the KSV and Jones algorithms for QFS generation
 to \textsf{2D CCNTCM} and compare their resources. We do not consider
 the phase kickback part of the quantum compiler, since this controlled addition
 is the same for both QFS algorithms. Like PK-Jones \cite{Jones2012}, we
-set our error as $\epsilon = \left(\frac{\pi}{2^n}\right)^2$. It is not clear why
+set our error as $\epsilon = \left(\frac{\pi}{2^{\eta}}\right)^2$. It is not clear why
 this error was chosen, since for factoring or other polynomial-sized circuits,
 an inverse-polynomial error precision is sufficient. However, for the
 purpose of comparison, we set the same error.
 
-The condition for error for PK-Jones is one minus the overlap between a
-pure Fourier state $\ket{\psi}^{(1)}_n$ and a distilled
-Fourier state $\ket{\tilde{\psi}}^{(1,m)}_n$ after $m$ rounds.
-
+The error for PK-Jones is one minus the overlap between a
+pure Fourier state $\ket{\psi_{\eta}^{(1)}}$ and a distilled
+Fourier state $\ket{\tilde{\psi_{\eta}^{(1,m)}}}$ after $m$ rounds.
+%
 \begin{equation}
-1 - | \braket{\tilde{\psi}^{(1,m)}_n}{\psi^{(1)}} |^2 = \epsilon \le \left( \frac{\pi}{2^n} \right)^2 
+1 - | \braket{\tilde{\psi}^{(1,m)}_{\eta}}{\psi_{\eta}^{(1)}} |^2 = \epsilon \le \left( \frac{\pi}{2^{\eta}} \right)^2 
 \end{equation}
-
-The condition for error in PK-KSV is that an incorrect phase indexed by $k$ is returned,
-one that does not correspond to the eigenstate $\ket{\psi}^{(1)}$. The target
+%
+The error in PK-KSV is that an incorrect phase indexed by $k'$ is returned,
+one that does not correspond to the eigenstate $\ket{\psi_{\eta}^{(k)}}$.
+The target
 register for phase estimation begins in a superposition of eigenstates
-$\ket{1} = \sum_{s = 1}^{2^{n-1}} \ket{\psi^{(2s-1)}_n}$, and does not deteriorate
+$\ket{1} = \sum_{s = 1}^{2^{{\eta}-1}} \ket{\psi^{(2s-1)}_n}$, and does not deteriorate
 since none of the measuring operators mix between the orthogonal decomposition of the
 QFS basis. We make use of Theorem \ref{thm:projective} in Appendix \ref{app:ksv-error},
 where the measured index $y$ corresponds to a subspace $\mathcal{M}_y$ of all Bernoulli series outcomes $\Delta$ that would
 correspond to the phase $k = (2s-1)$, and the state left in $\mathcal{N}$ is a (possibly impure)
-QFS $\mathcal{\tilde{\psi}^{(k)}}$ which has large overlap with $\mathcal{\psi^{(k)}}$.
-We take the set of $\Omega$ of subspaces to be the odd QFS indices $\{1, 3, 5, \ldots 2^n - 1\}$
-of which there are $2^{n-1}$ elements. Taking our phase estimation error to be $\epsilon \left( \frac{1}{2^{3n-1}} \right)$,
+QFS $\ket{\tilde{\psi_{\eta}^{(k)}}}$ which has large overlap with
+$\ket{\psi_{\eta}^{(k)}}$.
+We take the set of $\Omega$ of subspaces to be the odd QFS indices $\{1, 3, 5, \ldots 2^{\eta} - 1\}$
+of which there are $2^{{\eta}-1}$ elements. Taking our phase estimation error to be $\epsilon \left( \frac{1}{2^{3n-1}} \right)$,
 we then have the following inequality.
-
+%
 \begin{equation}
-1 - | \braket{\tilde{\psi}^{(y)}}{\psi^{(k)}} | = \sum_{s = 1}^{2^{n-1}} \sum_{y \in \Delta: f(j) \ne (2s-1)} \Pr(2s-1|y) \le |\Omega|\epsilon = \frac{1}{2^{2n}} \le \left( \frac{\pi}{2^n} \right)^2 
+1 - | \braket{\tilde{\psi}^{(y)}}{\psi^{(k)}} | = \sum_{s = 1}^{2^{{\eta}-1}} \sum_{y \in \Delta: f(j) \ne (2s-1)} \Pr(2s-1|y) \le |\Omega|\epsilon = \frac{1}{2^{2n}} \le \left( \frac{\pi}{2^{\eta}} \right)^2 
 \end{equation}
-
-Several differences exist in resource
+%
+Several differences exist in our resource
 calculation methods and those of PK-Jones \cite{Jones2012}. First, that
 author calculates expected resources, since the distillation method is
-probabilistic and involves post-selection. Our resources are worst-case,
+probabilistic and involves post-selection. Failures are heralded, and in
+the worst case we fall back to using PK-KSV(e) for QFS generation.
+Our resources are worst-case,
 with still a small probability of failure calculated to match the
 case of PK-Jones with all successful post-selection. We also compare our
 improvements with those of the original PK-KSV algorithm, for the QFS generation stage.
-These are given in Table \ref{tab:ksv-resources}.
+Second, the resource measurements for PK-Jones are on
+\textsf{AC}. Therefore, even in the most favorable (unconstrained, average-case) setting for
+PK-Jones and a more constrained model for PK-KSVe, our result still have
+lower depth at the cost of greater size and width.
+These results are shown in Table \ref{tab:ksv-resources}.
 
 \begin{table}[hbt!]
-\begin{tabular}{|c|c|c|c|}
+\begin{center}
+\begin{tabular}{|c|c|c|c|c|}
 \hline
-Resource       & PK-KSVe     & PK-KSV         & PK-Jones\\
+\textsf{2D CCNTCM} &         &                          & \textsf{AC}     & \\
+Resource  & PK-KSVe          & PK-KSV                   & Resource        & PK-Jones\\
 \hline
-$D$            & $O(\log n)$ & $O(\log^2 n)$  & $O(\log^2 n)$ \\
-$S$            & $O(n^2)$    & $O(n^2\log n)$ & $O(n \log n)$ \\
-$W$            & $O(n^2)$    & $O(n^2)$       & $2n + O(1)$ \\
-$\overline{D}$ & $O(\log n)$ & $O(\log^2 n)$  & $O(\log n)$ \\
-$\overline{S}$ & $O(n^2)$    & $O(n^2)$       & $O(n^2)$ \\
-$\overline{W}$ & $O(n)$      & $O(n)$         & $O(n)$ \\
+$D$       & $O(\log {\eta})$ & $O(\log^2 {\eta})$       & $\avg{D}$       & $O(\log^2 {\eta})$ \\
+$S$       & $O({\eta}^2)$    & $O({\eta}^2\log {\eta})$ & $\avg{S}$       & $O({\eta} \log {\eta})$ \\
+$W$       & $O({\eta}^2)$    & $O({\eta}^2)$            & $\avg{W}$       & $2\eta + O(1)$ \\
+$\bar{D}$ & $O(\log {\eta})$ & $O(\log^2 {\eta})$       & $\avg{\bar{D}}$ & $O(\log {\eta})$ \\
+$\bar{S}$ & $O({\eta}^2)$    & $O({\eta}^2)$            & $\avg{\bar{S}}$ & $O({\eta}^2)$ \\
+$\bar{W}$ & $O({\eta})$      & $O({\eta})$              & $\avg{\bar{W}}$ & $O({\eta})$ \\
 \hline
 \end{tabular}
-\caption{A comparison of circuit resources for QFS generation for PK-KSVe, PK-KSV, and PK-Jones on \textsf{2D CCNTCM} for error $\epsilon \le \left( \frac{\pi}{2^n} \right)^2$.}
+\caption{A comparison of circuit resources for generating an $\eta$-qubit QFS using PK-KSVe, PK-KSV, and PK-Jones for error $\epsilon \le \left( \frac{\pi}{2^{\eta}} \right)^2$.}
 \label{tab:ksv-resources}
+\end{center}
 \end{table}
-
-A useful extension of this work would be to calculate numerical upper bounds and compare the
-two QFS methods for an application, such as Shor's factoring algorithm for realistic key sizes of
-2048-4096 bits.
