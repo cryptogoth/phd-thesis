@@ -59,26 +59,31 @@ another unitary $\tilde{U}_j$ that approximates it with precision $\delta$,
 then the new measuring operator $\tilde{W}$ also approximates the original
 $W$ with the precision $\delta$.
 
-This precision is defined in terms of the inner product between any state
-$\ket{\zeta}$
-operated
-on by $W$ and by $\tilde{W}$. We can decompose $\ket{\zeta}$ into
-two subsystems $\ket{\psi}$ and $\ket{\phi}$
-corresponding to the spaces $\mathcal{N}$ and $\mathcal{K}$
-above. We will use this fact later.
+This precision is defined in terms of the operator norm of the difference
+between the operators $W$ and $\tilde{W}$, assuming that
+$|| \tilde{U}_j - U || \le \delta$.
+%inner product between any state
+%$\ket{\zeta}$
+%operated
+%on by $W$ and by $\tilde{W}$. We can decompose $\ket{\zeta}$ into
+%two subsystems $\ket{\psi}$ and $\ket{\phi}$
+%corresponding to the spaces $\mathcal{N}$ and $\mathcal{K}$
+%above. We will use this fact later.
 
 \begin{equation}
-\bra{\zeta} W^{\dag} \tilde{W} \ket{\zeta} =
-\bra{\psi} \otimes \bra{\phi} W^{\dag} \tilde{W} \ket{\psi} \otimes \ket{\phi} =
-\sum_{j \in \Omega} \left( \bra{\psi} \Pi_{\mathcal{L}_j} \ket{\psi} \otimes
-\bra{\phi} U^{\dag}_j \tilde{U}_j \ket{\phi} \right) \le \delta
+|| \tilde{W} - W || = || \bigoplus_{j \in \Omega} \Pi_{\mathcal{L}_j} \otimes () \tilde{U}_j - U_j ) || \le \delta
 \end{equation}
+%\begin{equation}
+%\bra{\zeta} W^{\dag} \tilde{W} \ket{\zeta} =
+%\bra{\psi} \otimes \bra{\phi} W^{\dag} \tilde{W} \ket{\psi} \otimes \ket{\phi} =
+%\sum_{j \in \Omega} \left( \bra{\psi} \Pi_{\mathcal{L}_j} \ket{\psi} \otimes
+%\bra{\phi} U^{\dag}_j \tilde{U}_j \ket{\phi} \right) \le \delta
+%\end{equation}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \section{Notation}
-
-A random section on notation. I will find a better place to put this later.
+\label{sec:meas-notation}
 
 In \cite{Kitaev2002}, ancillae are denoted as $\mathcal{B}^{\otimes N}$ to mean
 appending $N$ qubits to a quantum state. However, we will use the more general
@@ -104,7 +109,7 @@ of dimension
 $\dim(\mathcal{V})\times \dim(\mathcal{V})\cdot\dim(J)$
 (or the transpose of that), which are unital in that
 $\hat{U}\hat{U}^\dagger = I$. To convert between the two matrix sizes,
-so that we can combine unitary and unital operators, we can use the
+so that we can combine unitary and isometries, we can use the
 standard embedding as in \cite{Kitaev2002}:
 
 \begin{equation}
@@ -134,8 +139,8 @@ to the measurement instrument space $\mathcal{K}$ with respect to
 some fixed orthogonal decompositions of these spaces.
 
 \begin{equation}
-\mathcal{N} = \bigotimes_{j \in \Omega} \qquad
-\mathcal{K} = \bigotimes_{y \in \Delta} \qquad
+\mathcal{N} = \bigoplus_{j \in \Omega} \mathcal{L}_j \qquad
+\mathcal{K} = \bigoplus_{y \in \Delta} \mathcal{M}_y \qquad
 f:\Omega \rightarrow \Delta
 \end{equation}
 

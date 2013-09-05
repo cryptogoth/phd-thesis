@@ -66,7 +66,7 @@ tensored with unitary operators on $\mathcal{K}$.
 Let $\tilde{W}$ be an analogous operator except that the unitaries $\tilde{U}_j$
 now operate on $\mathcal{K}$ tensored with an ancillary subsystem
 $\mathcal{B}^N$.
-
+%
 \begin{eqnarray}
 U_j : \mathcal{K}\\
 \tilde{U}_j : \mathcal{K} \otimes \mathcal{B}^{\otimes N}\\
@@ -74,31 +74,31 @@ W : \mathcal{N} \otimes \mathcal{K} = \bigoplus_j \Pi_{\mathcal{L}_j} \otimes U_
 \tilde{W} : \mathcal{N} \otimes \mathcal{K} \otimes \mathcal{B}^N =
 \bigoplus_j \Pi_{\mathcal{L}_j} \otimes \tilde{U}_j
 \end{eqnarray}
-
+%
 Suppose that for each $j$,
 $\tilde{U}_j$ approximates (with ancillae) $U_j$ with error $\nu$
 according to the
 definition below.
-
+%
 \begin{equation}
 \forall_j || \tilde{U}_j - (U_j \otimes I_{\mathcal{B}^{\otimes N}}) || \le \nu
 \label{eqn:uj_approx}
 \end{equation}
-
+%
 Then the measuring operator
 $\tilde{W} = \oplus_j \Pi_{\mathcal{L}_j} \otimes \tilde{U}_j$ approximates
 with ancillae the measuring operator
 $W = \sum_j \Pi_{\mathcal{L}_j} \otimes U_j$ with the same error $\nu$.
-
+%
 \begin{equation}
-|| \tilde{W} - (W \otimes I_{\mathcal{B}^{\otimes N}}) || \le \nu ||
+|| \tilde{W} - (W \otimes I_{\mathcal{B}^{\otimes N}}) || \le \nu
 \end{equation}
-
+%
 \end{lemma}
 
 \begin{proof}
 We decompose $W$ using its definition.
-
+%
 \begin{eqnarray}
 || \tilde{W} - (W \otimes I_{\mathcal{B}^{\otimes N}}) || & = &
 || (\bigoplus_j \Pi_{\mathcal{L}_j} \otimes \tilde{U}_j) -
@@ -106,17 +106,17 @@ We decompose $W$ using its definition.
 & = & || \bigoplus_j \Pi_{\mathcal{L}_j} \otimes (\tilde{U}_j - (U_j \otimes I_{\mathcal{B}^{\otimes N}})) || \\
 & \le & \max_j ||    \Pi_{\mathcal{L}_j} \otimes (\tilde{U}_j - (U_j \otimes I_{\mathcal{B}^{\otimes N}})) ||
 \end{eqnarray}
-
+%
 In the last step above, we use Lemma \ref{lemma:error-sum} to reduce the
 error of approximating $W$ with ancillae to the largest error of approximating
 any $U_j$ with ancillae. Now we use Equation \ref{eqn:uj_approx} and continue.
-
+%
 \begin{eqnarray}
 || \tilde{W} - (W \otimes I_{\mathcal{B}^{\otimes N}}) || & \le &
 \max_j || (\tilde{U}_j - (U_j \otimes I_{\mathcal{B}^{\otimes N}}) || \\
 & = & \nu
 \end{eqnarray}
-
+%
 In the step above, we used the fact that when taking the norm of an operator
 which is a projector onto a subspace
 tensored with a unitary, this reduces to taking the norm
@@ -137,7 +137,6 @@ corresponds to parallelized phase estimation.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{theorem}[Problem 12.2, \cite{Kitaev2002}]
-\label{thm:coherent}
 We consider the space
 $\mathcal{N} \otimes \mathcal{B}^{\otimes N} \otimes \mathcal{K}$ with the
 following orthogonal subsystem decompositions:
@@ -146,15 +145,16 @@ $\mathcal{B}^{\otimes N} = \bigoplus_{y \in \Delta} \mathcal{M}_y$. We
 define two operators, $W$ which measures $\mathcal{N}$ as object into
 $\mathcal{B}^{\otimes N}$ as instrument and $V$ which measures
 $\mathcal{B}^{\otimes N}$ as object into $\mathcal{K}$ as instrument.
-
+%
 \begin{eqnarray}
 W : \mathcal{N} \otimes \mathcal{K}\\
 \tilde{W} : \mathcal{N} \otimes \mathcal{K} \otimes \mathcal{B}^N
 \end{eqnarray}
-
+%
 If $W$ approximately measures a function $f : \Omega \rightarrow \Delta$
 with error $\epsilon$, then the operator $\tilde{Y} = W^{-1}VW$ approximates
 the following operator $Y$ with error $2\sqrt{\epsilon}$.
+\label{thm:coherent}
 \end{theorem}
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -166,12 +166,12 @@ define $\tilde{Y}$ in an alternative way: operators $P_j$ which operate on the
 space $\mathcal{K} \otimes \mathcal{J}$ which can further be expressed
 in terms of operators $Q_y$ operating on $\mathcal{K}$ and operators
 $R_j$ operating on $\mathcal{J}$.
-
+%
 \begin{equation}
 \tilde{Y} = \sum_{j \in \Omega} \Pi_{\mathcal{L}_j} \otimes P_j \qquad
 P_j = \sum_{y \in \Delta} Q_y \otimes (R_j^{\dagger}\Pi_{\mathcal{M}_y}R_j)
 \end{equation}
-
+%
 Using the results of Lemma \ref{lemma:error-sum}, we only need to show that
 $P_j$ approximates (using ancillae) $Q_{f(j)}$ (without using ancillae) for
 all $j$.
@@ -180,30 +180,30 @@ To begin with, let's examine the action of $P_j$ and $Q_{f(j)}$ on
 an arbitrary state $\ket{\xi} \in \mathcal{K}$, possibly augmented with
 ancillae $\ket{0^N}$.
 We further define the following states and the difference between them.
-
+%
 \begin{eqnarray}
 \ket{\eta}         & = & Q_{f(j)} \ket{\xi} \\
 \ket{\tilde{\eta}} & = & P_j(\ket{\xi} \otimes \ket{0^N}) \\
 \ket{\psi}         & = & \ket{\tilde{\eta}} - \ket{\eta}
 \end{eqnarray}
-
+%
 We want to minimize the norm of $\ket{\psi}$, which represents the error
 in a state operated on by the desired unitary $Q_{f(j)}$ and the state
 operated on by the approximation with ancillae $P_j$.
 
 That's how we begin these next calculations.
-
+%
 \begin{eqnarray}
 \braket{\psi}{\psi} & = & \left[ \bra{\tilde{\eta}} - (\bra{\eta} \otimes \bra{0^N}) \right]
-                    \left[ \ket{\tilde{\eta}} - (\ket{eta} \otimes \ket{0^N}) \right] \\
+                    \left[ \ket{\tilde{\eta}} - (\ket{\eta} \otimes \ket{0^N}) \right] \\
               & = & \left[ \braket{\tilde{\eta}}{\tilde{\eta}} \right ] - \\
               &   & \left[ (\bra{\eta} \otimes \bra{0^N})(\ket{\tilde{\eta}}) \right] - \\
               &   & \left[ (\bra{\tilde{\eta}} \otimes (\ket{\eta} \otimes \ket{0^N}) \right] + \\
               &   & \left[ \braket{\eta}{\eta} \right] \\
               & = & 2 - \left(\bra{\eta} \otimes \bra{0^N} \right) \ket{\tilde{\eta}} - \\
-              &   & \bra{\tilde{eta}} \left( \ket{\eta} \otimes \ket{0^N} \right)
+              &   & \bra{\tilde{\eta}} \left( \ket{\eta} \otimes \ket{0^N} \right)
 \end{eqnarray}
-
+%
 In the last line, we use the fact that $\ket{\eta} \otimes \ket{0^N}$ and
 $\ket{\tilde{\eta}}$ are both normalized states of unit norm. The two braket
 terms remaining are complex conjugates of each other (call them $a+bi$ and
@@ -212,13 +212,13 @@ $a-bi$) so their sum is just $2a$, or the real part of either complex number.
 This is where we continue our calculations, using the definition of $\ket{\eta}$
 and $\ket{\tilde{\eta}}$ to express their overlaps in terms of $Q_y$,
 $R_j$, and projectors onto the orthogonal decomposition of $\mathcal{J}$.
-
+%
 \begin{eqnarray}
 \braket{\psi}{\psi} & = & 2 - 2\Re\left[ \left(\bra{\eta} \otimes \bra{0^N}\right) \ket{\tilde{\eta}} \right] \\
                     & = & 2 - 2\Re\left[ \sum_{y \in \Delta} \bra{\xi}Q_{f(j)}^{\dagger}Q_y \ket{\xi}
                                                              \bra{0^N}R_j^{\dagger}\Pi_{\mathcal{M}_y}R_j\ket{0^N} \right] \label{eqn:sym-real}
 \end{eqnarray}
-
+%
 In the last line above, we use the fact that we can distribute a braket
 through a tensor product. That is, if $\ket{\alpha}$, $\ket{\beta}$, and
 $\ket{\gamma}$ are normalized vectors, then
@@ -235,20 +235,20 @@ as the braket $\braket{\phi}{\phi}$.
 
 Now we also need to use the fact that the real part of a sum over complex
 numbers is at most the sum of real parts of each complex number.
-
+%
 \begin{equation}
 \Re\left[ \sum_{i} c_i \right] \quad \le \quad \sum_{i} \Re( c_i )
 \end{equation}
-
-Furthermore, the following inequality holds.
-
+%
+Furthermore, the following equality holds.
+%
 \begin{equation}
-1 - \sum_{i} \Re(c_i) \quad \le \quad \sum_{i} \left(1 - \Re(c_i) \right)
+1 - \sum_{i} \Re(c_i) \quad = \quad \sum_{i} \left(1 - \Re(c_i) \right)
 \end{equation}
-
+%
 Substituting this
 back in our original calculation, we get:
-
+%
 \begin{eqnarray}
 \braket{\psi}{\psi} & \le & 2 - 2\sum_{y \in \Delta} \Re\left(
   \bra{\xi}Q_{f(j)}^{\dagger}Q_y \ket{\xi}
@@ -257,14 +257,12 @@ back in our original calculation, we get:
            \bra{\xi}Q_{f(j)}^{\dagger}Q_y \ket{\xi}\Pr(y | j) \right) \\
    & \le & 2 - 2\sum_{y \in \Delta} \Re\left(
            \bra{\xi}Q_{f(j)}^{\dagger}Q_y \ket{\xi}\right) \Pr(y | j) \\
-   & \le & 2 \left[ 1 - \sum_{y \in \Delta} \Re\left(
-           \bra{\xi}Q_{f(j)}^{\dagger}Q_y \ket{\xi} \right) \right] \Pr(y | j) \\
    & \le & 2 \sum_{y \in \Delta}\left[
            1 - \Re\left( \bra{\xi}Q_{f(j)}^{\dagger}Q_y \ket{\xi} \right)
            \Pr(y | j)
            \right]
 \end{eqnarray}
-
+%
 In the second line, we used the definition of
 $\bra{0^N}R_j^{\dagger}\Pi_{\mathcal{M}_y}R_j\ket{0^N} = \braket{\phi_{(y,j)}}{\phi_{(y,h)}}$
 as the probability of getting outcome $y$ in the register
@@ -277,21 +275,21 @@ because any $Q_y\ket{\xi}$ is a normalized state, and therefore one minus
 this quantity is at most $2$. We also exclude the case where
 $y = f(j)$, since in that case $Q_{f_(j)}^{\dagger}Q_y = I$ and the overlap
 is 1, contributing zero to the sum.
-
+%
 \begin{eqnarray}
 \braket{\psi}{\psi} & \le & 2 \sum_{y \ne f(j)} 2\Pr(y|j) \label{eqn:prob-sum}\\
                     & \le & 4\epsilon
 \end{eqnarray}
-
+%
 In the final line above, we use the definition of $\Pr(y|j)$ from
 Section \ref{subsec:approx}. The actual answer we want is the norm
 of the difference vector $\ket{\psi}$, which is the square root of the
 magnitude of the overlap.
-
+%
 \begin{equation}
 \lvert\lvert \ket{\psi} \rvert\rvert \le 2\sqrt{\epsilon}
 \end{equation}
-
+%
 This completes the proof.
 
 As an additional note, if $V$ is the copy operator, we have
@@ -301,18 +299,18 @@ is $1$ and contributes zero to the sum of probabilities.
 For each $y \ne f(j)$, the overlap is exactly $0$, and contributes
 $\Pr(y|j)$ to the sum.
 Therefore, instead of line \ref{eqn:prob-sum} above, we get:
-
+%
 \begin{eqnarray}
 \braket{\psi}{\psi} & \le & 2\sum_{y \ne f(j)} \Pr(y|j)\\
                     & \le & 2\epsilon
 \end{eqnarray}
-
+%
 And the final error is
-
+%
 \begin{equation}
 \lvert\lvert \ket{\psi} \rvert\rvert \le \sqrt{2\epsilon}
 \end{equation}
-
+%
 This makes intuitive sense, since the first bound is overly general.
 It works for any $V$. If we know $V$, we can actually make additional
 assumptions and get a better (smaller) upper bound for the error, in this
@@ -327,7 +325,7 @@ case by a factor $\sqrt{2}$.
 Now what happens if we perform the operator $\hat{Y} = VW$? That is, we
 perform $W$ to measure some function $f$ and then we extract the useful
 information using $V$, but we don't wish to uncompute the results by
-performing $W^{-1}$? There are three related reasons we may wish to do this:
+performing $W^{-1}$? There are four related reasons we may wish to do this:
 
 \begin{enumerate}
 \item
@@ -348,7 +346,10 @@ $\mathcal{L}_j$, and we wish to use states in these subspaces as a resource.
 \end{enumerate}
 
 All of these reasons are true for the problem of quantum Fourier state
-generation, as described in Section \ref{sec:qcompile-qfs}.
+generation, as described in Section \ref{sec:qcompile-qfs}. However,
+the last reason is the most important, since in the case of phase
+estimation for phase kickback quantum compiling, a quantum Fourier
+state (or something close to one) is left in the subsystem $\mathcal{N}$.
 
 These are both practical reasons in that they don't affect the
 asymptotic resources required by our algorithm. However, they do affect
@@ -363,26 +364,26 @@ where $W$ approximately measures a function $f : \Omega \rightarrow \Delta$
 with error $\epsilon$: If the operator $\hat{Y} = VW$ followed by projective
 measurement on $\mathcal{K}$ yields classical outcome $y \in \Delta$,
 then the
-overlap of the state $\ket{\tilde{psi}}$ in $\mathcal{N}$ with $\mathcal{L}_j$ such
+overlap of the state $\ket{\tilde{\psi}}$ in $\mathcal{N}$ with $\mathcal{L}_j$ such
 that $f(j) = y$ is upper-bounded by the number of subspaces $|\Omega|$ times the
 $\epsilon$.
-
+%
 \begin{equation}
 \sum_{j \in \Omega: f(j) \ne y} \bra{\tilde{\psi}}\Pi_{\mathcal{L}_j}\ket{\tilde{\psi}} \le |\Omega|\epsilon
 \end{equation}
 \label{thm:projective}
 \end{theorem}
-
+%
 \begin{proof}
 Consider the probability distribution of states over $\mathcal{N} \otimes \mathcal{J} \otimes \mathcal{K}$.
 Decomposing the entire system over the subspaces of $\mathcal{N} \bigoplus_{j \in \Omega} \mathcal{L}_j$,
 within each $\mathcal{L}_j$ there is a probability of $\epsilon$ associated with error states $y \in \Delta$
 such that $y \ne f(j)$.
-
+%
 \begin{equation}
 \sum_{y \ne f(j)} \Pr(y | j) \le \epsilon
 \end{equation}
-
+%
 We can define a total error probability by summing over all values of $j \in Omega$, or
 $\mathcal{L_j} \in \mathcal{N}$.
 
@@ -401,3 +402,8 @@ any $y$ is the total error probability above. Therefore, we have:
 
 This argument is independent of any ancillae.
 \end{proof}
+
+Theorem \ref{thm:projective} upper-bounds the error for
+early measurement in KSV parallel phase estimation used to
+generate a quantum Fourier state. It is necessary to compute the resources
+for a quantum compiler in Section \ref{sec:qcompile-ksv}.
