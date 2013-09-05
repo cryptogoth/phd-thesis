@@ -61,7 +61,12 @@ $W$ with the precision $\delta$.
 
 This precision is defined in terms of the operator norm of the difference
 between the operators $W$ and $\tilde{W}$, assuming that
-$|| \tilde{U}_j - U || \le \delta$.
+$|| \tilde{U}_j - U || \le \delta$. The operator norm is
+defined in Equation \ref{eqn:op-norm} in Section \ref{sec:intro-basis}.
+We can also come up with an analogous definition for the
+maximum
+self-overlap of any normalized state operated on by the difference
+$(\tilde{U} - U)$, which will always be real. 
 %inner product between any state
 %$\ket{\zeta}$
 %operated
@@ -72,6 +77,7 @@ $|| \tilde{U}_j - U || \le \delta$.
 
 \begin{equation}
 || \tilde{W} - W || = || \bigoplus_{j \in \Omega} \Pi_{\mathcal{L}_j} \otimes () \tilde{U}_j - U_j ) || \le \delta
+\label{eqn:op-diff}
 \end{equation}
 %\begin{equation}
 %\bra{\zeta} W^{\dag} \tilde{W} \ket{\zeta} =

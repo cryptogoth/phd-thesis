@@ -121,12 +121,14 @@ V = \sum_{y \in \Delta} I_{\mathcal{N}} \otimes \Pi_{\mathcal{M}_y} \otimes Q_y
 
 We now reveal that $\tilde{Y}$ approximates $Y$ from Equation \ref{eqn:y-ideal}.
 What does this mean? For one operator, say $\tilde{X}$, to approximate another,
-say $X$, within an error $\delta$ means that the minimum overlap between
-any state $\ket{\eta}$ that is operated on by $\tilde{X}$ and $X$ is at least
-$1 - \delta$. This is shown in Equation \ref{eqn:overlap}.
+say $X$, within an error $\delta$ means that the maximum overlap between
+any state $\ket{\eta}$ that is operated on by the difference
+$\bar{X} = (\tilde{X} - X$) is at most
+$\delta$. This is shown in Equation \ref{eqn:overlap}, and is analogous
+to the method in Equation \ref{eqn:op-diff}.
 
 \begin{equation}
-\bra{\eta} \tilde{X}^{\dagger} X \ket{\eta} \ge 1 - \delta
+\bra{\eta} \bar{X}^{\dagger} \bar{X} \ket{\eta} \le \delta
 \label{eqn:overlap}
 \end{equation}
 
