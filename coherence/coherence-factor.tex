@@ -169,7 +169,11 @@ The depth-width product for configurable parameter $d$ is
 $DW = O(n^{2^d + 3})$. By setting it to be less than one $d = 1/k$
 for $k \ge 2$, we are
 actually splitting each $n$-bit number into $2^{k-1}$ pieces and grouping
-them together.
+them together. Unfortunately, this configurability does not give us
+improved depth-width product; the optimal factoring architecture
+configuration appears to be our poly-logarithmic-depth implementation
+with $d=1$. However, circuit coherence may provide us with a
+better solution.
 
 %Of all these implementations, the one that is the closest to the
 %minimum $TS$ from Ref. \cite{Knill1995} is the $O(\log^2 n)$-depth
@@ -177,7 +181,7 @@ them together.
 
 %Other approaches to configuring 
 
-Finally, we suggest a construction for low-coherence factoring circuits.
+We end with a conjecture for constructing for low-coherence factoring circuits.
 In the original quantum period-finding (QPF) procedure of
 Nielsen-Chuang \cite{Nielsen2000}, $n$ quantum integers are multiplied in
 series, giving a depth in multiplications of $O(n)$.
@@ -190,7 +194,13 @@ and there are $2^{d-1}$ such groups multiplied in serial,
 where $d = \lceil \log_2 n \rceil$ for the serial QPF above,
 and $d=1$ for the parallel QPF above.
 
-Determining other bounds for circuit coherence and extending this
-to other quantum algorithms remains a promising area for future research.
+\begin{conjecture}
+Mixed serial-parallel factoring approaches described above,
+using uncomputing strategies similar to Bennett or
+Sherman-Levine in the previous section,
+which interpolate between the Nielsen-Chuang serial QPF and
+KSV parallel QPF, will achieve asymptotically lower circuit
+coherence than either approach alone.
+\end{conjecture}
 
 %The best choice of $d$ for either these configurable-coh

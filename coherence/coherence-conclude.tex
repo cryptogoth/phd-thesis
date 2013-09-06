@@ -1,0 +1,60 @@
+\section{Conclusion}
+\label{sec:coherence-conclude}
+
+In this chapter, we turned away from minimizing depth to
+examining its time-space tradeoff. Instead of using the
+depth-width product, we introduced a new circuit resource
+called circuit coherence
+which we claim is asymptotically less than depth-width.
+Operationally, we defined circuit coherence as an upper
+bound for error-correcting effort needed to maintain
+only those computationally useful qubits during
+computationally useful timesteps. We defined a
+plethora of concepts to support us in quantifying
+coherence:
+influencing and disentangling gates, qubit instances,
+influencing paths, reachability, computational subsets
+and sets, and the computational state.
+Using these concepts, we defined an algorithm for
+calculating the coherence for a given quantum circuit.
+However, coherence still remains difficult to calculate
+for general quantum circuits due to the need to know
+whether gates are entangling or disentangling.
+
+We then turn to an alternative model of quantum
+computation, the measurement-based model (MBQC).
+This model on a cluster state graph, in addition
+to sharing many common properties with our
+model \textsf{2D CCNTC}, also has a coherence that
+is easy to calculate. Inspired by this, we defined
+a layered form for quantum circuits which both
+facilitates the calculation of circuit coherence
+and corresponds to our hybrid factoring architectures
+from Chapters \ref{chap:factor-polylog} and \ref{chap:factor-sublog}.
+We present the important conjecture that
+the optimal pebble-game strategies of Bennett and
+Sherman-Levine can be used to uncompute intermediate
+garbage in our factoring architectures, leading to
+circuit coherence asymptotically less than
+depth-width.
+
+Returning to these architectures from the beginning
+of our dissertation, we fulfilled our
+promise of quantum architecture: providing configurable
+parameters for future experimentalists.
+We also present the conjecture that a mixed
+hybrid-serial approach can lead to even
+lower circuit coherence than either a purely
+serial or a purely parallel approach.
+
+The two major conjectures above indicate that
+circuit coherence shows great promise in
+characterizing future quantum architectures,
+taking its place among circuit depth, size,
+and width. Circuit coherence is well-defined
+and has significance independently of
+nearest-neighbor or hybrid architectures.
+Determining better bounds for circuit coherence,
+improving its definition, and applying it
+to other quantum algorithms are all worthy
+future directions to pursue.

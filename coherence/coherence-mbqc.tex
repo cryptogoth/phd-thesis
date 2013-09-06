@@ -83,7 +83,7 @@ qubit $i$ if the signal $t$ is $1$.
 
 A pattern is a valid executable sequence which corresponds to well-defined
 quantum and classical operations if no command depends on outcomes that
-are not yet measured. Pattern and executed right to left, much like
+are not yet measured. Patterns are executed right to left, much like
 composing the matrices that make up a sequence of gates to be applied to
 a quantum state (column vector). Certain operations can be parallelized
 if they occur on disjoint qubits. Furthermore, the operations in the
@@ -95,7 +95,7 @@ $s$, which may be the parity
 We illustrate this via a simple pattern on two qubits below.
 
 \begin{equation}
-X^{s_1}_2 M^{-\alpha}_1 E_{12} N^{0}_2 N^{0}_1
+X^{s_1}_2 M^{-\alpha}_1 E_{12} N_2 N_1
 \end{equation}
 
 In this pattern, both qubits 1 and 2 are initially prepared in the
@@ -114,9 +114,10 @@ the geometry of the entanglement graph always has the following form
 corresponding to an $n$-qubit circuit: it is a
 rectangular, regular 2D lattice of $n \times D(n)$ qubits where the
 leftmost column of $n$ qubits are the inputs and the rightmost
-column of $n$ qubits are the outputs. We state without proof that an
-MBQC pattern can be standardized so that measurements and corrections
-always proceed from left-to-right across this graph.
+column of $n$ qubits are the outputs. An
+MBQC pattern can always be standardized so that measurements and corrections
+always proceed from left-to-right across this so-called cluster state graph
+\cite{Raussendorf2003}.
 
 The preparation commands are often omitted since it is implied that they
 are always done for all qubits except the input.
@@ -232,16 +233,17 @@ cluster-state graph, the preparation depth and $Z$-correction depth are then
 constant. The computation depth of the pattern is dominated by the
 depth of dependent measurements and $X$ corrections.
 
-Because the cluster state graph is a 2D CCNTC lattice, it is natural to
+Because the cluster state graph is a \textsf{2D CCNTC} lattice, it is natural to
 wonder whether the circuit translation techniques of Broadbent-Kashefi
-can be used to automatically map any quantum circuit to a 2D CCNTC
+can be used to automatically map any quantum circuit to a \textsf{2D CCNTC}
 architecture. Indeed, the discovery of a constant-depth teleportation
 circuit on \textsf{2D CCNTC} proceeds directly from an MBQC pattern
 for long-range teleportation. This is illustrated in the next equation,
+which is Equation 15 from \cite{Broadbent2007},
 which is a pattern for teleporting qubit $i$ to qubit $k$.
 
 \begin{equation}
-X^{s_j}_k X^{s_i}_k M^0_j M^0_i E_{jk} E_{ij}
+X^{s_j}_k Z^{s_i}_k M^0_j M^0_i E_{jk} E_{ij}
 \end{equation}
 
 Furthermore, the quintessential example of a tight logarithmic separation

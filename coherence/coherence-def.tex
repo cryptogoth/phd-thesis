@@ -5,17 +5,18 @@ Usually quantum circuits neglect to draw identity gates. When a bare
 quantum wire appears, what is meant is that the qubit maintains its
 coherent state until the next non-identity gate comes along to transform it.
 However, most quantum circuits are drawn at a logical qubit level,
-assuming no errors occur and a coherent state is maintained. While
-so far we have maintained that abstraction in this thesis by studying
+assuming no errors occur and a coherent state is maintained.
+So far we have maintained that abstraction in this dissertation by studying
 quantum compiling and quantum architecture independently from
-quantum error correction, we acknowledge it as an important area for
-optimization and future study. In this chapter, we peek beneath
-this abstraction barrier to study
+quantum error correction. In this chapter, we move closer to
+this abstraction barrier by studying
 the effort to maintain a coherent quantum state at the logical qubit level
-throughout a circuit
-by defining a new circuit resource called \emph{circuit coherence}.
+only for those qubits and only during those timesteps which are useful
+for computation.
+We quantify this effort with a new circuit resource called \emph{circuit coherence}.
 
-First, we will define what we mean by an entangling (or disentangling) gate
+First, we will define what we mean by an \emph{influencing} gate and
+a \emph{qubit instance}
 in Section \ref{subsec:cohere-entangle}. Then we will build upon this
 to define a computational subset of qubits in every
 timestep, in Section \ref{subsec:cohere-subset}. Finally,
@@ -27,135 +28,159 @@ describe its relationship to the other circuit resources: depth, size, and
 width. 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-\subsection{Entangling Gates}
+\subsection{Influencing Gates and Qubit Instances}
 \label{subsec:cohere-entangle}
 
-An entangled quantum state is one which cannot be expressed as the
-tensor product of two smaller states. This does not depend on what basis
-we consider for the smaller states. Using the density operator formalism,
-we can say that a quantum state over two subsystems $A$ and $B$ is
-entangled if tracing over one of the subsystem \emph{does not} yield the other subsystem
-as a reduced density matrix.
+In the rest of this chapter, we only consider pure quantum states, which are
+sufficient for describing circuit coherence. While in reality
+mixed quantum states may occur on implementations of our circuits, it
+will not affect our definitions here. We will not precede every
+instance of a quantum state with the word ``pure,'' but it should be
+assumed.
 
+The basic unit of circuit coherence is a \emph{qubit instance} which is
+a qubit at a particular timestep. There are $D\cdot W$ qubit instances
+in a circuit, but only some of them are computationally useful, depending
+on how they interact with each other via gates. In this section and
+the next we will define what it means to be computationally useful in terms
+of the output qubits in the last timestep, what we call the
+\emph{output qubit instances}.
+
+An \emph{entangled} pure quantum state is one which cannot be expressed as the
+tensor product of two smaller states. An unentangled pure quantum state
+is also known as a \emph{product} state. This does not depend on what basis
+we consider for the smaller states. Using the density operator formalism,
+we can say that a pure quantum state over two subsystems $A$ and $B$ is
+entangled if tracing over one of the subsystem \emph{does not}
+yield the other subsystem as a reduced density matrix.
+%
 \begin{equation}
 \rho^{AB} \text{ entangled }
 \iff \left( \tr_{A}(\rho^{AB}) \ne \rho^{B} \right) \land
 \left(\tr_{B}(\rho^{AB}) \ne \rho^{A} \right)
 \end{equation}
-
+%
 A general density matrix for a state across two subsystems $A$ and $B$ can be
 written as
+%
 \begin{equation}
 \rho^{AB} = \sum_{i,i',j,j'} p_{ii'jj'} \ket{a_i}\bra{a_{i'}} \otimes \ket{b_j}\bra{b_{j'}}
 \end{equation}
 where $\ket{a_i},\ket{a_{i'}}$ are any two states on $A$ and
 $\ket{b_j},\ket{b_{j'}}$ are any two states on $B$.
-
+%
 We review here that the trace is a linear operator which distributes across
 a general density matrix.
-
+%
 \begin{equation}
 \tr\left(\rho^{AB}\right) = \sum_{i,i',j,j'} p_{ii'jj'} \tr \left(\ket{a_i}\bra{a_{i'}} \otimes \ket{b_j}\bra{b_{j'}}\right)
 \end{equation}
-
+%
 A reduced density matrix for a particular term is obtained by tracing out
 one subsystem.
-
+%
 \begin{equation}
 \tr_A\left(\ket{a_i}\bra{a_{i'}} \otimes \ket{b_j}\bra{b_{j'}}\right) = \tr\left(\ket{a_i}\bra{a_{i'}}\right) \ket{b_j}\bra{b_{j'}}
 \end{equation}
-
+%
 Consider a two-qubit gate $E_{uv}$ on single qubits $u$ and $v$ which exist
 in a larger system.
-Without loss of generality, we assume that $u$ is
+Without loss of generality, we assume that the state on $u$ is
 \emph{not} entangled with some other, possibly multi-qubit,
-state on another set of vertices $L \ni v$.
-The total state on $u \cup L$ is called $\rho^{u}\otimes \rho^{L}$.
+state on all other qubits $L = V - \{u\}$. Note that $v \in L$.
+The total state on all qubits we call $\rho^{V} = \rho^{u} \otimes \rho^{L}$.
 
-We call the action of $E_{uv}$ on this combined state a new state $\sigma^{uL}$:
-
+We call the action of $E_{uv}$ on this combined state a new state $\sigma^{V}$:
+%
 \begin{equation}
 \sigma^{uL} = E_{uv} (\rho^{u}\otimes \rho^{L}) E^{\dagger}_{uv}
+\label{eqn:sigma-output}
 \end{equation}
-
+%
 We call the gate $E_{uv}$ \emph{entangling} between $u$ and $v$
-(and between $u$ and $L$) given the states $\rho^{u}$ and $\rho^{L}$ if
+(and between $u$ and $L$) given the input states $\rho^{u}$ and $\rho^{L}$ if
 the new state after applying $E_{uv}$ is entangled, which corresponds to
 the condition below.
-
+%
 \begin{equation}
 \tr_{u}( \sigma^{uL} ) \ne \rho^{L}
 \end{equation}
+%
+However, it is useful to characterize a gate as ``potentially entangling''
+as a simplification, so that we can reason about the circuit without
+worrying about the input states to each gate.
+%
+\begin{definition}
+A gate $E_{uv}$ is \emph{influencing}, or potentially entangling, if
+there exists any pure, product quantum input state $\rho^{u} \otimes \rho^{L}$
+(where $v \in L$) such that the output state $\sigma^{uL}$ from
+Equation \ref{eqn:sigma-output}
+is entangled. We can also say that $u$ influences $v$, or $u$ influences
+$L$, in the timestep in which $E_{uv}$ occurs.
+\end{definition}
 
-More generally, if the above condition is true,
-we call $E_{uv}$ entangling for any multi-qubit
-states on $V_1 \ni u$ and $V_2 \ni v$ before the application of $E_{uv}$.
+Influencing gates are the means by which any qubit instance can influence
+the output qubit instances. This will tell us when we need to \emph{begin}
+maintaining a qubit's state, which is after a gate that is
+\emph{influencing, but not disentangling}.
+But how do we know when to \emph{stop} maintaing a qubit's state?
+For this purpose of conserving our error-correcting effort, we define
+a related concept: an operator which is known to disentangle
+one of its qubits from all other qubits.
 
-We call a state $\rho^{L}$ \emph{self-entangled} if every two qubits
-$(u,v) \in L$ are entangled, but no qubits are entangled with qubits
-not in $L$.
+\begin{definition}
+An operator $M$ on a pure $n$-qubit input state $\rho$ is 
+\emph{disentangling} with respect to a given input state $\rho^{V}$,
+the resulting output state is product:
+$\rho^{u} \otimes \rho^{L}$ where $L = V - \{u\}$.
+We say $u$ is the
+qubit which has been disentangled.
+\end{definition}
 
-Now consider a slightly different setting, where $L$ contains both $u$ and $v$
-in a larger self-entangled state $\rho^{L}$. We denote by $\sigma^{L}$ the resulting
-state after applying $E_{uv}$ to $\rho^{L}$.
+We only consider single-qubit and two-qubit disentangling operators.
+The only single-qubit disentangling operator that we consider
+is a projective measurement operator. This projector is always disentangling,
+regardless of the input state.
 
-\begin{equation}
-\sigma^{L} = E_{uv} (\rho^{L}) E^{\dagger}_{uv}
-\end{equation}
-
-We call the $E_{uv}$ \emph{disentangling} between $u$ and $L$ (without loss
-of generality) if after its action on the state $\rho^{L}$ it is
-separable into the product state $\sigma^{L} = \sigma^{u} \otimes \sigma^{L - \{u\}}$,
-which corresponds to the following condition:
-
-\begin{equation}
-\tr_{u}(\sigma^{L}) = \sigma^{L - \{u\}}
-\end{equation}
-
-More generally, we can say the $E_{uv}$ is disentangling for any two
-larger subsystems $V_1 \ni u$ and $V_2 \ni v$, if it is disentangling
-for any pairs of qubits $(u',v')$ such that $u' \in V_1$ and $v' \in V_2$
-for a particular state $\rho^{V_1 V_2}$.
-Operationally, it is
-usually more difficult to show that a gate is disentangling.
-
-Given these definitions, a gate $E_{uv}$
-that is entangling in the forward time direction on input state $\rho$
-is disentangling in the backward time direction ($E^{\dagger}_{uv}$) on output
-state $\sigma = E^{\dagger}_{uv}\rho E_{uv}$. When we do not specify a
-time direction, an entangling gate $E_{uv}$ is entangling in the forward
-direction and disentangling in the backward direction, and vice versa
-for a disentangling gate.
-
-This definition for entangling or disentangling quantum gates
+These definitions for entangling or disentangling quantum gates
 depends on knowing the actual states before these gates are applied.
 Therefore, the entangling or disentangling nature of a gate
 may not be apparent just by examining a circuit locally,
-but may require simulation of the entire circuit. This gives an operational
-definition for identifying entangling/disentangling quantum gates, but it does not give
-a compact, theoretical description that can be applied generically. This is
+but may require simulation of the entire circuit.
+To make things more difficult, a disentangling gate can also be
+influencing (for example, CNOT).
+Our definition for disentangling is operational given global knowledge of
+the state on all qubits, but it does
+not give
+a compact, theoretical description that can be applied generically.
+This is
 currently a drawback of our definition, especially for characterizing the
 behavior of new quantum algorithms that are not yet well-studied.
 
-However, a quantum algorithm designer able to specify a circuit in terms of single-qubit and
+However, a quantum algorithm designer able to specify a circuit in terms of
+single-qubit and
 two-qubit gates often knows when gates are entangling or disentangling.
 Moreover, the algorithm designer knows which qubits are garbage and that reversing
 part of a quantum circuit will uncompute these garbage ancillae back to $\ket{0}$.
-This is
-the case for
-quantum circuits in a certain layered form which we describe in Section \ref{sec:cohere-tradeoff},
-of which 
-the 
+In those cases, it is known by design which gates are entangling
+(not just influencing) and which are disentangling.
+
+This is the case for
+quantum circuits in a certain layered form which we describe in
+Section \ref{sec:cohere-tradeoff},
+of which the 
 well-known QFT and factoring circuits are special cases.
-As an overestimate of circuit coherence, we can also consider all two-qubit gates entangling in the worst case
+As an overestimate of circuit coherence, we can also consider all
+two-qubit gates entangling in the worst case
 with
-only single-qubit projective measurement considered as disentangling. However, this will usually
+only single-qubit projective measurement considered as disentangling.
+However, this will usually
 not give an upper-bound separation between coherence and the depth-width product.
-We only consider two-qubit gates that are either potentially entangling or disentangling
+We only consider two-qubit gates that are either influencing or disentangling
 for some input states; all other two-qubit gates are a tensor product of
 single-qubit gates and will be treated as such.
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \subsection{Reachability and Computational Subsets}
 \label{subsec:cohere-subset}
 
@@ -168,46 +193,61 @@ Our notion of circuit coherence will not depend
 on the modules defined in \textsf{CCNTCM}.
 
 %%%%%%%%%%%%%%%%%% DEFINITION
-\begin{definition}{\textbf{Entangling Paths.}}
+\begin{definition}{\textbf{Influencing Paths.}}
 We denote by $E^{(i)}_{uv}$ a two-qubit gate which acts in
-timestep $i$ which is either entangling or disentangling for its current states on
-$\ket{u}$ and $\ket{v}$.
-An \emph{entangling path} of gates from qubit $u$ in timestep $i_1$ to
+timestep $i$ which is influencing and \emph{not} disentangling for its current states
+on $\rho^{u}$ and $\rho^{L}$ for $L = V - \{u\}$, $v \in L$.
+An \emph{influencing path} of gates from qubit $u$ in timestep $i_1$ to
 qubit $v$ in timestep $i_n$ is
-any sequence of entangling gates $(E^{(i_1)}, E^{(i_2)}, \ldots, E^{(i_n)})$
+any sequence of influencing (and not disentangling)
+gates $(E^{(i_1)}, E^{(i_2)}, \ldots, E^{(i_n)})$
 where the following conditions are met:
 
 \begin{enumerate}
 \item
 $E^{(i_1)}$ operates on qubit $u$ and $E^{(i_n)}$ operates on qubit $v$.
 
+%\item
+%influencing paths always move forward in time: $i_j > i_{j-1}$.
 \item
 any two consecutive gates in the sequence $(E^{(i_j)},E^{(i_{j+1})})$
 act on a common qubit $w$.
 \item
 any two consecutive gates in the sequence either occur in
-consecutive timesteps ($i_j = i_{j+1} \pm 1$) or are only separated by
+consecutive timesteps ($i_j = i_{j-1} + 1$) or are only separated by
 gates which are not single-qubit measurements on $w$ in intervening timesteps $i_j < i < i_{j+1}$.
-\item
-every gate $E^{(i_j)}$ encountered in the sequence satisfies the
-following two conditions:
+%\item
+%every gate $E^{(i_j)}$ encountered in the sequence satisfies the
+%following two conditions:
 
-\begin{enumerate}
-\item it is entangling if
-the path exits it in the forward direction ($i_{j+1} = i_j + 1$)
-\item it is disentangling if the path exits it in the backward direction
-($i_{j+1} = i_j - 1$).
-\end{enumerate}
+%\begin{enumerate}
+%\item it is influencing if
+%the path exits it in the forward direction ($i_{j+1} = i_j + 1$)
+%\item it is disentangling if the path exits it in the backward direction
+%($i_{j+1} = i_j - 1$).
+%\end{enumerate}
 \end{enumerate}
 
 \end{definition}
+
 %%%%%%%%%%%%%%%%
 
 \begin{definition}{\textbf{Reachability.}}
-A qubit $u$ at timestep $i$ is \emph{reachable} from another qubit $v$ in
-another (possibly the same) timestep $i'$ if there is some path of entangling gates that
-connects them.
+A qubit instance $u$ at timestep $i$ is \emph{reachable} from another qubit
+instance $v$ in
+another (possibly the same) timestep $i'$ if there is some path of influencing
+gates that connects them. Reachability is directed and asymmetric; qubit
+instances are only reachable from qubit instances in earlier timesteps.
 \end{definition}
+
+Reachability also applies to classical measurement outcomes which are
+connected by the classical controller.
+If one qubit instance occurs right after a single-qubit measurement
+(that is, its state contains a classical measurement outcome), any other
+qubit instance (including another classical measurement outcome) which
+depends on the
+Two qubit instances are also 
+
 
 We now define a standard form for circuit in which circuit coherence will be
 well-defined.
@@ -231,7 +271,8 @@ output qubits in timestep $D$.
 We will assume all circuits from now on are in standard form.
 
 \begin{definition}{\textbf{Computational subset, computational set, computational state.}}
-The computational subset in timestep $i$ (abbreviated $L_i$) is the subset of the qubits
+The computational subset in timestep $i$ (abbreviated $L_i$) is the subset of
+the qubit instances in that timestep
 which are reachable from the output qubits $O$.
 The \emph{computational set} is the set of computational subsets across
 all timesteps.
@@ -241,12 +282,13 @@ M = \{L_1, L_2, \ldots, L_D \}
 \end{equation}
 \end{definition}
 
-The computational set are those qubits on which an entangled, coherent
+The computational set are those qubit instances on which an entangled, coherent
 quantum state (which we will call the computational state) evolves over time from
 the initial preparation of the input qubits $I \subset V$ in timestep $1$
 until the output qubits $O \subset V$ are
 measured in timestep $D$.
-It is measured in qubits, and potentially grows (if entangling gates are applied), shrinks
+It is measured in qubit instances,
+and potentially grows (if non-disentangling, influencing gates are applied), shrinks
 (if disentangling gates including measurements are applied) or stays the same in size
 in every timestep. We note the following
 relationships for well-formed circuits.
@@ -263,7 +305,8 @@ layered quantum circuit as defined in Section \ref{subsec:cohere-lqc}.
 
 In each timestep $i$, we partition all $W$ qubits in $V$ into disjoint
 subsets which each contain a self-entangled state. We denote these other
-(possibly non-computational) qubit subsets as $\{\tilde{L}^{(j)}_i\}$, of which one is the same as the current
+(possibly non-computational) qubit subsets as $\{\tilde{L}^{(j)}_i\}$,
+of which one is the same as the current
 computational subset $L_i$.
 
 This partitioning, like $L_i$, is updated in
@@ -294,11 +337,12 @@ The data type of qubit subset $\tilde{L}^{(j)}_i$ is the tuple
 $(\tilde{V}, P)$ where:
 
 \begin{itemize}
-\item $\tilde{V} \subseteq V$ are the qubits in the subset
+\item $\tilde{V} \subseteq V$ are the qubits (qubit instances) in the subset
 \item $P$ is a pointer to the parent qubit subset in timestep ${i-1}$, initially \textsc{NULL}.
 \end{itemize}
 
-When we assign one qubit subset to another, we assume we are only assigning the qubits part of the tuple, $\tilde{V}$.
+When we assign one qubit subset to another, we assume we are only assigning
+the qubits part of the tuple, $\tilde{V}$.
 
 %%%%%%%%%%%%%%%%% ENUMERATE 1
 \begin{enumerate}
@@ -310,7 +354,7 @@ $L_1 \leftarrow \{ I \}$.
 \item
 $\tilde{L}^{(j)}_1 = v_j \in V \setminus I$ (all non-input qubits $v_j$ get their own subset)
 \item
-$M_1 = \{ L_1 \} \cup \{ L^{(j)}_1 \}$.
+$M_1 = \left( \bigcup_j \{ \tilde{L}^{(j)}_1 \} \right) \cup \{ L_1 \} $.
 \end{itemize}
 
 \item
@@ -320,19 +364,20 @@ In timestep $i \in \{2, \ldots, D \}$:
 \begin{enumerate}
 
 \item
-Compute the classical description of the state on all the qubits $\rho^{V}_i$ from the state $\rho^{V}_{i-1}$
+Compute the classical description of the state on all the qubits $\rho^{V}_i$
+from the state $\rho^{V}_{i-1}$
 given $M_{i-1}$.
-This is assumed to efficient (e.g. for layered quantum circuits). 
+This is assumed to be efficient (e.g. for layered quantum circuits). 
 \item
 Initialize $M_i \leftarrow \{\}$.
 \item
 Create two sets:
 \begin{itemize}
 \item $T_e$ which contains every two-qubit
-gate $E_{uv} \in G_i$ that is entangling in the forward direction based on
+gate $E_{uv} \in G_i$ that is influencing and not disentangling based on
 their state $\rho^{uv}$ in timestep $i$
 \item $T_d$ which contains every two-qubit
-gate $E_{uv} \in G_i$ that is disentangling in the forward direction
+gate $E_{uv} \in G_i$ that is disentangling
  based on
 their state $\rho^{uv}$ in timestep $i$,
 along with all single-qubit measurements $M_u \in G_i$.
@@ -466,7 +511,7 @@ in $M_D$. Call this $L_D$.
 \item
 Initialize the computational set $M \leftarrow \{ L_D \}$.
 \item
-Working backwards for timestep $i$ in $(D, D-1, D_2, \ldots, 3, 2)$:
+Working backwards for timestep $i$ in $(D, D-1, D-2, \ldots, 3, 2)$:
 \begin{enumerate}
 \item
 Find the parent(s) of $L_i$. Create a new set that is the union of them called $L_{i-1}$
