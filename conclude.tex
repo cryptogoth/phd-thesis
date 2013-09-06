@@ -1,27 +1,114 @@
 \chapter{Conclusion}
 \label{chap:conclude}
 
-Quantum architecture is the intermediate layer between algorithms and hardware.
-It is the design of how quantum bits and their allowed interactions in order
-to solve these algorithms efficiently on realistic models of quantum hardware.
-It aims to minimize circuit resources of interest, namely depth, size, and
-width. In analogy to classical circuits, the depth is the running time of an
-algorithm allowing parallelization, the size is the number of operations
-required over all parallel processors, and the width is the number of
-(quantum) bits required over all parallel processors.
+In this dissertation, we have studied the depth of quantum architectures
+for Shor's factoring algorithm as a means of implementing it to
+compromise currently useful RSA key sizes within a human lifetime.
+We have done this first by minimizing the depth
+of hybrid nearest-neighbor factoring architectures and examining the 
+resulting increase in the circuit resources of size and width.
+We then examined an apparently universal limit to the depth of any architecture due to fault-tolerant quantum compiling. Finally, we
+took a further step back to study a more relevant tradeoff with
+depth, namely the effort of error-correcting computationally useful
+qubits during any circuit. In this conclusion, we will summarize the
+main results of the current work following the outline above.
+Then we will present a vision for moving forward
+with related research on low-depth quantum architectures.
 
-In this dissertation, we study quantum architecture in the context of
-optimizing Shor's factoring algorithm on nearest-neighbor architectures with
-realistic constraints. It is hoped that lessons learned in this special-case
-can contribute to the general community general principles which can be used
-to generalize other quantum algorithms. We posit that the larger overall goal
-of quantum architecture should be the design of a general-purpose quantum
-processor, one which can execute any quantum algorithm with emphasis on being
-able to perform a core group of operations efficiently. This core group of
-operations is defined by the instruction set. Once quantum architecture has
-progressed to this point, we can leverage the remarkable strides in normal
-digital architecture over the past 80 years.
+Our introduction in Chapter \ref{chap:intro} motivated the problem of
+factoring in terms of the effect of compromising RSA on human life,
+mainly helping to ensure social justice and keeping governments in check.
+In it, we laid the groundwork for studying quantum architectures and
+their circuit resources of depth, size, and width. We presented
+a 2D model
+with a classical controller to achieve
+the lowest depth (namely, \textsf{2D CCNTC}), and we introduced modules
+(in \textsf{2D CCNTCM}) to
+better characterize the communication needs of the algorithm versus
+its computational resources. We also addressed some objections to
+this hybrid nearest-neighbor model
+and acknowledge that it deserves future examination
+to accurately model experiments. Finally, we summarized known constant-depth
+techniques for teleporting and fanning out a quantum bit, and we
+contributed a new circuit for the corresponding quantum unfanout in
+Theorem \ref{thm:cdu}. 
 
-As well, we may be able to use the insights of quantum architecture to build
-quantum processors which can surpass digital architectures in the solution of
-large-scale problems over exponentially-sized solution spaces.
+In Chapter \ref{chap:factor-polylog}, we begin our approach of minimizing
+depth by contributing a hybrid factoring architecture with poly-logarithmic
+depth, an exponential improvement over previous results. We used
+carry-save adders to construct three results:
+a constant-depth modular adder in
+Section \ref{sec:csa-mod-add}, a logarithmic-depth modular multiplier in
+Section \ref{sec:csa-mod-mult}, and finally a poly-logarithmic-depth
+modular exponentiator in Section \ref{sec:modexp}. In concluding, we
+calculate the real-world resources for using our implementation to
+compromise 4096-bit RSA keys. In Chapter \ref{chap:factor-sublog}, we minimized depth further with another exponential improvement,
+a hybrid factoring architecture with sub-logarithmic depth. We used
+classical threshold circuits for multiple product and modular reduction
+in constant-depth and mapped a quantum majority gate to \textsf{2D CCNTCM},
+resulting in our main result in Section \ref{subsec:maj-gate}.
+
+However, here we hit a sub-logarithmic barrier to further improving
+factoring depth due to the constraints of quantum compiling. To examine
+this further, we devoted Chapter \ref{chap:qcompile} to understanding
+quantum compiling algorithms, including an extensive literature review
+and a summary of cross-cutting themes. We focused on the lowest-depth
+approach to quantum compiling using phase kickback, namely the
+Kitaev-Shen-Vyalyi (KSV) procedure.
+Then we contributed an improvement to the KSV algorithm for generating
+the necessary quantum Fourier states in our first main result in
+Section \ref{subsec:ksv-compare}. Finally, we supplied the missing
+piece for Chapter \ref{chap:factor-sublog}, a quantum compiling
+procedure in sub-logarithmic depth for the quantum majority gate with
+polynomial fanin.
+
+Taking a larger perspective, we rest from our struggle to minimize depth
+at all costs. Returning to the real-world calculations at the end of
+Chapter \ref{chap:factor-polylog}, we realized that there is a point of
+diminishing returns in optimizing depth, especially when the other
+resources become intractable. Common tradeoffs with depth include
+circuit size, circuit width, or the depth-width product, and a more
+moderate approach to studying quantum architecture would choose to
+optimize one of those quantities instead. However, we identify a new
+circuit resource called circuit coherence
+which is more relevant than these others: the amount
+of error-correcting
+effort needed to maintain a coherent state in order to produce
+correct outputs. We introduce a framework for reasoning about circuit
+coherence and calculating it for a quantum circuit, both in a general
+form and a special layered form that corresponds to our factoring
+architecture in Chapter \ref{chap:factor-polylog}. We connect circuit
+coherence with the measurement-based model of quantum computation and
+reversible pebble game time-space tradeoffs. Finally, we end by
+presenting configurable-depth factoring architectures that interpolate
+between completely serial and complete parallel approaches.
+Circuit coherence, like modules in a hybrid architecture, are worthy
+of closer refinement and further study.
+
+Where should we go from here? Optimizing Shor's factoring algorithm on
+realistic architectures still has plenty of room for improvement. Our
+constructive approaches are not known to be optimal, so future work could
+focus on improving the depth-coherence tradeoff or improving known
+lower bounds. However, RSA is no longer considered secure by many
+governments. It is possible to apply our techniques to optimize quantum
+architectures for other quantum-resistant cryptosystems, such as
+elliptic curve cryptography.
+
+The most important vision of quantum architecture is the design a general-purpose
+quantum processor that is efficient for solving a wide range of
+problems. We can draw many lessons from classical, digital architecture
+over the past 80 years, which has identified a small group of
+core operations which are useful in many different algorithms.
+The lessons we have learned about factoring architectures in
+the current work may find wider application in other important human
+problems, such as the simulation of spatially-local Hamiltonians.
+Returning to our introduction, 
+quantum computing is a marriage of computer science and quantum physics,
+one in which our fundamental need to solve problems is intimately
+linked with the machines which solve them.
+This quantum architecture
+vision is long-term, because we must wait until we actually build and
+run special-purpose quantum computers before we know what they should be
+good at and what we want them to do. However, the author would be
+satisfied to see the first major step, a working quantum factoring
+machine, before his death.
