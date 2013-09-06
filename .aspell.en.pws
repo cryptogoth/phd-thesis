@@ -1,4 +1,4 @@
-personal_ws-1.1 en 329 
+personal_ws-1.1 en 333 
 Mata
 Takahashi
 derandomized
@@ -37,6 +37,7 @@ uncomputation
 Roetteler
 braket
 Shor's
+configurability
 CSA
 Hamiltonians
 versa
@@ -63,6 +64,7 @@ timesteps
 timestep's
 unentangled
 parallelize
+Config
 encodings
 duals
 Tani
@@ -249,6 +251,7 @@ MSR
 Broadbent
 SU
 supremum
+qubit's
 qubits
 un
 tensored
@@ -312,6 +315,7 @@ multicomputer
 exponentiator
 PTE
 monomials
+Sublog
 Stickles
 BKP
 quintillion
