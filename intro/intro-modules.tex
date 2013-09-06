@@ -191,7 +191,7 @@ We say there are $\overline{D}$ such timesteps.
 \end{enumerate}
 
 Again, we define the support of $G_i$
-as $V_i$, the set of all qubits acted upon by any $g_{i.j}$, which
+as $V_i$, the set of all qubits acted upon by any $g_{i,j}$, which
 includes all the modules.
 \begin{equation}
 V_i = \bigcup_{j: g_{i,j} \in G_i} v_{i,j} \cup v^{(1)}_{i,j} \cup v^{(2)}_{i,j} 
@@ -380,7 +380,7 @@ $\overline{S}$ will be calculated later for factoring in Chapter
 \subsection{Objections to Modules and Future Directions}
 \label{subsec:module-future}
 
-Although we have demonstrate the usefulness of modules in capturing
+Although we have demonstrated the usefulness of modules in capturing
 the locality of a quantum algorithm, our new \textsf{CCNTCM} model also
 contains some weaknesses. Chief among them are the possibilities of
 wasteful modules
@@ -411,7 +411,7 @@ costs of long-range teleportation. Whereas the models \textsf{NTC} and
 way alongside computation, it can be argued that \textsf{CCNTCM} is unfairly
 optimizing $S$ and $W$ compared to these two models. Indeed, for any
 sufficiently localized algorithm, a \textsf{CCNTCM} architecture can be designed with asymptotically lower $S$ and $W$ than a corresponding \textsf{NTC} or \textsf{CCNTC}. However, the costs of communication are not being
-misrepresented, they are just counted separately
+misrepresented; they are just counted separately
 in the module resources $\overline{D}$, $\overline{S}$, and
 $\overline{W}$. Later, when physical experiments have determined the
 true cost of each resource, architects can make informed decisions about
@@ -449,11 +449,11 @@ those qubits into position for computation.
 
 Beyond these objections, there is still more work to be done to fully
 understand the usefulness of modules and the \textsf{CCNTCM} model.
-First and foremost, the connectivity
-of the modules themselves. We allow teleportation between any two modules
+First and foremost, it may be more realistic to constraint the
+connectivity of modules. We allow teleportation between any two modules
 because an entangled pair can be generated and distributed between any
-two modules. However, in reality, this distribution might occur along
-constrained paths between modules. Although 
+two modules. However, in reality, this distribution itself might occur along
+constrained paths between modules.
 
 Furthermore, \textsf{CCNTCM} can be defined for other dimensionalities,
 which constrain the \textsf{CCNTC} lattices in each modules.

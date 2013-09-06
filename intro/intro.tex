@@ -88,7 +88,7 @@ A government able to hack the organizers' Twitter accounts or Facebook pages
 could misdirect protest actions or identify activists for imprisonment.
 Similarly, being able to accurately estimate the resources needed to factor
 an RSA key of a certain size may help protect future citizens against
-governments with a quantum computers, as governments will be the first
+governments with quantum computers, as governments will be the first
 organizations interested in and able to afford such a device.
 
 How can we reason about the computational resources needed to solve the
@@ -143,7 +143,7 @@ lines represent qubits, which begin in some input state
 (usually initialized to all $\ket{0}$'s) on the left and resulting in some
 output state on the right.
 
-\begin{figure}{htb!}
+\begin{figure}[htb!]
 \begin{displaymath}
 \begin{matrix}% matrix for left braces
 %\vphantom{a}\\ 
@@ -182,7 +182,7 @@ of quantum architecture with the current work.
 Quantum architecture is both a thing and a study of that thing.
 A quantum architecture (as a thing) is a quantum circuit with constraints. For this
 dissertation, we will concern ourselves with two main constraints:
-(1) the layout graph of qubits which constrain a fixed two-qubit gate interactions and
+(1) the layout graph of qubits which constrain fixed two-qubit gate interactions and
 (2) the decomposition of all single-qubit gates to a discrete, finite,
 set of gates which are universal when combined with a fixed two-qubit gate.
 Quantum architecture provides an intermediate layer in between working
@@ -191,8 +191,8 @@ abstract theory (algorithms divorced of all physical constraints).
 As quantum architects, we can optimize algorithms in a general way which
 is relevant to many kinds of laboratory experiments. At the same time,
 we can take into account the more complicated nature of physical devices
-to provide more pessimistic, accurate, numerical resource estimates than
-more high-level, theoretical results.
+to provide numerical resource estimates that are more pessimistic and accurate than
+high-level, theoretical results.
 
 The role of quantum architecture (as a study) is two-fold. First,
 to quantify and improve the circuit resources required to run a quantum
@@ -213,13 +213,13 @@ human problems within a human lifetime.
 \end{quote}
 
 In particular ``a human lifetime'' means on the order of 50 years, which is
-the expected expected lifetime for the author.
+the expected lifetime for the author.
 This not only means that an implementation of a quantum architecture
 in a laboratory should complete within 50 years, but that all resources
 needed to build and power such a laboratory should also be acquirable in
 50 years.
 
-``Human problems'' in this dissertation is exemplified by the special-case of
+``Human problems'' in this dissertation are exemplified by the special-case of
 factoring. We will optimize the circuit resources for Shor's algorithm mapped
 to a specific quantum architecture with the hope of discovering general
 principles that can be applied to other quantum algorithms (and other human
@@ -286,8 +286,8 @@ introduces a tradeoff between depth and the other two resources. Specifically,
 reducing depth raises the possibility that more circuit resources are
 devoted to communication than to computation. This tradeoff is examined 
 in more detail in Section \ref{sec:intro-modules}
-by introducing the notion of a module and hybrid nearest-neighbor
-quantum architectures.
+by introducing the notion of a module within a hybrid nearest-neighbor
+quantum architecture.
 Finally, Section \ref{sec:intro-conclude}
 gives an overview of the remaining chapters in this dissertation,
 placing them within the context of this introduction and our thesis statement

@@ -2,7 +2,8 @@
 \section{Constant-depth Communication}
 \label{sec:intro-cdc}
 
-Communication, namely the \emph{moving} and \emph{copying} of quantum information, in nearest-neighbor quantum architectures is challenging.
+Communication, namely the \emph{moving} and \emph{copying} of quantum
+information, in nearest-neighbor quantum architectures is challenging.
 In this section we quote known results for teleportation and
 fanout in constant depth while also contributing a novel construction
 for unfanout.
@@ -13,9 +14,11 @@ arbitrarily long distances can be addressed by using
 % in an
 %architecture through ancillae prepared in some initial state.
 the constant-depth teleportation circuit
-shown in Figure \ref{fig:cdt} due to Rosenbaum \cite{Rosenbaum2012}, illustrated using standard quantum circuit
+shown in Figure \ref{fig:cdt} due to Rosenbaum \cite{Rosenbaum2012},
+illustrated using standard quantum circuit
 notation \cite{Nielsen2000}. This requires the circuit resources shown in
-Table \ref{tab:cd-resources}. The depth includes a layer of $H$ gates; a layer of CNOTs; an interleaved layer of Bell basis measurements; and two layers of
+Table \ref{tab:cd-resources}. The depth includes a layer of $H$ gates; a
+layer of CNOTs; an interleaved layer of Bell basis measurements; and two layers of
 Pauli corrections ($X$ and $Z$ for each qubit), occurring concurrently with
 resetting the $\ket{j}$ and $\ket{k}$ qubits back to $\ket{0}$.
 These correction layers are not shown in the circuit.
@@ -46,13 +49,13 @@ $\ket{x,y_1,\ldots,y_n} \rightarrow \ket{x,y_1\oplus x, \ldots, y_n\oplus x}$.
 This is used in our arithmetic circuits when
 a single qubit needs to control (be entangled with) a large quantum register
 (called a \emph{fanout rail}). The result of a fanout is an $n$-qubit
-\emph{cat state} stored in the fanout rail, as shown in the following equation.
-
+\emph{cat state} stored in the fanout rail, as shown in the following expression.
+%
 \begin{equation}
 \normtwo (\ket{0}^{\otimes n} + \ket{1}^{\otimes n})
 \label{eqn:fanned-out}
 \end{equation}
-
+%
 To implement the fanout from the basis $\mathcal{G}$,
 we employ a constant-depth circuit due to insight from
 measurement-based quantum computing \cite{Raussendorf2003}
@@ -131,8 +134,8 @@ consisting of all $\ket{0}$'s except for a single target qubit $\alpha\ket{0} + 
 same state as the original source qubit of the fanout.
 
 In the model of \cite{Hoyer2002}, the fanout and unfanout were identical, elementary
-operations. In Figure \ref{fig:cdf}, the given \textsf{CCNTC} fanout circuit is not its own self-inverse
-due to
+operations. In Figure \ref{fig:cdf}, the given \textsf{CCNTC} fanout circuit is not its own
+inverse due to
 the one-way nature of the measurement and the assumption that ancillary qubits begin in the
 $\ket{0}$ state. Therefore, one major contribution of this current work is
 a \textsf{CCNTC} circuit which performs unfanout, or the inverse of the fanout circuit in
@@ -142,6 +145,7 @@ effect on intermediate quantum states is shown below.
 (\alpha\ket{0} + \beta\ket{1})\otimes\ket{0}^{\otimes n-1} \rightarrow^{fanout}
 \alpha\ket{0}^{\otimes n} + \beta\ket{1}^{\otimes n} \rightarrow^{unfanout}
 (\alpha\ket{0} + \beta\ket{1})\otimes\ket{0}^{\otimes n-1}
+\label{eqn:cdf-cdu}
 \end{equation}
 We give a concrete example of our unfanout circuit in Figure \ref{fig:cdu}
 for $n=7$ which executes in constant depth on \textsf{2D CCNTC}.
@@ -171,7 +175,15 @@ which in this case selects the bottom qubit in the figure to be the target.
 target product state $(\alpha\ket{0} + \beta\ket{1})\otimes\ket{0}^{\otimes 6}$.}
 \label{fig:cdu}
 \end{center}\end{figure*}
-
+%
+\begin{theorem}
+Unbounded quantum unfanout that operates according to Equation
+\ref{eqn:cdf-cdu} can be achieved in $O(1)$ depth and $O(n)$ size and
+width on \textsf{CCNTC}.
+\label{thm:cdu}
+\end{theorem}
+%
+\begin{proof}
 The initial fanned out state lives in a $2$-dimensional subspace. The
 round of Hadamard gates increases its dimension to $2^n$, and the two
 interleaved layers of CNOTs in a sense ``disentangle'' the qubits from
@@ -197,6 +209,7 @@ The target qubit of an unfanout is usually chosen to be in the same location
 as the source qubit of the previous, corresponding fanout. 
 The resources for unfanout are given in
 Table \ref{tab:cd-resources}.
+\end{proof}
 
 % From Notebook #16, p. 212
 % From Notebook #16, p. 66

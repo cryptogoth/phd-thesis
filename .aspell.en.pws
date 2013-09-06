@@ -60,8 +60,8 @@ boolean
 FET
 Bruck
 diagonalized
-timesteps
 timestep's
+timesteps
 unentangled
 parallelize
 Config
@@ -237,8 +237,8 @@ Miquel
 Zalka
 Lubotsky
 fanin
-LTE's
 LTEs
+LTE's
 truein
 th
 ACC
@@ -251,8 +251,8 @@ MSR
 Broadbent
 SU
 supremum
-qubit's
 qubits
+qubit's
 un
 tensored
 subcomponents

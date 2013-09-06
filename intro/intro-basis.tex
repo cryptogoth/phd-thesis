@@ -9,7 +9,7 @@ Therefore, we will now review quantum gates and how to combine them into
 circuits. This procedure is known as quantum compiling, but we will not
 delve into its details until we need them in Chapter \ref{chap:qcompile}.
 
-A quantum gate on $n$-qubits is a $2^n \times 2^n$ unitary matrix
+A quantum gate on $n$ qubits is a $2^n \times 2^n$ unitary matrix
 (an element of $U(2^n)$). We can consider this the overall circuit width.
 Often, we find it useful to neglect a
 global phase, since these cannot be measured in quantum mechanics.
@@ -202,7 +202,7 @@ By $\Lambda^n(U)$, we mean an $(n+1)$-qubit gate ($2^{n+1} \times 2^{n+1}$
 unitary matrix) with $n$ control qubits and a single-qubit target gate
 $U \in U(2)$. An important multiply-controlled gate, which is universal
 for classical reversible circuits, is the Toffoli gate, or controlled-controlled-$NOT$.
-
+%
 \begin{equation}
 \text{Toffoli} = \Lambda^2(X) = 
  \left[
@@ -217,7 +217,7 @@ for classical reversible circuits, is the Toffoli gate, or controlled-controlled
     0 & 0 & 0 & 0 & 0 & 0 & 1 & 0
   \end{array} \right]
 \end{equation}
-
+%
 As seen above, multiply-controlled single-qubit gates $\Lambda^n(U)$ have a
 special, sparser structure than general $n$-qubit gates in $U(2^n)$.
 These play a special role in many multi-qubit decompositions, about which
@@ -225,7 +225,7 @@ we will say more in Chapter \ref{chap:qcompile}.
 
 There is also a special case of a ``targetless'' controlled single-qubit
 gate which simply rotates the $\ket{1}$ component of a single-qubit state.
-
+%
 \begin{equation}
 \Lambda(e^{i\phi}) = 
  \left[
@@ -234,7 +234,7 @@ gate which simply rotates the $\ket{1}$ component of a single-qubit state.
     0 & e^{i\phi} \\
   \end{array} \right]
 \end{equation}
-
+%
 This gate is a key tool and simplification for single-qubit compiling.
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -249,18 +249,18 @@ gates that we have already introduced.
 
 First, we review how to decompose a general $U \in U(2)$ into three single-qubit
 rotations about the Bloch sphere $x$-axis and $z$-axis, the so-called
-Euler angle decompositions \cite{Nielsen2000}. This gives rise to a factor of $3$
+Euler angle decomposition \cite{Nielsen2000}. This gives rise to a factor of $3$
 which commonly appears in resource calculations in the literature.
-
+%
 \begin{equation}
 U = e^{i\delta}R_Z(\gamma)R_X(\beta)R_Z(\alpha)
 \end{equation}
-
+%
 The gate $R_Z(\phi)$ represents a rotation about the Bloch sphere $z$-axis,
 of which the Pauli $Z$ gate is a special case of a $\pi$ rotation. In fact,
 it is the same as the controlled-phase gate we introduced in the previous section,
 up to a global phase.
-
+%
 \begin{equation}
 R_Z(\phi) =
 \left[
@@ -276,11 +276,11 @@ e^{-i\phi / 2} \left[
   \end{array} \right]
 = e^{-i\phi / 2} \Lambda(e^{i\phi})
 \end{equation}
-
+%
 We can now state the relationship between $S$ and $Z$, as well as introduce
 an important new gate $T$ which is the square root of $S$ up to a phase. All three
 are rotations about the Bloch $z$-axis by power-of-two fractions of $\pi$.
-
+%
 \begin{equation}
 Z = R_Z(\pi) =
 \left[
@@ -315,7 +315,7 @@ R_X(\phi) =
     -i \sin \tfrac{\phi}{2} & \cos \tfrac{\phi}{2} \\
   \end{array} \right]
 \end{equation}
-
+%
 Similar decompositions can be given in terms of $R_X$ and $R_Y$, or in
 terms of $R_Y$ and $R_Z$. Solving for the angles $\{ \alpha, \beta, \gamma, \delta \}$
 involves writing four equations in four variables, which can be found in
@@ -323,14 +323,14 @@ the standard textbook \cite{Nielsen2000}. We will not say
 more about their solution here, except that we can implement the
 global phase shift $e^{i\delta}$ using the identities below, which are
 adapted from \cite{Kitaev2002}.
-
+%
 \begin{eqnarray}
 e^{i\delta} & = & R_Z(\phi)\cdot X \cdot R_Z(\phi) \cdot X \\
 X & = & R_X(\pi) \\
 Z & = & R_Z(\pi) \\
 R_X(\phi) & = & H \cdot R_Z(\phi) \cdot H
 \end{eqnarray}
-
+%
 It now seems that a reasonable basis for single-qubit compiling are
 arbitrary $R_Z(\phi)$ and $R_X(\phi)$ rotations, along with $H$.
 However, in practice our classical control can only implement
@@ -349,49 +349,49 @@ product of gate matrices from our basis operating on individual qubits.
 Our desired target matrix $C$ is itself
 a matrix from $U(2^n)$, and therefore we will need a distance metric
 that operates on matrices (specifically, the difference of matrices).
-
+%
 \begin{equation}
 \tilde{C} = G_{D}G_{D-1}\cdots G_{2} G_{1}
 \end{equation}
-
+%
 One distance metric used in theoretical literature
 is the operator norm of a matrix $M$,
-is defined as the maximum amount it scales the vector norm
+which is defined as the maximum amount $M$ scales the vector norm
 of all unit-length vectors. This is sometimes also called the
 infinity-norm, or supremum-norm (sup-norm).
-
+%
 \begin{equation}
 \| M \|_{\infty} = \max_{\| \ket{v} \| = 1} \| M \ket{v} \|
 \label{eqn:op-norm}
 \end{equation}
-
+%
 However, this is not an operational definition.
 Moreover, we often wish to neglect a global phase in a unitary matrix,
 which is not measurable in quantum physics. To measure phase-independent
 distance between two unitary matrices, we can use the following
 distance measure due to Fowler \cite{Fowler2011}.
-
+%
 \begin{equation}
 dist(U, V) = \| U - V\| \equiv \sqrt{\frac{2^n - |tr(U^{\dag}V)|}{2^n}}
 \end{equation}
-
+%
 Now can quantify the quality of our approximations through an
 error $\epsilon$.
-
+%
 \begin{equation}
 \| C - \tilde{C}\| = \| C -  G_D\cdots G_1 \| < \epsilon
 \end{equation}
-
+%
 Often $\epsilon$ will be small, and we will upper bound it by some
 power of $\frac{1}{2}$. Therefore, we define a
 new parameter $\nu$ which is the number of bits needed to encode the exponent
 of this increasingly small fraction.
-
+%
 \begin{equation}
 \epsilon = \frac{1}{2^\nu} \qquad
 \nu = \log(1/\epsilon)
 \end{equation}
-
+%
 It is natural to suppose that compiling better approximations requires
 more resources, and these resources are expressed as functions of
 these
@@ -423,11 +423,11 @@ We call a fixed, finite set of gates $\mathcal{G}$ \emph{universal} for
 a group $U(2^n)$ iff for every desired target $C \in U(2^n)$ and
 desired error $\epsilon$, we can return a
 sequence of gates $(g_1,g_2,\ldots,g_S)$ from $\mathcal{G}$ where
-
+%
 \begin{equation}
 \| C - g_1 g_2 \cdots g_S \| \le \epsilon
 \end{equation}
-
+%
 \end{definition}
 
 This defines whether a gateset is a basis, or whether universal approximation
@@ -444,11 +444,11 @@ suitable bases for quantum compilation? We state without proof that
 the following basis satisfies these properties, and we will use it later as
 our circuit basis in Chapters \ref{chap:factor-polylog} and
 \ref{chap:factor-sublog}.
-
+%
 \begin{equation}
 \mathcal{G} = \{X, Z, H, \text{Toffoli}, \text{CNOT}\}
 \end{equation}
-
+%
 It is important to note that the only non-Clifford gate in the above basis
 is Toffoli.
 The Clifford group $\mathcal{C}_n$ by itself is \emph{not}
